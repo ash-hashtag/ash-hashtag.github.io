@@ -136,6 +136,22 @@ body {
 	line-height: 1.5;
 }
 
+/* Prevent layout shifts during navigation */
+html {
+	scroll-behavior: smooth;
+}
+
+/* Ensure consistent layout during transitions */
+::view-transition-old(root),
+::view-transition-new(root) {
+	animation-duration: 0.2s;
+}
+
+/* Prevent content jumping */
+main {
+	min-height: calc(100vh - 200px); /* Adjust based on nav/footer height */
+}
+
 *,
 *::after,
 *::before {
