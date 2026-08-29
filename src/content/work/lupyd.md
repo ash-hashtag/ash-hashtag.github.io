@@ -1,7 +1,8 @@
 ---
 title: Lupyd
 publishDate: 2024-03-10 00:00:00
-img: /assets/work/lupyd.png
+priority: 1
+img: /assets/work/lupyd.webp
 img_alt: Privacy-focused social media platform
 description: |
   Privacy-focused social media platform prioritizing user data protection and control.

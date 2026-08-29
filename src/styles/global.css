@@ -152,6 +152,36 @@ main {
 	min-height: calc(100vh - 200px); /* Adjust based on nav/footer height */
 }
 
+/* One permanent visual system across every route. */
+:root,
+:root.theme-dark {
+	--gray-0: #e8e7e1;
+	--gray-50: #191916;
+	--gray-100: #e8e7e1;
+	--gray-200: #c3c3ba;
+	--gray-300: #96968d;
+	--gray-400: #85857d;
+	--gray-500: #66665f;
+	--gray-800: rgba(232, 231, 225, 0.16);
+	--gray-900: #191916;
+	--gray-999: #11110f;
+	--gray-999-basis: 232, 231%, 225%;
+	--gray-999_40: rgba(17, 17, 15, 0.7);
+	--accent-light: #e8e7e1;
+	--accent-regular: #d9fa54;
+	--accent-dark: #ff7043;
+	--accent-overlay: rgba(217, 250, 84, 0.2);
+	--accent-text-over: #11110f;
+	--link-color: #d9fa54;
+	--gradient-stop-1: #d9fa54;
+	--gradient-stop-2: #ff7043;
+	--gradient-stop-3: #11110f;
+	--gradient-subtle: linear-gradient(145deg, #191916, #11110f);
+	--gradient-accent: linear-gradient(135deg, #d9fa54, #ff7043);
+	--gradient-accent-orange: linear-gradient(135deg, #d9fa54, #ff7043);
+	--gradient-stroke: linear-gradient(180deg, #d9fa54, #ff7043);
+}
+
 *,
 *::after,
 *::before {

@@ -1,7 +1,6 @@
 ---
 import Icon from './Icon.astro';
-import type { iconPaths } from './IconPaths';
-import ThemeToggle from './ThemeToggle.astro';
+import BrandIcon from './BrandIcon.astro';
 
 /** Main menu items */
 const textLinks: { label: string; href: string }[] = [
@@ -11,8 +10,10 @@ const textLinks: { label: string; href: string }[] = [
 ];
 
 /** Icon links to social media — edit these with links to your profiles! */
-const iconLinks: { label: string; href: string; icon: keyof typeof iconPaths }[] = [
-	{ label: 'GitHub', href: 'https://github.com/ash-hashtag', icon: 'github-logo' },
+const iconLinks: { label: string; href: string; brand: 'github' | 'linkedin' | 'x' }[] = [
+	{ label: 'GitHub', href: 'https://github.com/ash-hashtag', brand: 'github' },
+	{ label: 'LinkedIn', href: 'https://www.linkedin.com/in/sri-pranav-tene', brand: 'linkedin' },
+	{ label: 'X', href: 'https://x.com/sripranavtene', brand: 'x' },
 ];
 
 /** Test if a link is pointing to the current page. */
@@ -27,7 +28,6 @@ const isCurrentPage = (href: string) => {
 <nav>
 	<div class="menu-header">
 		<a href="/" class="site-title">
-			<Icon icon="terminal-window" color="var(--accent-regular)" size="1.6em" gradient />
 			Sri Pranav Tene
 		</a>
 		<menu-button>
@@ -56,10 +56,10 @@ const isCurrentPage = (href: string) => {
 		<div class="menu-footer">
 			<div class="socials">
 				{
-					iconLinks.map(({ href, icon, label }) => (
+					iconLinks.map(({ href, brand, label }) => (
 						<a href={href} class="social">
 							<span class="sr-only">{label}</span>
-							<Icon icon={icon} />
+							<BrandIcon brand={brand} />
 						</a>
 					))
 				}
@@ -81,18 +81,15 @@ const isCurrentPage = (href: string) => {
 		<div class="menu-footer">
 			<div class="socials">
 				{
-					iconLinks.map(({ href, icon, label }) => (
+				iconLinks.map(({ href, brand, label }) => (
 						<a href={href} class="social">
 							<span class="sr-only">{label}</span>
-							<Icon icon={icon} />
+							<BrandIcon brand={brand} />
 						</a>
 					))
 				}
 			</div>
 
-			<div class="theme-toggle">
-				<ThemeToggle />
-			</div>
 		</div>
 	</div>
 </nav>
@@ -160,22 +157,20 @@ const isCurrentPage = (href: string) => {
 	}
 
 	.menu-button {
-		position: relative;
 		display: flex;
-		border: 0;
-		border-radius: 999rem;
-		padding: 0.5rem;
+		border: 1px solid var(--gray-800);
+		border-radius: 0;
+		padding: 0.55rem;
 		font-size: 1.5rem;
-		color: var(--gray-300);
-		background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
-		box-shadow: var(--shadow-md);
+		color: var(--gray-100);
+		background: transparent;
+		transition: color var(--theme-transition), border-color var(--theme-transition), transform var(--theme-transition);
 	}
 
 	.menu-button[aria-expanded='true'] {
-		color: var(--gray-0);
-		background:
-			linear-gradient(180deg, var(--gray-600), transparent),
-			radial-gradient(var(--gray-900), var(--gray-800) 150%);
+		color: var(--accent-regular);
+		border-color: var(--accent-regular);
+		transform: rotate(90deg);
 	}
 
 	.menu-button[hidden] {
@@ -183,12 +178,13 @@ const isCurrentPage = (href: string) => {
 	}
 
 	.menu-button::before {
-		position: absolute;
-		inset: -1px;
-		content: '';
-		background: var(--gradient-stroke);
-		border-radius: 999rem;
-		z-index: -1;
+		display: none;
+	}
+
+	.menu-button:hover,
+	.menu-button:focus-visible {
+		color: var(--accent-regular);
+		border-color: var(--accent-regular);
 	}
 
 	.menu-content {
@@ -244,19 +240,13 @@ const isCurrentPage = (href: string) => {
 		display: flex;
 		padding: var(--icon-padding);
 		text-decoration: none;
-		color: var(--accent-dark);
+		color: var(--gray-100);
 		transition: color var(--theme-transition);
 	}
 
 	.social:hover,
 	.social:focus {
-		color: var(--accent-text-over);
-	}
-
-	.theme-toggle {
-		display: flex;
-		align-items: center;
-		height: calc(var(--icon-size) + 2 * var(--icon-padding));
+		color: var(--accent-regular);
 	}
 
 	@media (min-width: 50em) {
@@ -284,25 +274,21 @@ const isCurrentPage = (href: string) => {
 			position: relative;
 			flex-direction: row;
 			font-size: var(--text-sm);
-			border-radius: 999rem;
+			border-radius: 0;
 			border: 0;
+			border-bottom: 1px solid var(--gray-800);
 			padding: 0.5rem 0.5625rem;
-			background: radial-gradient(var(--gray-900), var(--gray-800) 150%);
-			box-shadow: var(--shadow-md);
+			background: transparent;
+			box-shadow: none;
 		}
 
 		.nav-items::before {
-			position: absolute;
-			inset: -1px;
-			content: '';
-			background: var(--gradient-stroke);
-			border-radius: 999rem;
-			z-index: -1;
+			display: none;
 		}
 
 		.link {
 			padding: 0.5rem 1rem;
-			border-radius: 999rem;
+			border-radius: 0;
 			transition:
 				color var(--theme-transition),
 				background-color var(--theme-transition);
@@ -310,13 +296,14 @@ const isCurrentPage = (href: string) => {
 
 		.link:hover,
 		.link:focus {
-			color: var(--gray-100);
-			background-color: var(--accent-subtle-overlay);
+			color: var(--accent-regular);
+			background-color: transparent;
 		}
 
 		.link[aria-current='page'] {
-			color: var(--accent-text-over);
-			background-color: var(--accent-regular);
+			color: var(--accent-regular);
+			background-color: transparent;
+			box-shadow: inset 0 -2px var(--accent-regular);
 		}
 
 		.menu-footer {

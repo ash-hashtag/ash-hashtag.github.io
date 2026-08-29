@@ -1,5 +1,6 @@
 # build output
 dist/
+# `docs/` is intentionally tracked for GitHub Pages.
 # generated types
 .astro/
 

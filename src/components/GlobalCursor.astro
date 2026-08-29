@@ -1,0 +1,77 @@
+<div class="global-cursor cursor-dot" aria-hidden="true"></div>
+<div class="global-cursor cursor-ring" aria-hidden="true"></div>
+
+<script>
+	let cleanupCursor = () => {};
+
+	const initCursor = () => {
+		cleanupCursor();
+		const dot = document.querySelector<HTMLElement>('.global-cursor.cursor-dot');
+		const ring = document.querySelector<HTMLElement>('.global-cursor.cursor-ring');
+		if (!dot || !ring || matchMedia('(pointer: coarse)').matches) return;
+
+		let mouseX = innerWidth / 2;
+		let mouseY = innerHeight / 2;
+		let ringX = mouseX;
+		let ringY = mouseY;
+		let frame = 0;
+
+		const move = (event: PointerEvent) => {
+			mouseX = event.clientX;
+			mouseY = event.clientY;
+			dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+			document.documentElement.classList.add('cursor-ready');
+		};
+		const over = (event: PointerEvent) => {
+			const target = event.target as Element | null;
+			document.documentElement.classList.toggle('cursor-hover', Boolean(target?.closest('a, button, [data-cursor]')));
+		};
+		const follow = () => {
+			ringX += (mouseX - ringX) * 0.16;
+			ringY += (mouseY - ringY) * 0.16;
+			ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+			frame = requestAnimationFrame(follow);
+		};
+
+		addEventListener('pointermove', move);
+		document.addEventListener('pointerover', over);
+		follow();
+		cleanupCursor = () => {
+			cancelAnimationFrame(frame);
+			removeEventListener('pointermove', move);
+			document.removeEventListener('pointerover', over);
+			document.documentElement.classList.remove('cursor-ready', 'cursor-hover');
+		};
+	};
+
+	document.addEventListener('astro:page-load', initCursor);
+	document.addEventListener('astro:before-swap', cleanupCursor);
+	initCursor();
+</script>
+
+<style is:global>
+	@media (pointer: fine) and (prefers-reduced-motion: no-preference) {
+		html,
+		html * { cursor: none !important; }
+	}
+
+	.global-cursor {
+		position: fixed;
+		z-index: 20000;
+		top: 0;
+		left: 0;
+		pointer-events: none;
+		border-radius: 50%;
+		mix-blend-mode: difference;
+		opacity: 0;
+	}
+
+	.cursor-ready .global-cursor { opacity: 1; }
+	.global-cursor.cursor-dot { width: .7rem; height: .7rem; margin: -.35rem 0 0 -.35rem; background: #fff; }
+	.global-cursor.cursor-ring { width: 2.4rem; height: 2.4rem; margin: -1.2rem 0 0 -1.2rem; border: 1px solid #fff; transition: width .25s, height .25s, margin .25s, border-color .25s, opacity .2s; }
+	.cursor-hover .global-cursor.cursor-ring { width: 4rem; height: 4rem; margin: -2rem 0 0 -2rem; border-color: var(--accent-regular); }
+
+	@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+		.global-cursor { display: none; }
+	}
+</style>

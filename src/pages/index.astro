@@ -1,243 +1,72 @@
 ---
-import { getCollection } from "astro:content";
-// Component Imports
-import CallToAction from "../components/CallToAction.astro";
-// Page section components
-import ContactCTA from "../components/ContactCTA.astro";
-import Grid from "../components/Grid.astro";
-import Hero from "../components/Hero.astro";
-import Icon from "../components/Icon.astro";
-import Pill from "../components/Pill.astro";
-import PortfolioPreview from "../components/PortfolioPreview.astro";
-import Skills from "../components/Skills.astro";
-// Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
-import BaseLayout from "../layouts/BaseLayout.astro";
+import { getCollection } from 'astro:content';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Icon from '../components/Icon.astro';
 
-// Content Fetching: List four most recent work projects
-const projects = (await getCollection("work"))
-	.sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
-	.slice(0, 4);
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
+const work = (await getCollection('work')).sort(
+  (a, b) => (a.data.priority ?? Number.MAX_SAFE_INTEGER) - (b.data.priority ?? Number.MAX_SAFE_INTEGER)
+    || b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
+);
+const selected = work.slice(0, 3);
+const otherWork = work.slice(3);
 ---
 
-<BaseLayout>
-
-
-	<div class="stack gap-20 lg:gap-48">
-		<div class="wrapper stack gap-8 lg:gap-20">
-			<header class="hero">
-				<Hero
-					title="Hello, my name is Sri Pranav Tene"
-					tagline="I am a Software Engineer who is currently based in Hyderabad, Telangana"
-					align="start"
-				>
-					<div class="roles">
-						<Pill><Icon icon="code" size="1.33em" /> Developer</Pill
-						>
-						<Pill
-							><Icon icon="microphone-stage" size="1.33em" /> Founder</Pill
-						>
-					</div>
-				</Hero>
-
-				<img
-					class="potrait"
-					alt="Jeanine White smiling in a red plaid shirt and tortoise shell glasses"
-					width="480"
-					height="620"
-					src="/assets/portrait.jpg"
-				/>
-			</header>
-
-			<Skills />
-		</div>
-
-		<main class="wrapper stack gap-20 lg:gap-48">
-			<section class="section with-background with-cta">
-				<header class="section-header stack gap-2 lg:gap-4">
-					<h3>Selected Work</h3>
-					<p>
-						Take a look below at some of my featured work for
-						clients from the past few years.
-					</p>
-				</header>
-
-				<div class="gallery">
-					<Grid variant="offset">
-						{
-							projects.map((project) => (
-								<li>
-									<PortfolioPreview project={project} />
-								</li>
-							))
-						}
-					</Grid>
-				</div>
-
-				<div class="cta">
-					<CallToAction href="/work/">
-						View All
-						<Icon icon="arrow-right" size="1.2em" />
-					</CallToAction>
-				</div>
-			</section>
-
-
-		</main>
-
-		<ContactCTA />
-	</div>
-
-
-
+<BaseLayout title="Sri Pranav Tene — Founder and Software Developer" description="Sri Pranav Tene is a software engineer and founder building privacy-first products and high-performance systems.">
+  <div class="landing">
+    <div class="scroll-paint" aria-hidden="true"></div>
+    <section class="hero landing-shell" aria-labelledby="hero-title">
+      <div class="hero-copy reveal"><p class="eyebrow"><span class="status-dot"></span> Software engineer / founder</p><h1 id="hero-title">I build software<br /><em>with a point of view.</em></h1><p class="hero-intro">Privacy-first products, fast systems, and tools that feel a little more human than they need to.</p><div class="hero-actions"><a class="button button-fill" href="#work">See the work <Icon icon="arrow-right" size="1.1em" /></a><a class="text-link" href="mailto:tenesripranav@gmail.com">Start a conversation <span>↗</span></a></div></div>
+      <div class="hero-orbit" aria-hidden="true"><div class="orbit orbit-one"></div><div class="orbit orbit-two"></div><div class="orbit-core"><span>SPT</span><small>HYD · IN</small></div></div>
+      <div class="hero-scroll"><span>01</span><div></div><span>Scroll to explore</span></div>
+    </section>
+    <section class="statement landing-shell reveal"><p class="section-kicker">The short version</p><div><h2>Less shipping for shipping's sake.<br /><span>More things worth using.</span></h2><p class="statement-body">I'm Sri Pranav — a full-stack engineer and founder building privacy-first products across Rust, React, C++, Flutter, and Go. I care about the layer where hard technical ideas become dependable products.</p></div></section>
+    <section id="work" class="work-section landing-shell"><div class="section-heading reveal"><p class="section-kicker">02 / Selected work</p><h2>Built in public.<br /><span>Built to last.</span></h2><p>Three products from the Lupyd orbit — each one solving a different kind of trust problem.</p></div><div class="project-stack">
+      {selected.map((project, index) => <a href={`/work/${project.id}`} aria-label={`Read about ${project.data.title}`} class:list={['project-card', `project-${project.id}`, 'reveal']}><div class="project-meta"><span>0{index + 1}</span><span>{project.data.tags.slice(0, 2).join(' · ')}</span></div><div class="project-visual" aria-hidden="true">
+        {project.id === 'firefly' && <div class="firefly-ui"><div class="ui-top"><b>firefly</b><span>•••</span></div><div class="signal-line"><i></i><span>encrypted / always</span></div><div class="message m1">meet me where the light is</div><div class="message m2">everything here is ours.</div><div class="lock-mark">⌁</div></div>}
+        {project.id === 'lupyd' && <div class="lupyd-ui"><div class="lupyd-word">lupyd<span>®</span></div><div class="lupyd-ring ring-a"></div><div class="lupyd-ring ring-b"></div><div class="lupyd-caption">your data.<br /><b>your rules.</b></div></div>}
+        {project.id === 'noon' && <div class="noon-ui"><div class="noon-sun">○</div><div class="noon-card"><span>anonymous / 0042</span><b>What should change?</b><div class="fake-input"></div><div class="fake-button">submit privately</div></div><div class="noon-word">noon</div></div>}
+      </div><div class="project-info"><div><p class="project-type">{project.data.tags.join(' · ')}</p><h3>{project.data.title}</h3></div><p class="project-description">{project.data.description}</p></div></a>)}
+    </div></section>
+    <section class="elsewhere landing-shell reveal"><div><p class="section-kicker">03 / Also in the lab</p><h2>Small tools.<br /><span>Serious intent.</span></h2></div><div class="lab-list">{otherWork.map((project) => <a href={`/work/${project.id}`}><span>{project.data.title}</span><small>{project.data.tags.slice(0, 2).join(' · ')}</small><b>↗</b></a>)}</div></section>
+    <section class="closing landing-shell reveal"><p class="section-kicker">Have a hard problem?</p><h2>Let's make it<br /><em>interesting.</em></h2><a class="button button-fill" href="mailto:tenesripranav@gmail.com">Say hello <span>↗</span></a></section>
+  </div>
 </BaseLayout>
 
-<style>
-	.hero {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: 2rem;
-	}
+<script>
+  let cleanupLanding = () => {};
+  const initLanding = () => {
+    cleanupLanding();
+    const landing = document.querySelector('.landing');
+    if (!landing) return;
+    const revealItems = landing.querySelectorAll('.reveal');
+    const revealObserver = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); revealObserver.unobserve(entry.target); } }), { threshold: 0.12 });
+    revealItems.forEach((item) => revealObserver.observe(item));
+    const updateScrollPaint = () => { const max = document.documentElement.scrollHeight - window.innerHeight; landing.style.setProperty('--scroll-progress', `${max ? window.scrollY / max : 0}`); };
+    window.addEventListener('scroll', updateScrollPaint, { passive: true }); updateScrollPaint();
+    cleanupLanding = () => { revealObserver.disconnect(); window.removeEventListener('scroll', updateScrollPaint); };
+  };
+  document.addEventListener('astro:page-load', initLanding); document.addEventListener('astro:before-swap', cleanupLanding); initLanding();
+</script>
 
-	.roles {
-		display: none;
-	}
-
-	.potrait {
-		z-index: 999;
-	}
-
-	.hero img {
-		aspect-ratio: 5 / 4;
-		object-fit: cover;
-		object-position: top;
-		border-radius: 1.5rem;
-		box-shadow: var(--shadow-md);
-	}
-
-	@media (min-width: 50em) {
-		.hero {
-			display: grid;
-			grid-template-columns: 6fr 4fr;
-			padding-inline: 2.5rem;
-			gap: 3.75rem;
-		}
-
-		.roles {
-			margin-top: 0.5rem;
-			display: flex;
-			gap: 0.5rem;
-		}
-
-		.hero img {
-			aspect-ratio: 3 / 4;
-			border-radius: 4.5rem;
-			object-fit: cover;
-		}
-	}
-
-	/* ====================================================== */
-
-	.section {
-		display: grid;
-		gap: 2rem;
-	}
-
-	.with-background {
-		position: relative;
-	}
-
-	.with-background::before {
-		--hero-bg: var(--bg-image-subtle-2);
-
-		content: "";
-		position: absolute;
-		pointer-events: none;
-		left: 50%;
-		width: 100vw;
-		aspect-ratio: calc(2.25 / var(--bg-scale));
-		top: 0;
-		transform: translateY(-75%) translateX(-50%);
-		background: url("/assets/backgrounds/noise.png") top center/220px repeat,
-			var(--hero-bg) center center / var(--bg-gradient-size) no-repeat,
-			var(--gray-999);
-		background-blend-mode: overlay, normal, normal, normal;
-		mix-blend-mode: var(--bg-blend-mode);
-		z-index: -1;
-	}
-
-	.with-background.bg-variant::before {
-		--hero-bg: var(--bg-image-subtle-1);
-	}
-
-	.section-header {
-		justify-self: center;
-		text-align: center;
-		max-width: 50ch;
-		font-size: var(--text-md);
-		color: var(--gray-300);
-	}
-
-	.section-header h3 {
-		font-size: var(--text-2xl);
-	}
-
-	@media (min-width: 50em) {
-		.section {
-			grid-template-columns: repeat(4, 1fr);
-			grid-template-areas: "header header header header" "gallery gallery gallery gallery";
-			gap: 5rem;
-		}
-
-		.section.with-cta {
-			grid-template-areas: "header header header cta" "gallery gallery gallery gallery";
-		}
-
-		.section-header {
-			grid-area: header;
-			font-size: var(--text-lg);
-		}
-
-		.section-header h3 {
-			font-size: var(--text-4xl);
-		}
-
-		.with-cta .section-header {
-			justify-self: flex-start;
-			text-align: left;
-		}
-
-		.gallery {
-			grid-area: gallery;
-		}
-
-		.cta {
-			grid-area: cta;
-		}
-	}
-
-	/* ====================================================== */
-
-	.mention-card {
-		display: flex;
-		height: 7rem;
-		justify-content: center;
-		align-items: center;
-		text-align: center;
-		border: 1px solid var(--gray-800);
-		border-radius: 1.5rem;
-		color: var(--gray-300);
-		background: var(--gradient-subtle);
-		box-shadow: var(--shadow-sm);
-	}
-
-	@media (min-width: 50em) {
-		.mention-card {
-			border-radius: 1.5rem;
-			height: 9.5rem;
-		}
-	}
+<style is:global>
+  :root { --ink: #11110f; --paper: #e8e7e1; --muted: #96968d; --line: rgba(232,231,225,.16); --acid: #d9fa54; --orange: #ff7043; }
+  :root.theme-dark { --gray-999: var(--ink); --gray-0: var(--paper); --gray-100: var(--paper); --gray-200: #c3c3ba; --gray-300: var(--muted); --link-color: var(--acid); }
+  .backgrounds:has(.landing) { background: var(--ink); --gray-0:var(--paper); --gray-100:var(--paper); --gray-200:#c3c3ba; --gray-300:var(--muted); --gray-400:#85857d; --gray-999:var(--ink); --gray-999_40:rgba(17,17,15,.7); --link-color:var(--acid); }
+  .landing { color: var(--paper); overflow: hidden; background: var(--ink); }
+  .scroll-paint { position:fixed;z-index:10000;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--acid),var(--orange));transform:scaleX(var(--scroll-progress,0));transform-origin:left;box-shadow:0 0 1.2rem var(--acid);pointer-events:none; }
+  .landing-shell { max-width: 78rem; margin: 0 auto; padding-inline: clamp(1.25rem, 5vw, 5rem); }
+  .landing .hero { min-height: min(53rem, 92vh); position: relative; display: grid; align-items: center; padding-top: 4rem; padding-bottom: 7rem; }
+  .hero-copy { position: relative; z-index: 2; max-width: 47rem; }.eyebrow,.section-kicker,.project-type,.project-meta { font: 600 .7rem/1.2 var(--font-body); text-transform: uppercase; letter-spacing: .17em; color: var(--muted); }.eyebrow { display:flex; gap:.65rem; align-items:center; color:var(--paper); }.status-dot { width:.45rem;height:.45rem;background:var(--acid);border-radius:50%; box-shadow: 0 0 1rem var(--acid); }
+  .landing h1,.landing h2,.landing h3 { font-family: var(--font-brand); color: var(--paper); letter-spacing:-.055em; }.landing h1 { margin-top:1.6rem; font-size:clamp(3.8rem, 9vw, 8.7rem); line-height:.86; max-width: 9ch; }.landing em { color:var(--orange); font-style:normal; }.landing h1 em { display:inline-block; transform:translateX(.35em); }.hero-intro { max-width: 32rem; margin-top:2.2rem; font-size:clamp(1rem, 1.8vw, 1.3rem); color:#b8b8ae; }.hero-actions { display:flex; align-items:center; flex-wrap:wrap; gap:1.5rem; margin-top:2.5rem; }.button { display:inline-flex;align-items:center;gap:.7rem;padding:1rem 1.35rem;text-decoration:none;font:600 .8rem var(--font-body);text-transform:uppercase;letter-spacing:.08em; }.button-fill { color:var(--ink); background:var(--acid); }.button-fill:hover { background:var(--paper); }.text-link { color:var(--paper); font-size:.85rem; text-decoration:none; border-bottom:1px solid var(--line); padding-bottom:.25rem; }.text-link span { color:var(--acid); margin-left:.4rem; }
+  .hero-orbit { position:absolute; right:-8vw; top:9%; width:min(50vw, 39rem); aspect-ratio:1; opacity:.8;animation:orbit-drift 12s ease-in-out infinite alternate; }.orbit { position:absolute; inset:12%; border:1px solid var(--line); border-radius:50%; transform:rotate(-25deg) skewX(-13deg);animation:orbit-spin 18s linear infinite; }.orbit-two { inset:23%; transform:rotate(55deg) skewX(-20deg); border-color:rgba(217,250,84,.28);animation-direction:reverse;animation-duration:12s; }.orbit-core { position:absolute; inset:39%; display:grid; place-content:center; text-align:center; border-radius:50%; color:var(--acid); background:var(--orange); box-shadow:0 0 6rem rgba(255,112,67,.35); transform:rotate(-12deg);animation:core-pulse 4s ease-in-out infinite; }.orbit-core span { font:bold 1.6rem var(--font-brand); letter-spacing:-.08em; }.orbit-core small { font: .5rem var(--font-body); letter-spacing:.16em; margin-top:.3rem; }.hero-scroll { position:absolute;bottom:2rem;left:clamp(1.25rem,5vw,5rem);display:flex;align-items:center;gap:.7rem;font-size:.65rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted); }.hero-scroll div { width:4rem;height:1px;background:var(--line); }.hero-scroll span:first-child { color:var(--acid); }
+  .statement { padding-top:9rem; padding-bottom:11rem; display:grid; grid-template-columns: minmax(8rem,1fr) 2.2fr; gap:2rem; border-top:1px solid var(--line); }.statement h2,.section-heading h2,.elsewhere h2 { font-size:clamp(2.8rem,6vw,6.6rem); line-height:.9; }.landing h2 span { color:var(--muted); }.statement-body { max-width:32rem; margin-top:2rem; color:#a9a9a0; font-size:1.05rem; }
+  .work-section { padding-bottom:12rem; }.section-heading { display:grid; grid-template-columns:1fr 2fr; gap:1rem; align-items:end; margin-bottom:4rem; }.section-heading h2 { grid-column:2; grid-row:1 / span 2; }.section-heading > p:last-child { max-width:24rem; color:var(--muted); }.project-stack { display:grid; gap:3rem; }.project-card { position:relative; border:1px solid var(--line); background:#191916; min-height:33rem; overflow:hidden; transition:transform .5s ease, border-color .5s ease; }.project-card:hover { transform:translateY(-.5rem); border-color:rgba(217,250,84,.65); }.project-meta { display:flex;justify-content:space-between;padding:1.3rem 1.4rem;position:relative;z-index:2; }.project-meta span:first-child { color:var(--acid); }.project-visual { height:23rem; position:relative; overflow:hidden; }.project-info { display:grid;grid-template-columns:1fr;gap:.35rem;padding:1.5rem 1.4rem 1.6rem;position:relative;z-index:2;background:#191916; }.project-type { color:var(--muted);font-size:.58rem; }.project-info h3 { font-size:clamp(2.2rem,4vw,4rem); margin-top:.5rem; }.project-description { grid-column:1;max-width:32rem;color:#9b9b91;font-size:.9rem;margin-top:.6rem; }.project-firefly { background:#151923; }.project-lupyd { background:#dbdfd3; color:#161714; }.project-noon { background:#efe5d0; color:#1d1915; }.project-lupyd .project-meta,.project-noon .project-meta { color:#555a4e; }
+  .firefly-ui { position:absolute;inset:2rem 12%;padding:1.4rem;border:1px solid #40506b;background:linear-gradient(145deg,#202b42,#101622);box-shadow:1.5rem 1.5rem 0 rgba(3,6,12,.25);transform:rotate(-3deg) translateX(-3rem);opacity:0; }.is-visible .firefly-ui { animation:firefly-enter .9s .15s cubic-bezier(.2,.8,.2,1) forwards; }.ui-top { display:flex;justify-content:space-between;color:#e4ecff;font:600 1rem var(--font-brand); }.ui-top span { color:#8191af; letter-spacing:.2em; }.signal-line { display:flex;align-items:center;gap:.5rem;margin-top:2rem;color:#91a8c9;font-size:.55rem;letter-spacing:.1em;text-transform:uppercase; }.signal-line i { display:block;width:1.8rem;height:1px;background:var(--acid);animation:signal-pulse 1.6s ease-in-out infinite; }.message { width:max-content;max-width:80%;padding:.65rem .8rem;margin-top:1.5rem;font-size:.7rem;color:#dce6fb;background:#293956;animation:message-in .7s 1s both; }.m2 { margin-left:auto;background:#d9fa54;color:#19200c;margin-top:.5rem;animation-delay:1.4s; }.lock-mark { position:absolute;right:1.2rem;bottom:1rem;color:var(--acid);font-size:2rem;transform:rotate(35deg);animation:lock-float 3s ease-in-out infinite; }
+  .lupyd-ui { position:absolute;inset:0;display:grid;place-content:center;transform:scale(.7) rotate(12deg);opacity:0; }.is-visible .lupyd-ui { animation:lupyd-enter 1s .1s cubic-bezier(.2,.8,.2,1) forwards; }.lupyd-word { position:relative;z-index:2;font:600 clamp(3rem,8vw,7rem) var(--font-brand);letter-spacing:-.12em;color:#192018; }.lupyd-word span { font:1rem var(--font-body);vertical-align:top;color:#5b6858; }.lupyd-ring { position:absolute;border:1px solid #6d806b;border-radius:50%;aspect-ratio:1;animation:ring-spin 16s linear infinite; }.ring-a { width:16rem;left:10%;top:8%; }.ring-b { width:24rem;right:-12%;bottom:-30%;border-color:#a9b6a1;animation-duration:22s;animation-direction:reverse; }.lupyd-caption { position:absolute;right:10%;top:15%;font: .65rem/1.2 var(--font-body);color:#647160;text-transform:uppercase;letter-spacing:.12em; }.lupyd-caption b { color:#192018; }
+  .noon-ui { position:absolute;inset:0;padding:2rem 12%;transform:translateY(3rem);opacity:0; }.is-visible .noon-ui { animation:noon-enter .9s .2s cubic-bezier(.2,.8,.2,1) forwards; }.noon-sun { position:absolute;right:10%;top:1rem;font-size:5rem;color:#ff7043;line-height:1;animation:sun-breathe 3s ease-in-out infinite; }.noon-card { position:relative;margin:2rem auto 0;max-width:22rem;padding:1.5rem;background:#f8f1e5;box-shadow:1.5rem 1.5rem 0 rgba(93,71,45,.14);transform:rotate(2deg); }.noon-card span { font:.55rem var(--font-body);color:#8a806f;letter-spacing:.1em;text-transform:uppercase; }.noon-card b { display:block;margin-top:2rem;font:1.4rem var(--font-brand);color:#33281f; }.fake-input { height:3rem;margin-top:1rem;border-bottom:1px solid #b8a995; }.fake-button { width:max-content;margin-top:1.2rem;padding:.6rem .8rem;background:#1d1915;color:#f8f1e5;font:.55rem var(--font-body);text-transform:uppercase; }.noon-word { position:absolute;bottom:1rem;left:9%;font:600 3rem var(--font-brand);color:#ff7043;letter-spacing:-.1em;animation:noon-word-in 1s 1s both; }
+  .project-card { display:block;color:inherit;text-decoration:none; }.project-card:focus-visible { border-color:var(--acid);outline:2px solid var(--acid);outline-offset:4px; }.project-info { grid-template-columns:1fr; }
+  .elsewhere { display:grid;grid-template-columns:1fr 1.2fr;gap:4rem;padding-top:7rem;padding-bottom:10rem;border-top:1px solid var(--line); }.lab-list { border-top:1px solid var(--line); }.lab-list a { display:grid;grid-template-columns:1fr auto auto;gap:1rem;align-items:center;padding:1.3rem 0;border-bottom:1px solid var(--line);color:var(--paper);text-decoration:none; }.lab-list a:hover span { color:var(--acid); }.lab-list span { font:1.3rem var(--font-brand); }.lab-list small { color:var(--muted);font-size:.65rem;text-transform:uppercase;letter-spacing:.1em; }.lab-list b { color:var(--acid);font-weight:400; }.closing { padding-top:8rem;padding-bottom:10rem;border-top:1px solid var(--line); }.closing h2 { font-size:clamp(4rem,11vw,11rem);line-height:.8;max-width:8ch;margin:2rem 0 3rem; }.reveal { opacity:0;transform:translateY(2.5rem);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.7,.2,1); }.reveal.is-visible { opacity:1;transform:none; }
+  @media (max-width:700px) { .landing .hero { min-height:44rem;align-items:start;padding-top:6rem; }.hero-orbit { width:27rem;right:-10rem;top:31%;opacity:.5; }.statement,.elsewhere { display:block;padding-top:6rem;padding-bottom:7rem; }.statement h2 { margin-top:2rem; }.statement-body { margin-top:2rem; }.section-heading { display:block;margin-bottom:2.5rem; }.section-heading h2 { margin:2rem 0; }.project-card { min-height:29rem; }.project-visual { height:19rem; }.firefly-ui { inset:1.5rem 7%; }.elsewhere h2 { margin:2rem 0 3rem; }.lab-list small { display:none; } }
+  @media (prefers-reduced-motion:reduce) { .reveal { opacity:1;transform:none;transition:none; }.project-card { transition:none; }.project-card:hover { transform:none; } html { scroll-behavior:auto; } }
+  @keyframes orbit-spin { to { transform:rotate(335deg) skewX(-13deg); } } @keyframes orbit-drift { to { transform:translate3d(-1rem,1rem,0) rotate(4deg); } } @keyframes core-pulse { 50% { box-shadow:0 0 9rem rgba(255,112,67,.6); transform:rotate(-12deg) scale(1.04); } } @keyframes firefly-enter { to { transform:rotate(-3deg) translateX(0);opacity:1; } } @keyframes message-in { from { opacity:0;transform:translateY(1rem); } to { opacity:1;transform:none; } } @keyframes signal-pulse { 50% { width:3.5rem;opacity:.4; } } @keyframes lock-float { 50% { transform:rotate(45deg) translateY(-.4rem); } } @keyframes lupyd-enter { to { transform:scale(1) rotate(0);opacity:1; } } @keyframes ring-spin { to { transform:rotate(360deg); } } @keyframes noon-enter { to { transform:translateY(0);opacity:1; } } @keyframes sun-breathe { 50% { transform:scale(1.12); } } @keyframes noon-word-in { from { transform:translateX(-2rem);opacity:0; } to { transform:none;opacity:1; } }
 </style>

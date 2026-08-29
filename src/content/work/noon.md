@@ -1,7 +1,8 @@
 ---
 title: Noon
 publishDate: 2024-04-05 00:00:00
-img: /assets/work/noon.png
+priority: 3
+img: /assets/work/noon.webp
 img_alt: Anonymous cryptographic forms
 description: |
   Cryptographic anonymous form suite ensuring complete privacy and anonymity for form submissions.

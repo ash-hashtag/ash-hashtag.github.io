@@ -1,10 +1,12 @@
 ---
 title: Firefly
 publishDate: 2024-02-20 00:00:00
-img: /assets/work/firefly.png
+priority: 2
+img: /assets/work/firefly.webp
 img_alt: Secure encrypted messaging interface
 description: |
   End-to-end encrypted chat suite using libsignal and Message-Layer-Security with multi-device support.
+githubUrl: https://github.com/lupyd/firefly
 tags:
   - Security
   - Encryption

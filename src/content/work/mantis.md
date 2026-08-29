@@ -1,7 +1,7 @@
 ---
 title: Mantis
 publishDate: 2024-06-01 00:00:00
-img: /assets/work/mantis.png
+img: /assets/work/mantis.webp
 img_alt: Programming language compiler interface
 description: |
   Rust-based memory-safe statically compiled programming language.

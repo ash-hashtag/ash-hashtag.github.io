@@ -1,7 +1,8 @@
 ---
 title: Filter
 publishDate: 2024-01-15 00:00:00
-img: /assets/work/filter.png
+priority: 6
+img: /assets/work/filter.webp
 img_alt: Real-time log processing interface
 description: |
   Real-time interactive log processing TUI built with Rust for efficient filtering and analysis.

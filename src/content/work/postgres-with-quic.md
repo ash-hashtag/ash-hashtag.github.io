@@ -1,7 +1,8 @@
 ---
 title: Postgres with QUIC
 publishDate: 2024-07-15 00:00:00
-img: /assets/work/postgres-with-quic.png
+priority: 4
+img: /assets/work/postgres-with-quic.webp
 img_alt: Database performance visualization
 description: |
   Project demonstrating the benefits of using PostgreSQL over QUIC protocol.
