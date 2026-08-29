@@ -1,30 +1,35 @@
-# Astro Starter Kit: Portfolio
 
-```sh
-bun create astro@latest -- --template portfolio
-```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/portfolio)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/portfolio)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/portfolio/devcontainer.json)
+# Hi, I'm Ash
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-![portfolio](https://user-images.githubusercontent.com/357379/210779178-a98f0fb7-6b1a-4068-894c-8e1403e26654.jpg)
+<h2> About Me </h2>
 
-## 🧞 Commands
+<img width="55%" align="right" alt="Github" src="./assets/github.gif" />
 
-All commands are run from the root of the project, from a terminal:
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `bun install`             | Installs dependencies                            |
-| `bun dev`             | Starts local dev server at `localhost:4321`      |
-| `bun build`           | Build your production site to `./dist/`          |
-| `bun preview`         | Preview your build locally, before deploying     |
-| `bun astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `bun astro -- --help` | Get help using the Astro CLI                     |
+- 🔭 I’m currently working on Mantis Programming Language
 
-## 👀 Want to learn more?
+- 🌱 I’m currently learning Quantum Computing and web3
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- 👯 I’m looking to collaborate on awesome projects
+
+- 💬 Talk to me about anything
+
+- 🤖 Full Stack Developer at 🎭 Lupyd
+
+
+<h2> Skills <img src = "./assets/code.gif" width = 32px height=32px> </h2>
+<a href= https://github.com/ash-hashtag?tab=repositories&q=&type=&language=rust&sort= > <img width ='32px' height='32px' src ='./assets/rust.webp'> </a>
+<a href= https://github.com/ash-hashtag?tab=repositories&q=&type=&language=flutter&sort= > <img width ='32px' height='32px' src ='./assets/flutter.svg'> </a>
+<a href= https://github.com/ash-hashtag?tab=repositories&q=&type=&language=python&sort= > <img width ='32px' height='32px' src ='./assets/python.svg'> </a>
+<a href= https://github.com/ash-hashtag?tab=repositories&q=&type=&language=cpp&sort= > <img width ='32px' height='32px' src ='./assets/cpp.svg'> </a>
+<a href= https://github.com/ash-hashtag?tab=repositories&q=&type=&language=typescript&sort= > <img width ='32px' height='32px' src ='./assets/typescript.svg'> </a>
+
+
+![GitHub Stats](./assets/languages.svg)
+
+
+
+### Get in touch with me...
+[📫 Mail](mailto://hashtag438@gmail.com)
