@@ -1,13 +1,6 @@
 ---
-// Learn about using Astro layouts:
-// https://docs.astro.build/en/core-concepts/layouts/
-
-import Footer from '../components/Footer.astro';
-import GlobalCursor from '../components/GlobalCursor.astro';
-// Component Imports
 import MainHead from '../components/MainHead.astro';
-import Nav from '../components/Nav.astro';
-import { ViewTransitions } from 'astro:transitions';
+import { AUTHOR } from '../lib/memo';
 
 interface Props {
 	title?: string | undefined;
@@ -15,49 +8,41 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+const links = [
+	{ label: 'index', href: '/' },
+	{ label: 'work', href: '/work/' },
+	{ label: 'author', href: '/about/' },
+];
+
+const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
+const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
 ---
 
 <html lang="en">
 	<head>
 		<MainHead title={title} description={description} />
-		<ViewTransitions />
 	</head>
 	<body>
-		<GlobalCursor />
-		<div class="stack backgrounds">
-			<Nav />
+		<main class="memo">
+			<nav class="memo-nav" aria-label="Site">
+				{links.map(({ label, href }) => <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>[{label}]</a>)}
+				<span class="spacer"></span>
+				<a href={`mailto:${AUTHOR.email}`}>[mail]</a>
+			</nav>
 			<slot />
-			<Footer />
-		</div>
+		</main>
 
 		<script>
-			// Add “loaded” class once the document has completely loaded.
-			addEventListener('load', () => document.documentElement.classList.add('loaded'));
-			const prepareExternalLinks = () => {
-				document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
-					const url = new URL(link.href, location.href);
-					if ((url.protocol === 'http:' || url.protocol === 'https:') && url.origin !== location.origin) {
-						link.target = '_blank';
-						link.rel = 'noopener noreferrer';
-					}
-				});
-			};
-			document.addEventListener('astro:page-load', prepareExternalLinks);
-			prepareExternalLinks();
-		</script>
+			import '../scripts/fx';
 
-		<style>
-			.backgrounds {
-				min-height: 100%;
-				isolation: isolate;
-				background: var(--gray-999);
-			}
-			@media (forced-colors: active) {
-				/* Deactivate custom backgrounds for high contrast users. */
-				.backgrounds {
-					background: none;
+			document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
+				const url = new URL(link.href, location.href);
+				if ((url.protocol === 'http:' || url.protocol === 'https:') && url.origin !== location.origin) {
+					link.target = '_blank';
+					link.rel = 'noopener noreferrer';
 				}
-			}
-		</style>
+			});
+		</script>
 	</body>
 </html>

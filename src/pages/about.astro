@@ -1,97 +1,153 @@
 ---
+import FormFeed from '../components/FormFeed.astro';
+import MemoHeader from '../components/MemoHeader.astro';
+import Sec from '../components/Sec.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR } from '../lib/memo';
+
+const DOC = 'RFC 1';
+const SHORT = 'The Author';
+
+const experience = [
+	{
+		when: '2023 - present',
+		org: 'Lupyd Media',
+		role: 'Founder, full-stack developer',
+		body: 'Building a privacy-focused social and collaboration platform from the ground up. Rust across the backend, React and Tauri across the clients, with MLS, blind signatures, WebSockets, WebTransport and WebRTC in the mix.',
+	},
+	{
+		when: '2025',
+		org: 'Turing',
+		role: 'Rust LLM trainer, contract',
+		body: 'RLHF training for Anthropic models, bringing systems-level Rust judgment into model evaluation and improvement.',
+	},
+	{
+		when: '2022 - 2023',
+		org: 'Jandas Corporation',
+		role: 'Mobile application developer, contract',
+		body: 'Cross-platform Flutter applications, and a low-level audio-processing product spanning Dart and C++.',
+	},
+	{
+		when: '2021 - 2022',
+		org: 'Freelance',
+		role: 'Independent developer',
+		body: 'Rust smart contracts, WGPU parallel-processing scripts, automation bots, games and mobile applications.',
+	},
+];
+
+const toolchain = String.raw`
+toolchain  = systems / realtime / product / infra
+
+systems    = "Rust" / "C++" / "Tokio" / "Hyper" / "Axum"
+             / "Boost" / "Rayon"
+realtime   = "WebRTC" / "WebTransport" / "WebSockets" / "MLS"
+product    = "React" / "TypeScript" / "Flutter" / "Tauri"
+             / "Next.js"
+infra      = "PostgreSQL" / "Redis" / "Docker" / "Kubernetes"
+             / "AWS"
+`.slice(1);
+
+const ranks = String.raw`
++--------------+--------------+
+| Examination  | Standing     |
++--------------+--------------+
+| JEE Mains    | top 3.4%     |
+| TS EAMCET    | top 0.019%   |
+| TG ICET      | top 0.0055%  |
++--------------+--------------+
+`.slice(1);
 ---
 
-<BaseLayout title="About | Sri Pranav Tene" description="Software engineer and founder building privacy-first products, real-time systems, and cross-platform software.">
-	<main class="about-page">
-		<div class="about-progress" aria-hidden="true"></div>
+<BaseLayout
+	title="Sri Pranav Tene — RFC 1: The Author"
+	description="Background, experience and toolchain of Sri Pranav Tene, a software engineer building privacy-first products and real-time systems."
+>
+	<MemoHeader
+		left={['Independent Submission', 'Request for Comments: 1', 'Updates: 0', 'Category: Informational']}
+		title="The Author: Background, Experience, and Toolchain"
+		docname="draft-tene-author-latest"
+	/>
 
-		<header class="about-hero about-shell">
-			<div class="about-copy about-reveal">
-				<p class="kicker">About / Sri Pranav Tene</p>
-				<h1>Builder by instinct.<br /><em>Systems thinker</em><br />by practice.</h1>
-				<p class="lede">I move between product thinking and low-level engineering — building privacy-first platforms, real-time protocols, cross-platform apps, and the infrastructure beneath them.</p>
-			</div>
-			<div class="systems-map about-reveal" aria-hidden="true">
-				<div class="map-orbit orbit-a"><span>Rust</span></div>
-				<div class="map-orbit orbit-b"><span>Realtime</span></div>
-				<div class="map-core">SPT<small>Hyderabad</small></div>
-				<p>Privacy · Systems · Product</p>
-			</div>
-		</header>
+	<Sec id="abstract" title="Abstract">
+		<p>
+			This memo supplements <a href="/">RFC 0</a> with a description of its author: where the work
+			has happened, what it was built with, and where the author learned to build it.
+		</p>
+	</Sec>
 
-		<section class="manifesto about-shell about-reveal">
-			<p class="kicker">01 / Point of view</p>
-			<div>
-				<h2>Good software should feel obvious.<br /><span>The engineering behind it rarely is.</span></h2>
-				<p>I like the difficult middle: translating ambitious product ideas into systems that stay fast, safe, and understandable. That has taken me from encrypted social infrastructure and WebRTC to audio processing, GPU workloads, mobile apps, and programming-language experiments.</p>
-			</div>
-		</section>
+	<Sec id="background" num="1" title="Background">
+		<p>
+			The author moves between product thinking and low-level engineering. Good software should feel
+			obvious; the engineering behind it rarely is.
+		</p>
+		<p>
+			The interesting part is the difficult middle: turning an ambitious product idea into a system
+			that stays fast, safe and understandable. That has led from encrypted social infrastructure and
+			WebRTC to audio processing, GPU workloads, mobile apps and programming-language experiments.
+		</p>
+	</Sec>
 
-		<section class="journey about-shell">
-			<header class="section-head about-reveal"><p class="kicker">02 / The path here</p><h2>Experience,<br /><span>without the résumé voice.</span></h2></header>
-			<div class="timeline">
-				<article class="timeline-item about-reveal"><time>2023 — Now</time><div><p class="role">Founder · Full-stack developer</p><h3>Lupyd Media</h3><p>Building a privacy-focused social and collaboration platform from the ground up. Rust across the backend, React and Tauri across clients, with MLS, blind signatures, WebSockets, WebTransport, and WebRTC in the mix.</p></div></article>
-				<article class="timeline-item about-reveal"><time>2025</time><div><p class="role">Rust LLM trainer · Contract</p><h3>Turing</h3><p>Worked on RLHF training for Anthropic models, bringing systems-level Rust judgment into model evaluation and improvement.</p></div></article>
-				<article class="timeline-item about-reveal"><time>2022 — 2023</time><div><p class="role">Mobile application developer · Contract</p><h3>Jandas Corporation</h3><p>Developed cross-platform Flutter applications and a low-level audio-processing product spanning Dart and C++.</p></div></article>
-				<article class="timeline-item about-reveal"><time>2021 — 2022</time><div><p class="role">Independent developer</p><h3>Freelance / Contract</h3><p>Shipped Rust smart contracts, WGPU parallel-processing scripts, automation bots, games, and mobile applications.</p></div></article>
-			</div>
-		</section>
+	<Sec id="experience" num="2" title="Experience">
+		<dl class="defs">
+			{
+				experience.map((e) => (
+					<>
+						<dt>
+							{e.org} <span class="meta">({e.when})</span>
+						</dt>
+						<dd>
+							<span class="meta">{e.role}.</span> {e.body}
+						</dd>
+					</>
+				))
+			}
+		</dl>
+	</Sec>
 
-		<section class="capabilities about-shell about-reveal">
-			<div><p class="kicker">03 / Working set</p><h2>From protocol<br />to product.</h2></div>
-			<div class="capability-grid">
-				<div><span>01</span><h3>Systems</h3><p>Rust, C++, Tokio, Hyper, Axum, Boost, Rayon</p></div>
-				<div><span>02</span><h3>Realtime</h3><p>WebRTC, WebTransport, WebSockets, MLS</p></div>
-				<div><span>03</span><h3>Product</h3><p>React, TypeScript, Flutter, Tauri, Next.js</p></div>
-				<div><span>04</span><h3>Infrastructure</h3><p>PostgreSQL, Redis, Docker, Kubernetes, AWS</p></div>
-			</div>
-		</section>
+	<FormFeed doc={DOC} short={SHORT} />
 
-		<section class="education about-shell about-reveal">
-			<p class="kicker">04 / Foundations</p>
-			<div class="education-copy"><h2>Data science trained.<br /><span>Curiosity led.</span></h2><p>BSc in Data Science from Kavitha Degree College, following earlier AI/ML study at Chaitanya Bharathi Institute of Technology. Most of the useful learning happened while making things that had to work.</p></div>
-			<div class="ranks"><span>Top 3.4%<small>JEE Mains</small></span><span>Top 0.019%<small>TS EAMCET</small></span><span>Top 0.0055%<small>TG ICET</small></span></div>
-		</section>
+	<Sec id="toolchain" num="3" title="Toolchain">
+		<p>
+			The tools in regular use are given below in ABNF [<a href="#ref-rfc5234">RFC5234</a>]. Any
+			production is a valid way to start a project with the author.
+		</p>
+		<figure>
+			<pre>{toolchain}</pre>
+			<figcaption>Figure 1: Toolchain</figcaption>
+		</figure>
+	</Sec>
 
-		<section class="about-close about-shell about-reveal"><p class="kicker">Still curious?</p><h2>Let's build something<br /><em>technically ambitious.</em></h2><a href="mailto:tenesripranav@gmail.com">Start a conversation <span>↗</span></a></section>
-	</main>
+	<Sec id="education" num="4" title="Education">
+		<p>
+			BSc in Data Science from Kavitha Degree College, after earlier AI/ML study at Chaitanya Bharathi
+			Institute of Technology. Most of the useful learning happened while making things that had to
+			work.
+		</p>
+		<figure>
+			<pre>{ranks}</pre>
+			<figcaption>Table 1: Entrance examinations</figcaption>
+		</figure>
+	</Sec>
+
+	<Sec id="references" num="5" title="References">
+		<dl class="defs">
+			<dt id="ref-rfc5234">[RFC5234]</dt>
+			<dd>
+				Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax Specifications: ABNF", STD 68,
+				RFC 5234, January 2008, <a href="https://www.rfc-editor.org/rfc/rfc5234">&lt;https://www.rfc-editor.org/rfc/rfc5234&gt;</a>.
+			</dd>
+		</dl>
+	</Sec>
+
+	<Sec id="address" title="Author's Address">
+		<p>
+			{AUTHOR.name}<br />
+			{AUTHOR.org}<br />
+			{AUTHOR.city}<br />
+			<br />
+			Email: <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
+		</p>
+	</Sec>
+
+	<FormFeed doc={DOC} short={SHORT} last />
 </BaseLayout>
-
-<script>
-	let cleanupAbout = () => {};
-	const initAbout = () => {
-		cleanupAbout();
-		const page = document.querySelector<HTMLElement>('.about-page');
-		if (!page) return;
-		const items = page.querySelectorAll('.about-reveal');
-		const observer = new IntersectionObserver((entries) => entries.forEach((entry) => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } }), { threshold: .12 });
-		items.forEach((item) => observer.observe(item));
-		const update = () => { const max = document.documentElement.scrollHeight - innerHeight; page.style.setProperty('--about-progress', `${max ? scrollY / max : 0}`); };
-		addEventListener('scroll', update, { passive: true }); update();
-		cleanupAbout = () => { observer.disconnect(); removeEventListener('scroll', update); };
-	};
-	document.addEventListener('astro:page-load', initAbout);
-	document.addEventListener('astro:before-swap', cleanupAbout);
-	initAbout();
-</script>
-
-<style>
-	.about-page { --line: rgba(232,231,225,.16); --paper:#e8e7e1; --muted:#96968d; --acid:#d9fa54; --orange:#ff7043; overflow:hidden; color:var(--paper); }
-	.about-shell { width:min(100%,78rem);margin-inline:auto;padding-inline:clamp(1.25rem,5vw,5rem); }
-	.about-progress { position:fixed;z-index:10000;top:0;left:0;width:100%;height:3px;background:linear-gradient(90deg,var(--orange),var(--acid));transform:scaleX(var(--about-progress,0));transform-origin:left;pointer-events:none; }
-	.kicker,.role,time { font:600 .68rem/1.3 var(--font-body);letter-spacing:.16em;text-transform:uppercase;color:var(--muted); }
-	.about-page h1,.about-page h2,.about-page h3 { color:var(--paper);letter-spacing:-.055em; }.about-page em { font-style:normal;color:var(--orange); }.about-page h2 span { color:var(--muted); }
-	.about-hero { min-height:min(50rem,88vh);display:grid;grid-template-columns:1.4fr 1fr;align-items:center;gap:4rem;padding-top:5rem;padding-bottom:8rem; }
-	.about-copy h1 { margin-top:1.5rem;font-size:clamp(3.6rem,7.4vw,7.5rem);line-height:.86; }.lede { max-width:38rem;margin-top:2.4rem;color:#aaa9a0;font-size:clamp(1rem,1.7vw,1.25rem); }
-	.systems-map { position:relative;aspect-ratio:1;display:grid;place-items:center; }.map-orbit { position:absolute;border:1px solid var(--line);border-radius:50%;display:flex;align-items:flex-start;justify-content:center;animation:map-spin 17s linear infinite; }.map-orbit span { padding:.4rem;background:#11110f;color:var(--muted);font-size:.58rem;text-transform:uppercase;letter-spacing:.12em; }.orbit-a { inset:8%; }.orbit-b { inset:25%;animation-direction:reverse;animation-duration:11s;border-color:rgba(217,250,84,.35); }.map-core { width:7rem;aspect-ratio:1;display:grid;place-content:center;text-align:center;border-radius:50%;background:var(--orange);color:#11110f;font:600 1.5rem var(--font-brand);box-shadow:0 0 6rem rgba(255,112,67,.35); }.map-core small { display:block;margin-top:.4rem;font:.45rem var(--font-body);letter-spacing:.14em;text-transform:uppercase; }.systems-map > p { position:absolute;bottom:4%;font-size:.58rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted); }
-	.manifesto { display:grid;grid-template-columns:1fr 2.2fr;gap:2rem;padding-top:9rem;padding-bottom:11rem;border-top:1px solid var(--line); }.manifesto h2,.section-head h2,.capabilities h2,.education h2 { font-size:clamp(2.8rem,5.8vw,6.2rem);line-height:.9; }.manifesto div > p { max-width:38rem;margin-top:2.5rem;color:#aaa9a0;font-size:1.05rem; }
-	.journey { padding-bottom:11rem; }.section-head { display:grid;grid-template-columns:1fr 2.2fr;gap:2rem;margin-bottom:5rem; }.section-head h2 { grid-column:2; }.timeline { position:relative;margin-left:calc(33% + 1rem);border-left:1px solid var(--line); }.timeline-item { position:relative;display:grid;grid-template-columns:9rem 1fr;gap:2rem;padding:0 0 5rem 2.5rem; }.timeline-item::before { content:'';position:absolute;left:-.34rem;top:.15rem;width:.65rem;aspect-ratio:1;border-radius:50%;background:var(--acid);box-shadow:0 0 1rem rgba(217,250,84,.5);transform:scale(0);transition:transform .5s .25s; }.timeline-item.is-visible::before { transform:scale(1); }.timeline h3 { margin:.45rem 0 .9rem;font-size:clamp(1.8rem,3vw,3rem); }.timeline article p:last-child { max-width:36rem;color:#9c9c93; }.role { color:var(--acid); }
-	.capabilities { display:grid;grid-template-columns:1fr 1.25fr;gap:5rem;padding-top:8rem;padding-bottom:10rem;border-top:1px solid var(--line); }.capabilities h2 { margin-top:2rem; }.capability-grid { display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--line);border-left:1px solid var(--line); }.capability-grid > div { min-height:12rem;padding:1.5rem;border-right:1px solid var(--line);border-bottom:1px solid var(--line);transition:background .35s,transform .35s; }.capability-grid > div:hover { background:rgba(217,250,84,.06);transform:translateY(-.35rem); }.capability-grid span { color:var(--acid);font-size:.62rem; }.capability-grid h3 { margin:2.4rem 0 .6rem;font-size:1.5rem; }.capability-grid p { color:var(--muted);font-size:.82rem; }
-	.education { display:grid;grid-template-columns:1fr 2fr;gap:2rem;padding-top:9rem;padding-bottom:10rem;border-top:1px solid var(--line); }.education-copy p { max-width:38rem;margin-top:2rem;color:#aaa9a0; }.ranks { grid-column:2;display:grid;grid-template-columns:repeat(3,1fr);margin-top:3rem;border-top:1px solid var(--line); }.ranks span { padding:1.5rem 1rem 1rem 0;color:var(--acid);font:600 1.5rem var(--font-brand); }.ranks small { display:block;margin-top:.5rem;color:var(--muted);font:.55rem var(--font-body);letter-spacing:.12em;text-transform:uppercase; }
-	.about-close { padding-top:9rem;padding-bottom:11rem;border-top:1px solid var(--line); }.about-close h2 { max-width:10ch;margin:2rem 0 3rem;font-size:clamp(3.5rem,8vw,8rem);line-height:.84; }.about-close a { display:inline-flex;gap:.8rem;padding:1rem 1.35rem;background:var(--acid);color:#11110f;text-decoration:none;font-size:.75rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em; }.about-close a:hover { background:var(--paper); }
-	.about-reveal { opacity:0;transform:translateY(2.5rem);transition:opacity .8s ease,transform .8s cubic-bezier(.2,.8,.2,1); }.about-reveal.is-visible { opacity:1;transform:none; }
-	@keyframes map-spin { to { transform:rotate(360deg); } }
-	@media (max-width:760px) { .about-hero { min-height:auto;display:block;padding-top:5rem; }.systems-map { width:min(100%,25rem);margin:5rem auto 0; }.manifesto,.section-head,.capabilities,.education { display:block;padding-top:6rem;padding-bottom:7rem; }.manifesto h2,.section-head h2,.capabilities h2,.education h2 { margin-top:2rem; }.timeline { margin:0 0 0 .35rem; }.timeline-item { grid-template-columns:1fr;padding-left:1.8rem;gap:.8rem; }.capability-grid { margin-top:3rem;grid-template-columns:1fr; }.ranks { grid-column:auto;grid-template-columns:1fr;margin-top:3rem; }.about-close { padding-top:6rem;padding-bottom:8rem; } }
-	@media (prefers-reduced-motion:reduce) { .about-reveal { opacity:1;transform:none;transition:none; }.map-orbit { animation:none; }.timeline-item::before { transform:scale(1);transition:none; } }
-</style>

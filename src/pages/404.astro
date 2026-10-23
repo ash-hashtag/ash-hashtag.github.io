@@ -1,8 +1,17 @@
 ---
-import Hero from '../components/Hero.astro';
+import MemoHeader from '../components/MemoHeader.astro';
+import Sec from '../components/Sec.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="Not Found" description="404 Error — this page was not found">
-	<Hero title="Page Not Found" tagline="Not found" />
+<BaseLayout title="404 — Not Found" description="This page was not found.">
+	<MemoHeader left={['Independent Submission', 'Erratum: 404', 'Category: Historic']} title="Not Found" docname="draft-tene-404" />
+
+	<Sec id="abstract" title="Abstract">
+		<p>
+			The requested document does not exist, has been obsoleted, or was never filed. Readers
+			<span class="kw">SHOULD</span> consult the <a href="/work/">RFC Index</a> or return to
+			<a href="/">RFC 0</a>.
+		</p>
+	</Sec>
 </BaseLayout>

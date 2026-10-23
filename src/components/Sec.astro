@@ -1,0 +1,36 @@
+---
+interface Props {
+	id: string;
+	/** Section number, e.g. "3.1". Omit for unnumbered sections like the abstract. */
+	num?: string;
+	title: string;
+	sub?: boolean;
+	/** Show the section's paragraphs as ciphertext until they are read. */
+	decrypt?: boolean;
+}
+
+const { id, num, title, sub = false, decrypt = false } = Astro.props;
+const Tag = sub ? 'h3' : 'h2';
+const label = num ? `${num}.  ${title}` : title;
+---
+
+{
+	sub ? (
+		<>
+			<Tag id={id}><a class="anchor" href={`#${id}`}>{label}</a></Tag>
+			<slot />
+		</>
+	) : (
+		<section aria-labelledby={id} data-decrypt={decrypt ? '' : undefined}>
+			<Tag id={id}><a class="anchor" href={`#${id}`}>{label}</a></Tag>
+			<slot />
+		</section>
+	)
+}
+
+<style>
+	h2,
+	h3 {
+		white-space: pre-wrap;
+	}
+</style>

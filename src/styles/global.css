@@ -1,235 +1,103 @@
-/* Global variables */
+/*
+ * The whole site is set as an IETF-style memo: one monospace face, one
+ * measure, plain hyperlinks. Colour is reserved for links and for the
+ * RFC 2119 keywords.
+ */
 :root {
-	/* Colors */
-	--gray-0: #090b11;
-	--gray-50: #141925;
-	--gray-100: #283044;
-	--gray-200: #3d4663;
-	--gray-300: #505d84;
-	--gray-400: #6474a2;
-	--gray-500: #8490b5;
-	--gray-600: #a3acc8;
-	--gray-700: #c3cadb;
-	--gray-800: #e3e6ee;
-	--gray-900: #f3f4f7;
-	--gray-999-basis: 0, 0%, 100%;
-	--gray-999_40: hsla(var(--gray-999-basis), 0.4);
-	--gray-999: #ffffff;
-
-	--accent-light: #c561f6;
-	--accent-regular: #7611a6;
-	--accent-dark: #1c0056;
-	--accent-overlay: hsla(280, 89%, 67%, 0.33);
-	--accent-subtle-overlay: var(--accent-overlay);
-	--accent-text-over: var(--gray-999);
-
-	--link-color: var(--accent-regular);
-
-	/* Gradients */
-	--gradient-stop-1: var(--accent-light);
-	--gradient-stop-2: var(--accent-regular);
-	--gradient-stop-3: var(--accent-dark);
-	--gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 150%);
-	--gradient-accent: linear-gradient(
-		150deg,
-		var(--gradient-stop-1),
-		var(--gradient-stop-2),
-		var(--gradient-stop-3)
-	);
-	--gradient-accent-orange: linear-gradient(
-		150deg,
-		#ca7879,
-		var(--accent-regular),
-		var(--accent-dark)
-	);
-	--gradient-stroke: linear-gradient(180deg, var(--gray-900), var(--gray-700));
-
-	/* Shadows */
-	--shadow-sm:
-		0px 6px 3px rgba(9, 11, 17, 0.01), 0px 4px 2px rgba(9, 11, 17, 0.01),
-		0px 2px 2px rgba(9, 11, 17, 0.02), 0px 0px 1px rgba(9, 11, 17, 0.03);
-	--shadow-md:
-		0px 28px 11px rgba(9, 11, 17, 0.01), 0px 16px 10px rgba(9, 11, 17, 0.03),
-		0px 7px 7px rgba(9, 11, 17, 0.05), 0px 2px 4px rgba(9, 11, 17, 0.06);
-	--shadow-lg:
-		0px 62px 25px rgba(9, 11, 17, 0.01), 0px 35px 21px rgba(9, 11, 17, 0.05),
-		0px 16px 16px rgba(9, 11, 17, 0.1), 0px 4px 9px rgba(9, 11, 17, 0.12);
-
-	/* Text Sizes */
-	--text-sm: 0.875rem;
-	--text-base: 1rem;
-	--text-md: 1.125rem;
-	--text-lg: 1.25rem;
-	--text-xl: 1.625rem;
-	--text-2xl: 2.125rem;
-	--text-3xl: 2.625rem;
-	--text-4xl: 3.5rem;
-	--text-5xl: 4.5rem;
-
-	/* Fonts */
-	--font-system:
-		system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell,
-		"Open Sans", "Helvetica Neue", sans-serif;
-	--font-body: "Public Sans", var(--font-system);
-	--font-brand: Rubik, var(--font-system);
-
-	/* Transitions */
-	--theme-transition: 0.2s ease-in-out;
+	--paper: #f6f4ec;
+	--ink: #1b1a17;
+	--dim: #6d6a60;
+	--rule: #cfcabb;
+	--link: #1d4ed8;
+	--visited: #6b2fb3;
+	--must: #b42318;
+	--mark: #fde68a;
+	--measure: 74ch;
+	--font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+	--font-hand: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
+	--desk: #d9d4c4;
+	--bar: rgba(70, 145, 95, 0.075);
+	--pen: #c8102e;
+	--pkt: #e4572e;
+	--gutter: 16px;
+	color-scheme: light dark;
 }
 
-:root.theme-dark {
-	--gray-0: #ffffff;
-	--gray-50: #f3f4f7;
-	--gray-100: #e3e6ee;
-	--gray-200: #c3cadb;
-	--gray-300: #a3acc8;
-	--gray-400: #8490b5;
-	--gray-500: #6474a2;
-	--gray-600: #505d84;
-	--gray-700: #3d4663;
-	--gray-800: #283044;
-	--gray-900: #141925;
-	--gray-999-basis: 225, 31%, 5%;
-	--gray-999: #090b11;
-
-	--accent-light: #1c0056;
-	--accent-regular: #7611a6;
-	--accent-dark: #c561f6;
-	--accent-overlay: hsla(280, 89%, 67%, 0.33);
-	--accent-subtle-overlay: hsla(281, 81%, 36%, 0.33);
-	--accent-text-over: var(--gray-0);
-
-	--link-color: var(--accent-dark);
-
-	--gradient-stop-1: #4c11c6;
-	--gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 81%);
-	--gradient-accent-orange: linear-gradient(
-		150deg,
-		#ca7879,
-		var(--accent-regular),
-		var(--accent-light)
-	);
-	--gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
-
-	--shadow-sm:
-		0px 6px 3px rgba(255, 255, 255, 0.01), 0px 4px 2px rgba(255, 255, 255, 0.01),
-		0px 2px 2px rgba(255, 255, 255, 0.02), 0px 0px 1px rgba(255, 255, 255, 0.03);
-	--shadow-md:
-		0px 28px 11px rgba(255, 255, 255, 0.01), 0px 16px 10px rgba(255, 255, 255, 0.03),
-		0px 7px 7px rgba(255, 255, 255, 0.05), 0px 2px 4px rgba(255, 255, 255, 0.06);
-	--shadow-lg:
-		0px 62px 25px rgba(255, 255, 255, 0.01), 0px 35px 21px rgba(255, 255, 255, 0.05),
-		0px 16px 16px rgba(255, 255, 255, 0.1), 0px 4px 9px rgba(255, 255, 255, 0.12);
-}
-
-html,
-body {
-	min-height: 100%;
-	overflow-x: hidden;
-}
-
-body {
-	background-color: var(--gray-999);
-	color: var(--gray-200);
-	font-family: var(--font-body);
-	-webkit-font-smoothing: antialiased;
-	line-height: 1.5;
-}
-
-/* Prevent layout shifts during navigation */
-html {
-	scroll-behavior: smooth;
-}
-
-/* Ensure consistent layout during transitions */
-::view-transition-old(root),
-::view-transition-new(root) {
-	animation-duration: 0.2s;
-}
-
-/* Prevent content jumping */
-main {
-	min-height: calc(100vh - 200px); /* Adjust based on nav/footer height */
-}
-
-/* One permanent visual system across every route. */
-:root,
-:root.theme-dark {
-	--gray-0: #e8e7e1;
-	--gray-50: #191916;
-	--gray-100: #e8e7e1;
-	--gray-200: #c3c3ba;
-	--gray-300: #96968d;
-	--gray-400: #85857d;
-	--gray-500: #66665f;
-	--gray-800: rgba(232, 231, 225, 0.16);
-	--gray-900: #191916;
-	--gray-999: #11110f;
-	--gray-999-basis: 232, 231%, 225%;
-	--gray-999_40: rgba(17, 17, 15, 0.7);
-	--accent-light: #e8e7e1;
-	--accent-regular: #d9fa54;
-	--accent-dark: #ff7043;
-	--accent-overlay: rgba(217, 250, 84, 0.2);
-	--accent-text-over: #11110f;
-	--link-color: #d9fa54;
-	--gradient-stop-1: #d9fa54;
-	--gradient-stop-2: #ff7043;
-	--gradient-stop-3: #11110f;
-	--gradient-subtle: linear-gradient(145deg, #191916, #11110f);
-	--gradient-accent: linear-gradient(135deg, #d9fa54, #ff7043);
-	--gradient-accent-orange: linear-gradient(135deg, #d9fa54, #ff7043);
-	--gradient-stroke: linear-gradient(180deg, #d9fa54, #ff7043);
+@media (prefers-color-scheme: dark) {
+	:root {
+		--paper: #141412;
+		--ink: #dedbd0;
+		--dim: #8f8b7f;
+		--rule: #36352f;
+		--link: #8ab4ff;
+		--visited: #c9a2ff;
+		--must: #ff8f80;
+		--mark: #5c4a12;
+		--desk: #0a0a09;
+		--bar: rgba(120, 200, 140, 0.035);
+		--pen: #ff6b6b;
+		--pkt: #ffb347;
+	}
 }
 
 *,
-*::after,
-*::before {
+*::before,
+*::after {
 	box-sizing: border-box;
 	margin: 0;
+}
+
+html {
+	background: var(--desk);
+	color: var(--ink);
+	font: 400 15px/1.6 var(--font-mono);
+	-webkit-font-smoothing: antialiased;
+	text-size-adjust: 100%;
+}
+
+body {
+	min-height: 100vh;
+	background: var(--desk);
+	overflow-x: hidden;
+}
+
+::selection {
+	background: var(--mark);
+	color: var(--ink);
+}
+
+a {
+	color: var(--link);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.18em;
+}
+a:visited {
+	color: var(--visited);
+}
+a:hover {
+	text-decoration-thickness: 2px;
+}
+a:focus-visible {
+	outline: 2px solid var(--link);
+	outline-offset: 2px;
+}
+
+h1,
+h2,
+h3 {
+	font: inherit;
+	font-weight: 700;
+}
+
+p + p {
+	margin-top: 1.2em;
 }
 
 img {
 	max-width: 100%;
 	height: auto;
 }
-
-a {
-	color: var(--link-color);
-}
-
-h1,
-h2,
-h3,
-h4,
-h5 {
-	line-height: 1.1;
-	font-family: var(--font-brand);
-	font-weight: 600;
-	color: var(--gray-100);
-}
-
-h1 {
-	font-size: var(--text-5xl);
-}
-
-h2 {
-	font-size: var(--text-4xl);
-}
-
-h3 {
-	font-size: var(--text-3xl);
-}
-
-h4 {
-	font-size: var(--text-2xl);
-}
-
-h5 {
-	font-size: var(--text-xl);
-}
-
-/* Utilities */
 
 .sr-only {
 	position: absolute;
@@ -243,66 +111,478 @@ h5 {
 	border-width: 0;
 }
 
-.wrapper {
-	width: 100%;
-	max-width: 83rem;
-	margin-inline: auto;
-	padding-inline: 1.5rem;
+/* ---------- the sheet ---------- */
+
+.memo {
+	position: relative;
+	max-width: calc(var(--measure) + 2 * var(--gutter));
+	margin: 0 auto;
+	padding: 2.5rem var(--gutter) 4rem;
+	counter-reset: page;
+	/* continuous-form green-bar: three lines shaded, three lines plain */
+	background: repeating-linear-gradient(to bottom, transparent 0 4.8rem, var(--bar) 4.8rem 9.6rem), var(--paper);
+	animation: feed 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes feed {
+	from {
+		transform: translateY(-1.5rem);
+		opacity: 0;
+	}
 }
 
-.stack {
+/* tractor-feed strips with sprocket holes, torn along a perforation */
+@media (min-width: 900px) {
+	:root {
+		--gutter: 5.5rem;
+	}
+	.memo {
+		margin-block: 2rem;
+		box-shadow:
+			0 1px 0 var(--rule),
+			0 1.5rem 3rem -1.5rem rgba(0, 0, 0, 0.35);
+	}
+	.memo::before,
+	.memo::after {
+		content: '';
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 2.4rem;
+		background: radial-gradient(circle, var(--desk) 0.4rem, transparent 0.45rem) center 0.6rem / 100% 2.4rem
+				repeat-y,
+			var(--paper);
+		pointer-events: none;
+	}
+	.memo::before {
+		left: 0;
+		border-right: 1px dashed var(--rule);
+	}
+	.memo::after {
+		right: 0;
+		border-left: 1px dashed var(--rule);
+	}
+}
+
+.memo-nav {
 	display: flex;
-	flex-direction: column;
+	flex-wrap: wrap;
+	gap: 0.25rem 1.5ch;
+	padding-bottom: 1.5rem;
+	color: var(--dim);
+}
+.memo-nav a {
+	color: var(--dim);
+}
+.memo-nav a[aria-current='page'] {
+	color: var(--ink);
+	font-weight: 700;
+	text-decoration: none;
+}
+.memo-nav .spacer {
+	flex: 1;
 }
 
-.gap-2 {
-	gap: 0.5rem;
+.memo-head {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: 0 2ch;
 }
-.gap-4 {
-	gap: 1rem;
-}
-.gap-8 {
-	gap: 2rem;
-}
-.gap-10 {
-	gap: 2.5rem;
-}
-.gap-15 {
-	gap: 3.75rem;
-}
-.gap-20 {
-	gap: 5rem;
-}
-.gap-30 {
-	gap: 7.5rem;
-}
-.gap-48 {
-	gap: 12rem;
+.memo-head > :nth-child(even) {
+	text-align: right;
 }
 
-@media (min-width: 50em) {
-	.lg\:gap-2 {
-		gap: 0.5rem;
+.memo-title {
+	margin: 3rem 0 0.25rem;
+	text-align: center;
+	font-weight: 700;
+	text-wrap: balance;
+}
+.memo-docname {
+	text-align: center;
+	color: var(--dim);
+}
+
+.memo section {
+	margin-top: 2.4rem;
+}
+.memo section > h2,
+.memo section > h3 {
+	position: relative;
+	margin-bottom: 1rem;
+}
+.memo section > h3 {
+	margin-top: 1.8rem;
+}
+.memo section > :not(h2, h3, pre, figure, .toc, .defs, ul, ol) {
+	padding-left: 3ch;
+}
+.memo section > ul,
+.memo section > ol {
+	padding-left: 6ch;
+}
+.memo li + li {
+	margin-top: 0.35em;
+}
+
+/* hover permalink, the way the rendered RFC editor pages do it */
+.memo h2 > a.anchor,
+.memo h3 > a.anchor {
+	color: inherit;
+	text-decoration: none;
+}
+.memo h2 > a.anchor:hover,
+.memo h3 > a.anchor:hover {
+	text-decoration: underline;
+}
+.memo h2 > a.anchor::after,
+.memo h3 > a.anchor::after {
+	content: ' ¶';
+	color: var(--dim);
+	opacity: 0;
+	transition: opacity 0.15s;
+}
+.memo h2:hover > a.anchor::after,
+.memo h3:hover > a.anchor::after {
+	opacity: 1;
+}
+:target {
+	scroll-margin-top: 1.5rem;
+	animation: target-flash 1.6s ease-out;
+}
+@keyframes target-flash {
+	from {
+		background: var(--mark);
 	}
-	.lg\:gap-4 {
-		gap: 1rem;
+}
+
+.kw {
+	color: var(--must);
+	font-weight: 700;
+}
+
+/* ---------- figures ---------- */
+
+pre {
+	font: inherit;
+	line-height: 1.35;
+	overflow-x: auto;
+	padding: 0.5rem 0 0.5rem 3ch;
+	white-space: pre;
+}
+figure {
+	margin: 1.5rem 0;
+}
+figcaption {
+	text-align: center;
+	color: var(--dim);
+	margin-top: 0.4rem;
+}
+
+/* ---------- table of contents ---------- */
+
+.toc {
+	list-style: none;
+	padding: 0 0 0 3ch;
+}
+.toc ol {
+	list-style: none;
+	padding-left: 3ch;
+}
+.toc li {
+	margin: 0;
+}
+.toc .row {
+	display: flex;
+	gap: 1ch;
+	align-items: baseline;
+}
+.toc .row::after {
+	content: '';
+	order: 2;
+	flex: 1;
+	border-bottom: 2px dotted var(--rule);
+	transform: translateY(-0.3em);
+}
+.toc .row .pg {
+	order: 3;
+	color: var(--dim);
+}
+
+/* ---------- definition-style lists (experience, references) ---------- */
+
+.defs {
+	padding-left: 3ch;
+}
+.defs dt {
+	font-weight: 700;
+}
+.defs dt + dd {
+	margin-top: 0.2rem;
+}
+.defs dd {
+	padding-left: 6ch;
+}
+.defs dd + dt {
+	margin-top: 1.1rem;
+}
+.defs .meta {
+	color: var(--dim);
+}
+
+/* ---------- form feed: footer of one page, header of the next ---------- */
+
+.ff {
+	counter-increment: page;
+	margin: 3rem 0 0;
+	color: var(--dim);
+	user-select: none;
+}
+.ff .foot,
+.ff .head {
+	display: flex;
+	justify-content: space-between;
+	gap: 2ch;
+}
+.ff .foot .pg::after {
+	content: '[Page ' counter(page) ']';
+}
+.ff .cut {
+	position: relative;
+	height: 1px;
+	margin: 1.1rem calc(-1 * var(--gutter));
+	border-top: 1px dashed var(--rule);
+}
+.ff .cut::before {
+	content: '^L';
+	position: absolute;
+	left: 50%;
+	top: -0.8em;
+	transform: translateX(-50%);
+	padding: 0 1ch;
+	background: var(--paper);
+	font-size: 0.8em;
+}
+.ff.last .cut,
+.ff.last .head {
+	display: none;
+}
+
+.end {
+	margin-top: 3rem;
+	text-align: center;
+	color: var(--dim);
+}
+
+@media (max-width: 640px) {
+	html {
+		font-size: 13.5px;
 	}
-	.lg\:gap-8 {
-		gap: 2rem;
+	.memo {
+		padding-top: 1.5rem;
 	}
-	.lg\:gap-10 {
-		gap: 2.5rem;
+	.memo section > :not(h2, h3, pre, figure, .toc, .defs, ul, ol) {
+		padding-left: 0;
 	}
-	.lg\:gap-15 {
-		gap: 3.75rem;
+	.memo section > ul,
+	.memo section > ol {
+		padding-left: 3ch;
 	}
-	.lg\:gap-20 {
-		gap: 5rem;
+	.toc,
+	.defs,
+	pre {
+		padding-left: 0;
 	}
-	.lg\:gap-30 {
-		gap: 7.5rem;
+	.defs dd {
+		padding-left: 3ch;
 	}
-	.lg\:gap-48 {
-		gap: 12rem;
+	.ff .head span:first-child {
+		display: none;
 	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	:target,
+	.memo {
+		animation: none;
+	}
+}
+
+@media print {
+	.memo-nav {
+		display: none;
+	}
+	.ff .cut {
+		break-after: page;
+		border: 0;
+	}
+	.ff .cut::before {
+		display: none;
+	}
+	a {
+		color: inherit;
+	}
+}
+
+/* fenced figures straight out of markdown, outside a <figure> */
+.memo section > pre {
+	margin-top: 1.2em;
+}
+
+/* ---------- red pen: margin notes and circled words ---------- */
+
+.note {
+	display: block;
+	margin: 0.6rem 0 0 3ch;
+	color: var(--pen);
+	font: 600 1.45rem/1.05 var(--font-hand);
+	transform: rotate(var(--tilt, -2deg));
+	transform-origin: left center;
+}
+.memo section > .note {
+	padding-left: 0;
+}
+.circle {
+	position: relative;
+	background: none;
+	color: inherit;
+}
+.circle::after {
+	content: '';
+	position: absolute;
+	inset: -0.3em -0.55em;
+	border: 2px solid var(--pen);
+	border-radius: 52% 46% 55% 43% / 58% 44% 60% 42%;
+	transform: rotate(-3deg);
+	pointer-events: none;
+}
+
+/*
+ * Written in as they scroll into view. Notes wipe in with a mask rather
+ * than clip-path: a fully clipped element never counts as intersecting.
+ */
+.fx .note {
+	-webkit-mask: linear-gradient(90deg, #000 45%, transparent 55%) 100% 0 / 220% 100% no-repeat;
+	mask: linear-gradient(90deg, #000 45%, transparent 55%) 100% 0 / 220% 100% no-repeat;
+	transition:
+		-webkit-mask-position 1s cubic-bezier(0.5, 0, 0.3, 1) 0.25s,
+		mask-position 1s cubic-bezier(0.5, 0, 0.3, 1) 0.25s;
+}
+.fx .note.seen {
+	-webkit-mask-position: 0 0;
+	mask-position: 0 0;
+}
+.fx .circle::after {
+	clip-path: inset(-0.5rem 100% -0.5rem 0);
+	transition: clip-path 0.9s cubic-bezier(0.5, 0, 0.3, 1) 0.25s;
+}
+.fx .circle.seen::after {
+	clip-path: inset(-0.5rem -1rem -0.5rem -1rem);
+}
+
+/* on wide screens the notes leave the sheet and sit on the desk */
+@media (min-width: 1340px) {
+	.note {
+		position: absolute;
+		left: calc(100% + 1.25rem);
+		width: 15rem;
+		margin: -3.2rem 0 0;
+		padding-left: 2.6rem !important;
+	}
+	.note::before {
+		content: '';
+		position: absolute;
+		left: -0.4rem;
+		top: 0.2rem;
+		width: 2.8rem;
+		height: 1.6rem;
+		background: currentColor;
+		-webkit-mask: var(--arrow) no-repeat center / contain;
+		mask: var(--arrow) no-repeat center / contain;
+	}
+}
+:root {
+	--arrow: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 32' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M54 24C40 30 22 26 6 9'/%3E%3Cpath d='M5 21L5 8 18 7'/%3E%3C/svg%3E");
+}
+
+/* ---------- ciphertext layer ---------- */
+
+.decrypting {
+	position: relative;
+}
+.decrypting,
+.decrypting * {
+	color: transparent !important;
+}
+.decrypt-layer {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+.decrypt-layer,
+.decrypt-layer * {
+	color: var(--dim) !important;
+	text-decoration: none !important;
+}
+
+/* ---------- packets on the wire ---------- */
+
+pre.wire {
+	position: relative;
+}
+.pkt {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0.62em;
+	height: 0.62em;
+	margin: -0.31em 0 0 -0.31em;
+	border-radius: 50%;
+	background: var(--pkt);
+	box-shadow: 0 0 0.6em var(--pkt);
+	opacity: 0;
+	pointer-events: none;
+	will-change: transform;
+}
+.pkt::after {
+	content: '';
+	position: absolute;
+	top: 50%;
+	width: 2.4em;
+	height: 2px;
+	margin-top: -1px;
+	opacity: 0.55;
+}
+.pkt.r::after {
+	right: 50%;
+	background: linear-gradient(to left, var(--pkt), transparent);
+}
+.pkt.l::after {
+	left: 50%;
+	background: linear-gradient(to right, var(--pkt), transparent);
+}
+.pkt.land {
+	animation: land 0.5s ease-out;
+}
+@keyframes land {
+	50% {
+		box-shadow: 0 0 0 0.5em color-mix(in srgb, var(--pkt) 30%, transparent);
+	}
+}
+.fx-ctl {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: 0.5rem 1.5ch;
+	margin-top: 0.8rem;
+	color: var(--dim);
+	padding-left: 0 !important;
+}
+.fx-ctl input {
+	accent-color: var(--pkt);
+	width: 12rem;
+}
+.fx-ctl output {
+	min-width: 7ch;
+	color: var(--ink);
 }

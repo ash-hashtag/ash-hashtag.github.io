@@ -13,7 +13,14 @@ tags:
   - Programming Language
 ---
 
-A memory-safe statically compiled programming language built with Rust. Designed to provide strong safety guarantees while maintaining high performance through static compilation.
+A memory-safe, statically compiled programming language written in
+Rust. The aim is strong safety guarantees without giving up the
+performance of ahead-of-time compilation.
 
+```
+  source -> lexer -> parser -> checks -> codegen -> binary
+                                 |
+                       unsafe programs stop here
+```
 
-[View on GitHub](https://github.com/ash-hashtag/mantis)
+<p class="caption">Figure 1: Compiler pipeline</p>

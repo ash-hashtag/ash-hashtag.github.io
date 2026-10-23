@@ -1,38 +1,80 @@
 ---
-import { getCollection } from 'astro:content';
-import ContactCTA from '../components/ContactCTA.astro';
-import Grid from '../components/Grid.astro';
-import Hero from '../components/Hero.astro';
-import PortfolioPreview from '../components/PortfolioPreview.astro';
+import FormFeed from '../components/FormFeed.astro';
+import MemoHeader from '../components/MemoHeader.astro';
+import Sec from '../components/Sec.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { AUTHOR, getWork, memoDate, memoNumber } from '../lib/memo';
 
-const projects = (await getCollection('work')).sort(
-	(a, b) => (a.data.priority ?? Number.MAX_SAFE_INTEGER) - (b.data.priority ?? Number.MAX_SAFE_INTEGER)
-		|| b.data.publishDate.valueOf() - a.data.publishDate.valueOf(),
-);
+const work = await getWork();
+const pad = (n: number) => String(n).padStart(4, '0');
+
+const entries = [
+	{ n: 0, href: '/', title: 'Sri Pranav Tene: Private Products and Fast Systems', date: memoDate(), keywords: 'portfolio' },
+	{ n: 1, href: '/about/', title: 'The Author: Background, Experience, and Toolchain', date: memoDate(), keywords: 'about, experience' },
+	...work.map((p, i) => ({
+		n: memoNumber(i),
+		href: `/work/${p.id}/`,
+		title: p.data.title,
+		date: memoDate(p.data.publishDate),
+		keywords: p.data.tags.filter((t) => t !== 'Dev').join(', '),
+		description: p.data.description,
+	})),
+];
 ---
 
-<BaseLayout
-	title="My Work | Sri Pranav Tene"
-	description="Explore Sri Pranav Tene's selected software projects"
->
-	<div class="stack gap-20">
-		<main class="wrapper stack gap-8">
-			<Hero
-				title="My Work"
-				tagline="See my most recent projects below to get an idea of my past experience."
-				align="start"
-			/>
-			<Grid variant="offset">
-				{
-					projects.map((project) => (
-						<li>
-							<PortfolioPreview project={project} />
-						</li>
-					))
-				}
-			</Grid>
-		</main>
-		<ContactCTA />
-	</div>
+<BaseLayout title="Sri Pranav Tene — RFC Index" description="Index of every project memo by Sri Pranav Tene.">
+	<MemoHeader
+		left={['Independent Submission', 'RFC Index', 'Category: Informational']}
+		title="RFC Index"
+		docname="rfc-index.txt"
+	/>
+
+	<Sec id="about-index" title="About This Index">
+		<p>
+			Every memo filed by {AUTHOR.name}, in order of number. Memos 0 and 1 describe the author; memos
+			{memoNumber(0)} onward each describe one project, in order of priority.
+		</p>
+	</Sec>
+
+	<Sec id="index" title="Index">
+		<ol class="index">
+			{
+				entries.map((e) => (
+					<li>
+						<a href={e.href} class="num">{pad(e.n)}</a>
+						<div>
+							<a href={e.href}>{e.title}</a>. {AUTHOR.short}. {e.date}. (Keywords: {e.keywords}) (Status:
+							INFORMATIONAL)
+							{e.description && <p class="desc">{e.description}</p>}
+						</div>
+					</li>
+				))
+			}
+		</ol>
+	</Sec>
+
+	<FormFeed doc="RFC Index" short="Index" last />
 </BaseLayout>
+
+<style>
+	.index {
+		list-style: none;
+		padding: 0;
+	}
+	.index li {
+		display: grid;
+		grid-template-columns: 5ch 1fr;
+		gap: 1ch;
+	}
+	.index li + li {
+		margin-top: 1.2rem;
+	}
+	.num {
+		color: var(--dim) !important;
+		text-decoration: none;
+	}
+	.desc {
+		margin-top: 0.3rem;
+		color: var(--dim);
+	}
+</style>

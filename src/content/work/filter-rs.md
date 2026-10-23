@@ -13,6 +13,16 @@ tags:
   - Dev
 ---
 
-A real-time interactive log processing terminal user interface that enables efficient filtering and analysis of log streams. Built with Rust for high performance and low resource usage.
+A real-time interactive terminal UI for processing logs: filter and
+analyse a stream as it arrives. It is written in Rust for high
+throughput and a small footprint.
 
-[View on GitHub](https://github.com/ash-hashtag/filter-rs)
+```
+  +-----------+      +----------+      +------------------------+
+  | log       |----->|  filter  |----->| > level=error  _       |
+  | stream    |      |          |      | 12:04:01 error  db ... |
+  +-----------+      +----------+      | 12:04:09 error  io ... |
+                                       +------------------------+
+```
+
+<p class="caption">Figure 1: Stream in, matching lines out, live</p>

@@ -1,0 +1,18 @@
+---
+import { AUTHOR, memoDate } from '../lib/memo';
+
+interface Props {
+	/** Running header for the next page, e.g. "RFC 0". */
+	doc: string;
+	short: string;
+	last?: boolean;
+}
+
+const { doc, short, last = false } = Astro.props;
+---
+
+<div class:list={['ff', { last }]} aria-hidden="true">
+	<div class="foot"><span>{AUTHOR.surname}</span><span>Informational</span><span class="pg"></span></div>
+	<div class="cut"></div>
+	<div class="head"><span>{doc}</span><span>{short}</span><span>{memoDate()}</span></div>
+</div>

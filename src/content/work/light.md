@@ -12,6 +12,18 @@ tags:
   - Dev
 ---
 
-Light is a lightweight RPC layer built on WebRTC for sync engines that need direct, real-time peer communication.
+Light is a lightweight RPC layer built on WebRTC, for sync engines that
+need direct, real-time communication between peers rather than a round
+trip through a server.
 
-[View on GitHub](https://github.com/lupyd/light)
+```
+     Peer A                                       Peer B
+  +-----------+         RTCDataChannel         +-----------+
+  |   sync    |------- call(id, method) ------>|  handler  |
+  |  engine   |<------ result(id, value) ------|           |
+  +-----------+                                +-----------+
+        \                                            /
+         \______ signaling, only to connect ________/
+```
+
+<p class="caption">Figure 1: Request and response over a data channel (illustrative)</p>

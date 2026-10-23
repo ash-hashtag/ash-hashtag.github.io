@@ -1,150 +1,100 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
-
-import ContactCTA from '../../components/ContactCTA.astro';
-import Hero from '../../components/Hero.astro';
-import Icon from '../../components/Icon.astro';
-import Pill from '../../components/Pill.astro';
+import { type CollectionEntry, render } from 'astro:content';
+import FormFeed from '../../components/FormFeed.astro';
+import MemoHeader from '../../components/MemoHeader.astro';
+import Sec from '../../components/Sec.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { AUTHOR, getWork, memoNumber } from '../../lib/memo';
 
 interface Props {
 	entry: CollectionEntry<'work'>;
+	index: number;
+	prev?: CollectionEntry<'work'>;
+	next?: CollectionEntry<'work'>;
 }
 
-// This is a dynamic route that generates a page for every Markdown file in src/content/
-// Read more about dynamic routes and this `getStaticPaths` function in the Astro docs:
-// https://docs.astro.build/en/core-concepts/routing/#dynamic-routes
 export async function getStaticPaths() {
-	const work = await getCollection('work');
-	return work.map((entry) => ({
+	const work = await getWork();
+	return work.map((entry, index) => ({
 		params: { slug: entry.id },
-		props: { entry },
+		props: { entry, index, prev: work[index - 1], next: work[index + 1] },
 	}));
 }
 
-const { entry } = Astro.props;
+const { entry, index, prev, next } = Astro.props;
 const { Content } = await render(entry);
+const n = memoNumber(index);
+const { title, description, tags, githubUrl, url } = entry.data;
+// the encrypted projects are read through their own ciphertext
+const encrypted = entry.id === 'firefly' || entry.id === 'noon';
+const refs = [
+	url && { key: title.toUpperCase().replace(/\W+/g, '-'), href: url },
+	githubUrl && { key: 'SOURCE', href: githubUrl },
+].filter((r): r is { key: string; href: string } => Boolean(r));
 ---
 
-<BaseLayout title={entry.data.title} description={entry.data.description}>
-	<div class="stack gap-20">
-		<div class="stack gap-15">
-			<header>
-				<div class="wrapper stack gap-2">
-					<a class="back-link" href="/work/"><Icon icon="arrow-left" /> Work</a>
-					<Hero title={entry.data.title} align="start">
-						<div class="details">
-							<div class="tags">
-								{entry.data.tags.map((t) => <Pill>{t}</Pill>)}
-							</div>
-							<p class="description">{entry.data.description}</p>
-						</div>
-					</Hero>
-				</div>
-			</header>
-			<main class="wrapper">
-				<div class="stack gap-10 content">
-					{entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
-					<div class="content">
-						<Content />
-					</div>
-				</div>
-			</main>
-		</div>
-		<ContactCTA />
-	</div>
+<BaseLayout title={`${title} — RFC ${n}`} description={description}>
+	<MemoHeader
+		left={['Independent Submission', `Request for Comments: ${n}`, 'Category: Informational']}
+		title={title}
+		docname={`draft-tene-${entry.id}`}
+	/>
+
+	<Sec id="abstract" title="Abstract">
+		<p>{description}</p>
+		<p>Keywords: {tags.filter((t) => t !== 'Dev').join(', ')}</p>
+	</Sec>
+
+	<Sec id="overview" num="1" title="Overview" decrypt={encrypted}>
+		<Content />
+	</Sec>
+
+	{
+		refs.length > 0 && (
+			<Sec id="references" num="2" title="References">
+				<dl class="defs">
+					{refs.map((r) => (
+						<>
+							<dt>[{r.key}]</dt>
+							<dd><a href={r.href}>&lt;{r.href}&gt;</a></dd>
+						</>
+					))}
+				</dl>
+			</Sec>
+		)
+	}
+
+	<Sec id="address" title="Author's Address">
+		<p>
+			{AUTHOR.name}<br />
+			Email: <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
+		</p>
+	</Sec>
+
+	<nav class="siblings" aria-label="Adjacent memos">
+		<span>{prev && <>&lt;- <a href={`/work/${prev.id}/`}>RFC {n - 1}: {prev.data.title}</a></>}</span>
+		<span>{next && <><a href={`/work/${next.id}/`}>RFC {n + 1}: {next.data.title}</a> -&gt;</>}</span>
+	</nav>
+
+	<FormFeed doc={`RFC ${n}`} short={title} last />
 </BaseLayout>
 
 <style>
-	header {
-		padding-bottom: 2.5rem;
-		border-bottom: 1px solid var(--gray-800);
-	}
-
-	.back-link {
-		display: none;
-	}
-
-	.details {
+	.siblings {
 		display: flex;
-		flex-direction: column;
-		padding: 0.5rem;
-		gap: 1.5rem;
+		flex-wrap: wrap;
 		justify-content: space-between;
-		align-items: center;
+		gap: 0.5rem 2ch;
+		margin-top: 3rem;
 	}
-
-	.tags {
-		display: flex;
-		gap: 0.5rem;
+	:global(.memo .caption) {
+		text-align: center;
+		color: var(--dim);
+		padding-left: 0 !important;
+		margin-top: 0.2rem;
 	}
-
-	.description {
-		font-size: var(--text-lg);
-		max-width: 54ch;
-	}
-
-	.content {
-		max-width: 65ch;
-		margin-inline: auto;
-	}
-
-	.content > :global(* + *) {
-		margin-top: 1rem;
-	}
-
-	.content :global(h1),
-	.content :global(h2),
-	.content :global(h3),
-	.content :global(h4),
-	.content :global(h5) {
-		margin: 1.5rem 0;
-	}
-
-	.content :global(img) {
-		border-radius: 1.5rem;
-		box-shadow: var(--shadow-sm);
-		background: var(--gradient-subtle);
-		border: 1px solid var(--gray-800);
-	}
-
-	.content :global(blockquote) {
-		font-size: var(--text-lg);
-		font-family: var(--font-brand);
-		font-weight: 600;
-		line-height: 1.1;
-		padding-inline-start: 1.5rem;
-		border-inline-start: 0.25rem solid var(--accent-dark);
-		color: var(--gray-0);
-	}
-
-	.back-link,
-	.content :global(a) {
-		text-decoration: 1px solid underline transparent;
-		text-underline-offset: 0.25em;
-		transition: text-decoration-color var(--theme-transition);
-	}
-
-	.back-link:hover,
-	.back-link:focus,
-	.content :global(a:hover),
-	.content :global(a:focus) {
-		text-decoration-color: currentColor;
-	}
-
-	@media (min-width: 50em) {
-		.back-link {
-			display: block;
-			align-self: flex-start;
-		}
-
-		.details {
-			flex-direction: row;
-			gap: 2.5rem;
-		}
-
-		.content :global(blockquote) {
-			font-size: var(--text-2xl);
-		}
+	:global(.memo section > pre + p:not(.caption)),
+	:global(.memo section > .caption + *) {
+		margin-top: 1.2em;
 	}
 </style>
