@@ -1,153 +1,201 @@
 ---
-import FormFeed from '../components/FormFeed.astro';
-import MemoHeader from '../components/MemoHeader.astro';
-import Sec from '../components/Sec.astro';
+import Experience from '../components/Experience.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { AUTHOR } from '../lib/memo';
+import { AUTHOR } from '../lib/site';
 
-const DOC = 'RFC 1';
-const SHORT = 'The Author';
-
-const experience = [
-	{
-		when: '2023 - present',
-		org: 'Lupyd Media',
-		role: 'Founder, full-stack developer',
-		body: 'Building a privacy-focused social and collaboration platform from the ground up. Rust across the backend, React and Tauri across the clients, with MLS, blind signatures, WebSockets, WebTransport and WebRTC in the mix.',
-	},
-	{
-		when: '2025',
-		org: 'Turing',
-		role: 'Rust LLM trainer, contract',
-		body: 'RLHF training for Anthropic models, bringing systems-level Rust judgment into model evaluation and improvement.',
-	},
-	{
-		when: '2022 - 2023',
-		org: 'Jandas Corporation',
-		role: 'Mobile application developer, contract',
-		body: 'Cross-platform Flutter applications, and a low-level audio-processing product spanning Dart and C++.',
-	},
-	{
-		when: '2021 - 2022',
-		org: 'Freelance',
-		role: 'Independent developer',
-		body: 'Rust smart contracts, WGPU parallel-processing scripts, automation bots, games and mobile applications.',
-	},
+const ranks = [
+	{ value: '0.0055%', label: 'top · TG ICET' },
+	{ value: '0.019%', label: 'top · TS EAMCET' },
+	{ value: '3.4%', label: 'top · JEE Mains' },
 ];
 
-const toolchain = String.raw`
-toolchain  = systems / realtime / product / infra
-
-systems    = "Rust" / "C++" / "Tokio" / "Hyper" / "Axum"
-             / "Boost" / "Rayon"
-realtime   = "WebRTC" / "WebTransport" / "WebSockets" / "MLS"
-product    = "React" / "TypeScript" / "Flutter" / "Tauri"
-             / "Next.js"
-infra      = "PostgreSQL" / "Redis" / "Docker" / "Kubernetes"
-             / "AWS"
-`.slice(1);
-
-const ranks = String.raw`
-+--------------+--------------+
-| Examination  | Standing     |
-+--------------+--------------+
-| JEE Mains    | top 3.4%     |
-| TS EAMCET    | top 0.019%   |
-| TG ICET      | top 0.0055%  |
-+--------------+--------------+
-`.slice(1);
+const rules = [
+	['MUST NOT', 'collect user data merely because it can be collected.'],
+	['SHOULD', 'encrypt end to end. The server is not a trusted party.'],
+	['SHOULD', 'remove any round trip that can be removed.'],
+	['MAY', 'add a dependency when it pays rent.'],
+	['MUST', 'stay understandable to whoever maintains it next.'],
+];
 ---
 
 <BaseLayout
-	title="Sri Pranav Tene — RFC 1: The Author"
-	description="Background, experience and toolchain of Sri Pranav Tene, a software engineer building privacy-first products and real-time systems."
+	title="About · Sri Pranav Tene"
+	description="Background, experience and toolkit of Sri Pranav Tene, founder of Lupyd and a software engineer working across Rust, encryption and real-time systems."
+	image="/og/about.png"
 >
-	<MemoHeader
-		left={['Independent Submission', 'Request for Comments: 1', 'Updates: 0', 'Category: Informational']}
-		title="The Author: Background, Experience, and Toolchain"
-		docname="draft-tene-author-latest"
-	/>
+	<main>
+		<section class="about-hero">
+			<div class="wrap">
+				<p class="label accent">About</p>
+				<h1>Product instincts, <span>systems habits.</span></h1>
+				<div class="about-cols">
+					<p>
+						I move between product thinking and low-level engineering. Good software should feel obvious; the
+						engineering behind it rarely is.
+					</p>
+					<p>
+						The interesting part is the difficult middle: turning an ambitious product idea into a system that stays
+						fast, safe and understandable. That has taken me from end-to-end encrypted collaboration and WebRTC to audio
+						processing in C++, GPU workloads, Godot games, mobile apps and a programming language of my own.
+					</p>
+				</div>
+			</div>
+		</section>
 
-	<Sec id="abstract" title="Abstract">
-		<p>
-			This memo supplements <a href="/">RFC 0</a> with a description of its author: where the work
-			has happened, what it was built with, and where the author learned to build it.
-		</p>
-	</Sec>
+		<section class="section">
+			<div class="wrap">
+				<div class="section-head rise">
+					<h2>Experience</h2>
+					<p>Shipping since 2021; founder since 2023.</p>
+				</div>
+				<Experience />
+			</div>
+		</section>
 
-	<Sec id="background" num="1" title="Background">
-		<p>
-			The author moves between product thinking and low-level engineering. Good software should feel
-			obvious; the engineering behind it rarely is.
-		</p>
-		<p>
-			The interesting part is the difficult middle: turning an ambitious product idea into a system
-			that stays fast, safe and understandable. That has led from encrypted social infrastructure and
-			WebRTC to audio processing, GPU workloads, mobile apps and programming-language experiments.
-		</p>
-	</Sec>
+		<section class="section">
+			<div class="wrap principles">
+				<div class="rise">
+					<h2>How I build</h2>
+					<p class="muted">
+						Written the way protocol specs are, because they're meant to be just as binding. Key words per
+						<a href="https://www.rfc-editor.org/rfc/rfc2119">RFC 2119</a>.
+					</p>
+				</div>
+				<ol class="rules panel rise">
+					{
+						rules.map(([kw, rest], i) => (
+							<li>
+								<span class="mono n">{String(i + 1).padStart(2, '0')}</span>
+								<p>
+									Software <b class="kw">{kw}</b> {rest}
+								</p>
+							</li>
+						))
+					}
+				</ol>
+			</div>
+		</section>
 
-	<Sec id="experience" num="2" title="Experience">
-		<dl class="defs">
-			{
-				experience.map((e) => (
-					<>
-						<dt>
-							{e.org} <span class="meta">({e.when})</span>
-						</dt>
-						<dd>
-							<span class="meta">{e.role}.</span> {e.body}
-						</dd>
-					</>
-				))
-			}
-		</dl>
-	</Sec>
+		<section class="section">
+			<div class="wrap edu">
+				<div class="rise">
+					<h2>Education</h2>
+					<p class="muted">
+						BSc in Data Science from Kavitha Degree College, after earlier AI/ML study at Chaitanya Bharathi
+						Institute of Technology. Most of the useful learning happened while making things that had to work.
+					</p>
+				</div>
+				<div class="ranks rise">
+					{
+						ranks.map((r) => (
+							<div class="tile">
+								<b>{r.value}</b>
+								<span class="label">{r.label}</span>
+							</div>
+						))
+					}
+				</div>
+			</div>
+		</section>
 
-	<FormFeed doc={DOC} short={SHORT} />
-
-	<Sec id="toolchain" num="3" title="Toolchain">
-		<p>
-			The tools in regular use are given below in ABNF [<a href="#ref-rfc5234">RFC5234</a>]. Any
-			production is a valid way to start a project with the author.
-		</p>
-		<figure>
-			<pre>{toolchain}</pre>
-			<figcaption>Figure 1: Toolchain</figcaption>
-		</figure>
-	</Sec>
-
-	<Sec id="education" num="4" title="Education">
-		<p>
-			BSc in Data Science from Kavitha Degree College, after earlier AI/ML study at Chaitanya Bharathi
-			Institute of Technology. Most of the useful learning happened while making things that had to
-			work.
-		</p>
-		<figure>
-			<pre>{ranks}</pre>
-			<figcaption>Table 1: Entrance examinations</figcaption>
-		</figure>
-	</Sec>
-
-	<Sec id="references" num="5" title="References">
-		<dl class="defs">
-			<dt id="ref-rfc5234">[RFC5234]</dt>
-			<dd>
-				Crocker, D., Ed. and P. Overell, "Augmented BNF for Syntax Specifications: ABNF", STD 68,
-				RFC 5234, January 2008, <a href="https://www.rfc-editor.org/rfc/rfc5234">&lt;https://www.rfc-editor.org/rfc/rfc5234&gt;</a>.
-			</dd>
-		</dl>
-	</Sec>
-
-	<Sec id="address" title="Author's Address">
-		<p>
-			{AUTHOR.name}<br />
-			{AUTHOR.org}<br />
-			{AUTHOR.city}<br />
-			<br />
-			Email: <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
-		</p>
-	</Sec>
-
-	<FormFeed doc={DOC} short={SHORT} last />
+		<section class="section">
+			<div class="wrap rise">
+				<h2 class="say">Say hello: <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a></h2>
+			</div>
+		</section>
+	</main>
 </BaseLayout>
+
+<style>
+	.about-hero {
+		padding-block: clamp(3.5rem, 8vw, 6.5rem);
+		background: radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 24px 24px;
+	}
+	.accent {
+		color: var(--accent);
+	}
+	h1 {
+		margin-top: 1rem;
+		font-size: clamp(3rem, 8vw, 6.5rem);
+		max-width: 12ch;
+	}
+	h1 span {
+		color: var(--dim);
+	}
+	.about-cols {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 2rem;
+		margin-top: 2.5rem;
+		max-width: 60rem;
+		color: var(--dim);
+		font-size: 1.1rem;
+	}
+	.muted {
+		color: var(--dim);
+		margin-top: 1rem;
+		max-width: 30rem;
+	}
+	.muted a {
+		color: var(--ink);
+	}
+	h2 {
+		font-size: clamp(2.2rem, 5vw, 3.6rem);
+	}
+	.principles,
+	.edu {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+		gap: 2.5rem;
+		align-items: start;
+	}
+	.rules {
+		list-style: none;
+		padding: 0.5rem 1.5rem;
+	}
+	.rules li {
+		display: grid;
+		grid-template-columns: 2.5rem 1fr;
+		gap: 1rem;
+		padding: 1.1rem 0;
+		border-bottom: 1px solid var(--line);
+		font-size: 1.1rem;
+	}
+	.rules li:last-child {
+		border: 0;
+	}
+	.rules .n {
+		color: var(--faint);
+		padding-top: 0.2rem;
+		font-size: 0.85rem;
+	}
+	.kw {
+		color: var(--accent);
+		font-family: var(--font-mono);
+		font-size: 0.95em;
+	}
+	.ranks {
+		display: grid;
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+		gap: 1rem;
+	}
+	.say {
+		font-size: clamp(1.8rem, 4.5vw, 3.4rem);
+	}
+	.say a {
+		color: var(--accent);
+		overflow-wrap: anywhere;
+	}
+	@media (max-width: 820px) {
+		.about-cols,
+		.principles,
+		.edu {
+			grid-template-columns: 1fr;
+		}
+	}
+	@media (max-width: 520px) {
+		.ranks {
+			grid-template-columns: 1fr;
+		}
+	}
+</style>

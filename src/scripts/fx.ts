@@ -1,8 +1,7 @@
 /*
- * Motion for the memo: red pen written in on scroll, ciphertext that
- * decrypts as it is read, and packets that travel the ASCII figures.
- * Everything here is decoration; with reduced motion or no JS the page
- * reads exactly the same.
+ * Page-level motion: sections rise in as they scroll into view, and
+ * packets travel the arrows of every ASCII figure. Decoration only; with
+ * reduced motion or no JS the page reads exactly the same.
  */
 
 const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -20,72 +19,9 @@ const onSeen = (els: Iterable<Element>, fn: (el: Element) => void, threshold = 0
 	for (const el of els) io.observe(el);
 };
 
-/* ---------- red pen ---------- */
+/* ---------- reveal ---------- */
 
-const pen = () => {
-	onSeen(document.querySelectorAll('.note, .circle'), (el) => el.classList.add('seen'), 0.9);
-};
-
-/* ---------- ciphertext ---------- */
-
-const HEX = '0123456789abcdef';
-const noise = () => HEX[(Math.random() * 16) | 0];
-
-const decrypt = (el: HTMLElement) => {
-	const layer = document.createElement('div');
-	layer.className = 'decrypt-layer';
-	layer.setAttribute('aria-hidden', 'true');
-	layer.innerHTML = el.innerHTML;
-	layer.style.padding = getComputedStyle(el).padding;
-
-	const walker = document.createTreeWalker(layer, NodeFilter.SHOW_TEXT);
-	const nodes: { node: Text; plain: string; start: number }[] = [];
-	let total = 0;
-	for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-		const plain = n.textContent ?? '';
-		nodes.push({ node: n as Text, plain, start: total });
-		total += plain.length;
-	}
-
-	const scramble = (resolved: number) => {
-		for (const { node, plain, start } of nodes) {
-			let out = '';
-			for (let i = 0; i < plain.length; i++) {
-				const c = plain[i];
-				out += start + i < resolved || /\s/.test(c) ? c : noise();
-			}
-			node.textContent = out;
-		}
-	};
-
-	el.classList.add('decrypting');
-	el.append(layer);
-	scramble(0);
-
-	// keep the noise moving until the reader gets there
-	const idle = setInterval(() => scramble(0), 90);
-
-	onSeen([el], () => {
-		clearInterval(idle);
-		const duration = Math.min(1600, 400 + total * 4);
-		const t0 = performance.now();
-		const step = (now: number) => {
-			const p = Math.min(1, (now - t0) / duration);
-			scramble(Math.floor(p * total));
-			if (p < 1) return requestAnimationFrame(step);
-			layer.remove();
-			el.classList.remove('decrypting');
-		};
-		requestAnimationFrame(step);
-	}, 0.6);
-};
-
-const cipher = () => {
-	for (const host of document.querySelectorAll<HTMLElement>('[data-decrypt]')) {
-		const targets = host.tagName === 'SECTION' ? host.querySelectorAll<HTMLElement>(':scope > p:not(.caption)') : [host];
-		targets.forEach(decrypt);
-	}
-};
+const reveal = () => onSeen(document.querySelectorAll('.rise'), (el) => el.classList.add('seen'), 0.15);
 
 /* ---------- packets ---------- */
 
@@ -206,11 +142,10 @@ const wire = (pre: HTMLPreElement) => {
 	requestAnimationFrame(frame);
 };
 
-const packets = () => document.querySelectorAll<HTMLPreElement>('.memo pre').forEach(wire);
+const packets = () => document.querySelectorAll<HTMLPreElement>('.prose pre, .spec pre').forEach(wire);
 
 if (!calm) {
 	document.documentElement.classList.add('fx');
-	pen();
-	cipher();
+	reveal();
 	packets();
 }

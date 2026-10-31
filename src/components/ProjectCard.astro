@@ -1,0 +1,140 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import ProjectViz from './ProjectViz.astro';
+
+interface Props {
+	project: CollectionEntry<'work'>;
+	index: number;
+	feature?: boolean;
+}
+
+const { project, index, feature = false } = Astro.props;
+const { title, description, tags, img, githubUrl, url } = project.data;
+const href = `/work/${project.id}/`;
+---
+
+<article class:list={['card', 'panel', 'rise', { feature, flip: feature && index % 2 === 1 }]}>
+	<div class="card-viz">
+		<ProjectViz id={project.id} />
+	</div>
+	<div class="card-body">
+		<div class="card-head">
+			{img && <img src={img} alt="" width="44" height="44" loading="lazy" />}
+			<span class="label">{String(index + 1).padStart(2, '0')} / {tags.filter((t) => t !== 'Dev').slice(0, 2).join(' · ')}</span>
+		</div>
+		<h3><a class="stretch" href={href}>{title}</a></h3>
+		<p>{description}</p>
+		<ul class="chips">
+			{tags.filter((t) => t !== 'Dev').map((t) => <li class="chip">{t}</li>)}
+		</ul>
+		<div class="card-links">
+			<span class="more mono">Read more →</span>
+			{githubUrl && <a class="mono" href={githubUrl}>source ↗</a>}
+			{url && <a class="mono" href={url}>live ↗</a>}
+		</div>
+	</div>
+</article>
+
+<style>
+	.card {
+		display: grid;
+		grid-template-rows: auto 1fr;
+		transition:
+			border-color 0.25s,
+			transform 0.25s;
+	}
+	.card:hover {
+		border-color: color-mix(in srgb, var(--accent) 55%, transparent);
+		transform: translateY(-3px);
+	}
+	.card.feature {
+		grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+		grid-template-rows: auto;
+		min-height: 24rem;
+	}
+	.card.flip .card-viz {
+		order: 2;
+	}
+	.card-viz {
+		border-bottom: 1px solid var(--line);
+		min-height: 270px;
+	}
+	.feature .card-viz {
+		border-bottom: 0;
+		border-right: 1px solid var(--line);
+	}
+	.flip .card-viz {
+		border-right: 0;
+		border-left: 1px solid var(--line);
+	}
+	.card-body {
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+		padding: clamp(1.25rem, 3vw, 2rem);
+	}
+	.card-head {
+		display: flex;
+		align-items: center;
+		gap: 0.8rem;
+	}
+	.card-head img {
+		width: 44px;
+		height: 44px;
+		border-radius: 10px;
+		object-fit: cover;
+		background: #fff;
+	}
+	h3 {
+		font-size: clamp(1.8rem, 3.4vw, 2.6rem);
+	}
+	.feature h3 {
+		font-size: clamp(2.2rem, 4.4vw, 3.4rem);
+	}
+	h3 a {
+		text-decoration: none;
+	}
+	/* the whole card opens the project; source links sit above the overlay */
+	.stretch::after {
+		content: '';
+		position: absolute;
+		inset: 0;
+		z-index: 1;
+	}
+	p {
+		color: var(--dim);
+	}
+	.card-links {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.2rem;
+		margin-top: auto;
+		padding-top: 0.5rem;
+		font-size: 0.85rem;
+	}
+	.card-links a {
+		position: relative;
+		z-index: 2;
+		color: var(--dim);
+		text-decoration: none;
+	}
+	.card-links a:hover {
+		color: var(--ink);
+	}
+	.more {
+		color: var(--accent);
+	}
+	@media (max-width: 860px) {
+		.card.feature {
+			grid-template-columns: 1fr;
+		}
+		.card.flip .card-viz {
+			order: 0;
+		}
+		.feature .card-viz,
+		.flip .card-viz {
+			border: 0;
+			border-bottom: 1px solid var(--line);
+		}
+	}
+</style>

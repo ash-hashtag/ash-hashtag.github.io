@@ -1,17 +1,37 @@
 ---
-import MemoHeader from '../components/MemoHeader.astro';
-import Sec from '../components/Sec.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout title="404 — Not Found" description="This page was not found.">
-	<MemoHeader left={['Independent Submission', 'Erratum: 404', 'Category: Historic']} title="Not Found" docname="draft-tene-404" />
-
-	<Sec id="abstract" title="Abstract">
-		<p>
-			The requested document does not exist, has been obsoleted, or was never filed. Readers
-			<span class="kw">SHOULD</span> consult the <a href="/work/">RFC Index</a> or return to
-			<a href="/">RFC 0</a>.
-		</p>
-	</Sec>
+<BaseLayout title="404 · Not found · Sri Pranav Tene" description="This page was not found.">
+	<main class="section" style="border-top:0">
+		<div class="wrap">
+			<p class="label">ICMP type 3 · destination unreachable</p>
+			<h1>404. <span>This packet was dropped.</span></h1>
+			<p class="lede">The page you asked for doesn't exist or has moved.</p>
+			<div class="cta">
+				<a class="btn primary" href="/">Back home</a>
+				<a class="btn" href="/work/">See the work</a>
+			</div>
+		</div>
+	</main>
 </BaseLayout>
+
+<style>
+	h1 {
+		margin-top: 1rem;
+		font-size: clamp(3rem, 9vw, 7rem);
+		max-width: 12ch;
+	}
+	h1 span {
+		color: var(--dim);
+	}
+	.lede {
+		margin-top: 1.25rem;
+		color: var(--dim);
+	}
+	.cta {
+		display: flex;
+		gap: 0.6rem;
+		margin-top: 2rem;
+	}
+</style>

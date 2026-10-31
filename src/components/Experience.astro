@@ -1,0 +1,116 @@
+---
+import { EXPERIENCE, TOOLKIT } from '../lib/profile';
+---
+
+<div class="xp">
+	<ol class="xp-list">
+		{
+			EXPERIENCE.map((e, i) => (
+				<li class="xp-item rise" style={`--d:${i * 0.08}s`}>
+					<span class="label xp-when">{e.when}</span>
+					<div>
+						<h3>{e.org}</h3>
+						<p class="label xp-role">{e.role}</p>
+						<p>{e.body}</p>
+						<ul class="chips">
+							{e.tags.map((t) => (
+								<li class="chip">{t}</li>
+							))}
+						</ul>
+					</div>
+				</li>
+			))
+		}
+	</ol>
+	<aside class="xp-kit panel rise">
+		<span class="label">toolkit</span>
+		{
+			TOOLKIT.map((g) => (
+				<div>
+					<h4>{g.group}</h4>
+					<ul class="chips">
+						{g.items.map((t) => (
+							<li class="chip">{t}</li>
+						))}
+					</ul>
+				</div>
+			))
+		}
+	</aside>
+</div>
+
+<style>
+	.xp {
+		display: grid;
+		grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+		gap: 2.5rem;
+		align-items: start;
+	}
+	.xp-list {
+		list-style: none;
+		padding: 0;
+		border-left: 1px solid var(--line-2);
+	}
+	.xp-item {
+		position: relative;
+		display: grid;
+		grid-template-columns: 8.5rem 1fr;
+		gap: 1.25rem;
+		padding: 0 0 2.5rem 1.75rem;
+	}
+	.xp-item::before {
+		content: '';
+		position: absolute;
+		left: -5px;
+		top: 0.35rem;
+		width: 9px;
+		height: 9px;
+		border-radius: 50%;
+		background: var(--bg);
+		border: 2px solid var(--accent);
+	}
+	.xp-item:first-child::before {
+		background: var(--accent);
+		box-shadow: var(--glow);
+	}
+	.xp-when {
+		padding-top: 0.3rem;
+	}
+	.xp-item h3 {
+		font-size: 1.75rem;
+	}
+	.xp-role {
+		margin: 0.35rem 0 0.7rem;
+		color: var(--accent);
+	}
+	.xp-item p:not(.label) {
+		color: var(--dim);
+		margin-bottom: 0.8rem;
+		max-width: 38rem;
+	}
+	.xp-kit {
+		position: sticky;
+		top: 5rem;
+		display: grid;
+		gap: 1.2rem;
+		padding: 1.4rem;
+	}
+	.xp-kit h4 {
+		margin-bottom: 0.5rem;
+		font: 600 1.05rem var(--font-display);
+	}
+	@media (max-width: 900px) {
+		.xp {
+			grid-template-columns: 1fr;
+		}
+		.xp-kit {
+			position: static;
+		}
+	}
+	@media (max-width: 560px) {
+		.xp-item {
+			grid-template-columns: 1fr;
+			gap: 0.4rem;
+		}
+	}
+</style>

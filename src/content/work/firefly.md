@@ -19,7 +19,7 @@ Message Layer Security (MLS). It supports multiple devices per user, so
 a conversation follows its participants across platforms without the
 server ever holding readable messages.
 
-<aside class="note" style="--tilt:-3deg">this noise is all the server ever gets to see</aside>
+<aside class="note" style="--tilt:-3deg">the middle column up there is all the server ever gets</aside>
 
 ```
    Alice/phone    Alice/laptop          Bob/phone    Bob/desktop

@@ -1,10 +1,8 @@
 ---
 import { type CollectionEntry, render } from 'astro:content';
-import FormFeed from '../../components/FormFeed.astro';
-import MemoHeader from '../../components/MemoHeader.astro';
-import Sec from '../../components/Sec.astro';
+import ProjectViz from '../../components/ProjectViz.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { AUTHOR, getWork, memoNumber } from '../../lib/memo';
+import { AUTHOR, getWork } from '../../lib/site';
 
 interface Props {
 	entry: CollectionEntry<'work'>;
@@ -23,78 +21,173 @@ export async function getStaticPaths() {
 
 const { entry, index, prev, next } = Astro.props;
 const { Content } = await render(entry);
-const n = memoNumber(index);
-const { title, description, tags, githubUrl, url } = entry.data;
-// the encrypted projects are read through their own ciphertext
-const encrypted = entry.id === 'firefly' || entry.id === 'noon';
-const refs = [
-	url && { key: title.toUpperCase().replace(/\W+/g, '-'), href: url },
-	githubUrl && { key: 'SOURCE', href: githubUrl },
-].filter((r): r is { key: string; href: string } => Boolean(r));
+const { title, description, tags, img, githubUrl, url } = entry.data;
+const keywords = tags.filter((t) => t !== 'Dev');
 ---
 
-<BaseLayout title={`${title} — RFC ${n}`} description={description}>
-	<MemoHeader
-		left={['Independent Submission', `Request for Comments: ${n}`, 'Category: Informational']}
-		title={title}
-		docname={`draft-tene-${entry.id}`}
-	/>
+<BaseLayout title={`${title} · Sri Pranav Tene`} description={description} image={`/og/${entry.id}.png`}>
+	<main>
+		<header class="p-hero">
+			<div class="wrap">
+				<a class="back mono" href="/work/">← all work</a>
+				<div class="p-title">
+					{img && <img src={img} alt="" width="64" height="64" />}
+					<div>
+						<p class="label">{String(index + 1).padStart(2, '0')} / {keywords.slice(0, 2).join(' · ')}</p>
+						<h1>{title}</h1>
+					</div>
+				</div>
+				<p class="lede">{description}</p>
+				<div class="cta">
+					{url && <a class="btn primary" href={url}>Visit {title} ↗</a>}
+					{githubUrl && <a class:list={['btn', { primary: !url }]} href={githubUrl}>Source on GitHub ↗</a>}
+					<a class="btn" href={`mailto:${AUTHOR.email}?subject=${encodeURIComponent(title)}`}>Ask me about it</a>
+				</div>
+			</div>
+		</header>
 
-	<Sec id="abstract" title="Abstract">
-		<p>{description}</p>
-		<p>Keywords: {tags.filter((t) => t !== 'Dev').join(', ')}</p>
-	</Sec>
+		<section class="wrap">
+			<div class="panel p-viz rise">
+				<ProjectViz id={entry.id} large />
+			</div>
+		</section>
 
-	<Sec id="overview" num="1" title="Overview" decrypt={encrypted}>
-		<Content />
-	</Sec>
+		<section class="wrap p-body">
+			<article class="prose rise">
+				<Content />
+			</article>
+			<aside class="p-meta rise">
+				<div>
+					<span class="label">Stack</span>
+					<ul class="chips">{keywords.map((t) => <li class="chip">{t}</li>)}</ul>
+				</div>
+				<div>
+					<span class="label">Started</span>
+					<p class="mono">{entry.data.publishDate.getUTCFullYear()}</p>
+				</div>
+				{
+					githubUrl && (
+						<div>
+							<span class="label">Repository</span>
+							<p class="mono">
+								<a href={githubUrl}>{githubUrl.replace('https://github.com/', '')}</a>
+							</p>
+						</div>
+					)
+				}
+			</aside>
+		</section>
 
-	{
-		refs.length > 0 && (
-			<Sec id="references" num="2" title="References">
-				<dl class="defs">
-					{refs.map((r) => (
-						<>
-							<dt>[{r.key}]</dt>
-							<dd><a href={r.href}>&lt;{r.href}&gt;</a></dd>
-						</>
-					))}
-				</dl>
-			</Sec>
-		)
-	}
-
-	<Sec id="address" title="Author's Address">
-		<p>
-			{AUTHOR.name}<br />
-			Email: <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
-		</p>
-	</Sec>
-
-	<nav class="siblings" aria-label="Adjacent memos">
-		<span>{prev && <>&lt;- <a href={`/work/${prev.id}/`}>RFC {n - 1}: {prev.data.title}</a></>}</span>
-		<span>{next && <><a href={`/work/${next.id}/`}>RFC {n + 1}: {next.data.title}</a> -&gt;</>}</span>
-	</nav>
-
-	<FormFeed doc={`RFC ${n}`} short={title} last />
+		<nav class="wrap p-nav" aria-label="Other projects">
+			{
+				prev ? (
+					<a class="panel" href={`/work/${prev.id}/`}>
+						<span class="label">← previous</span>
+						<b>{prev.data.title}</b>
+					</a>
+				) : (
+					<span />
+				)
+			}
+			{
+				next && (
+					<a class="panel next" href={`/work/${next.id}/`}>
+						<span class="label">next →</span>
+						<b>{next.data.title}</b>
+					</a>
+				)
+			}
+		</nav>
+	</main>
 </BaseLayout>
 
 <style>
-	.siblings {
+	.p-hero {
+		padding-block: clamp(2.5rem, 6vw, 4.5rem) 2.5rem;
+	}
+	.back {
+		font-size: 0.85rem;
+		color: var(--dim);
+		text-decoration: none;
+	}
+	.back:hover {
+		color: var(--ink);
+	}
+	.p-title {
+		display: flex;
+		align-items: center;
+		gap: 1.25rem;
+		margin-top: 1.75rem;
+	}
+	.p-title img {
+		width: 64px;
+		height: 64px;
+		border-radius: 14px;
+		object-fit: cover;
+		background: #fff;
+	}
+	h1 {
+		margin-top: 0.3rem;
+		font-size: clamp(2.8rem, 8vw, 5.5rem);
+	}
+	.lede {
+		margin-top: 1.25rem;
+		max-width: 44rem;
+		font-size: 1.2rem;
+		color: var(--dim);
+	}
+	.cta {
 		display: flex;
 		flex-wrap: wrap;
-		justify-content: space-between;
-		gap: 0.5rem 2ch;
-		margin-top: 3rem;
+		gap: 0.6rem;
+		margin-top: 1.75rem;
 	}
-	:global(.memo .caption) {
-		text-align: center;
-		color: var(--dim);
-		padding-left: 0 !important;
-		margin-top: 0.2rem;
+	.p-viz {
+		min-height: 380px;
 	}
-	:global(.memo section > pre + p:not(.caption)),
-	:global(.memo section > .caption + *) {
-		margin-top: 1.2em;
+	.p-body {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) 16rem;
+		gap: 3rem;
+		padding-block: clamp(2.5rem, 6vw, 4.5rem);
+	}
+	.p-meta {
+		display: grid;
+		gap: 1.5rem;
+		align-content: start;
+	}
+	.p-meta .label {
+		display: block;
+		margin-bottom: 0.5rem;
+	}
+	.p-meta a {
+		color: var(--ink);
+	}
+	.p-nav {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 1.25rem;
+		padding-bottom: 4rem;
+	}
+	.p-nav a {
+		display: grid;
+		gap: 0.4rem;
+		padding: 1.4rem 1.5rem;
+		text-decoration: none;
+		transition: border-color 0.2s;
+	}
+	.p-nav a:hover {
+		border-color: var(--accent);
+	}
+	.p-nav b {
+		font: 700 1.8rem var(--font-display);
+	}
+	.p-nav .next {
+		text-align: right;
+	}
+	@media (max-width: 820px) {
+		.p-body {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

@@ -1,40 +1,81 @@
 ---
 import MainHead from '../components/MainHead.astro';
-import { AUTHOR } from '../lib/memo';
+import { getGitHub, GITHUB_USER } from '../lib/github';
+import { AUTHOR, SOCIALS } from '../lib/site';
 
 interface Props {
 	title?: string | undefined;
 	description?: string | undefined;
+	image?: string | undefined;
 }
 
-const { title, description } = Astro.props;
+const { title, description, image } = Astro.props;
+const { pushes } = await getGitHub();
+const last = pushes[0];
 
 const links = [
-	{ label: 'index', href: '/' },
 	{ label: 'work', href: '/work/' },
-	{ label: 'author', href: '/about/' },
+	{ label: 'activity', href: '/#activity' },
+	{ label: 'about', href: '/about/' },
+	{ label: 'contact', href: '/#contact' },
 ];
-
 const path = Astro.url.pathname.endsWith('/') ? Astro.url.pathname : `${Astro.url.pathname}/`;
-const isCurrent = (href: string) => (href === '/' ? path === '/' : path.startsWith(href));
+const year = new Date().getFullYear();
 ---
 
 <html lang="en">
 	<head>
-		<MainHead title={title} description={description} />
+		<MainHead title={title} description={description} image={image} />
 	</head>
 	<body>
-		<main class="memo">
-			<nav class="memo-nav" aria-label="Site">
-				{links.map(({ label, href }) => <a href={href} aria-current={isCurrent(href) ? 'page' : undefined}>[{label}]</a>)}
-				<span class="spacer"></span>
-				<a href={`mailto:${AUTHOR.email}`}>[mail]</a>
-			</nav>
-			<slot />
-		</main>
+		<header class="topbar">
+			<div class="wrap">
+				<a class="brand" href="/">
+					<span class="brand-mark">SPT</span>
+					<span class="brand-name">Sri Pranav Tene</span>
+				</a>
+				{
+					last && (
+						<p class="status">
+							<span class="dot" />
+							pushed <time data-ago="#last-push" /> to
+							<a id="last-push" data-last-push data-at={last.at} href={`https://github.com/${last.repo}`}>
+								{last.repo}
+							</a>
+						</p>
+					)
+				}
+				<nav class="topnav" aria-label="Site">
+					{links.map(({ label, href }) => <a href={href} aria-current={path === href ? 'page' : undefined}>{label}</a>)}
+				</nav>
+			</div>
+		</header>
+
+		<slot />
+
+		<footer class="footer">
+			<div class="wrap">
+				<span>© {year} {AUTHOR.name} · {AUTHOR.city}</span>
+				<span>
+					{SOCIALS.map((s, i) => <>{i > 0 && ' · '}<a href={s.href}>{s.label}</a></>)} · <a
+						href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a
+					>
+				</span>
+				<span>
+					No trackers, no cookies. <a href={`https://github.com/${GITHUB_USER}/portfolio`}>Source</a>
+				</span>
+			</div>
+		</footer>
 
 		<script>
+			import { mountAllNets } from '../scripts/net';
+			import { mountViz } from '../scripts/viz';
+			import { live } from '../scripts/live';
 			import '../scripts/fx';
+
+			mountAllNets();
+			mountViz();
+			live();
 
 			document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
 				const url = new URL(link.href, location.href);

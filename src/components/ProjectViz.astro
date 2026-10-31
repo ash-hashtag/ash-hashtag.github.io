@@ -1,0 +1,559 @@
+---
+import { lupydGraph, mantisGraph } from '../lib/graphs';
+
+interface Props {
+	id: string;
+	/** Taller frame for the project page header. */
+	large?: boolean;
+}
+
+const { id, large = false } = Astro.props;
+
+/** Which script in src/scripts/viz.ts animates this project; canvases with data-net animate themselves. */
+const script: Record<string, string> = {
+	firefly: 'firefly',
+	noon: 'noon',
+	light: 'light',
+	'postgres-with-quic': 'quic',
+	'filter-rs': 'filter',
+};
+---
+
+<div class:list={['viz', `viz-${id}`, { large }]} data-viz={script[id]} aria-hidden="true">
+	{
+		id === 'lupyd' && (
+			<>
+				<canvas class="viz-net" data-net={JSON.stringify(lupydGraph)} />
+				<p class="viz-cap label">clients · rust core · direct peer paths</p>
+			</>
+		)
+	}
+	{
+		id === 'mantis' && (
+			<>
+				<canvas class="viz-net" data-net={JSON.stringify(mantisGraph)} />
+				<p class="viz-cap label">memory safety is checked before codegen</p>
+			</>
+		)
+	}
+	{
+		id === 'infinity' && (
+			<div class="inf">
+				{[1, 2, 3, 4, 5, 6].map((n, i) => (
+					<img src={`/assets/work/infinity/${n}.webp`} alt="" loading="lazy" style={`--i:${i}`} />
+				))}
+				<span class="inf-g label">
+					gravity <b>↓</b>
+				</span>
+			</div>
+		)
+	}
+	{
+		id === 'firefly' && (
+			<div class="ff">
+				<div class="ff-col">
+					<span class="label">alice · phone</span>
+					<div class="ff-lane" data-lane="a">
+						<div class="msg out">still on for friday?</div>
+					</div>
+				</div>
+				<div class="ff-col srv">
+					<span class="label">server sees</span>
+					<div class="ff-lane" data-lane="s">
+						<div class="msg cipher">9f2c41e0b7d38a5e12c4f0</div>
+					</div>
+				</div>
+				<div class="ff-col">
+					<span class="label">bob · laptop</span>
+					<div class="ff-lane" data-lane="b">
+						<div class="msg in">still on for friday?</div>
+					</div>
+				</div>
+			</div>
+		)
+	}
+	{
+		id === 'noon' && (
+			<div class="nn">
+				<div class="nn-form">
+					<span class="label">what should the team change?</span>
+					<dl>
+						<dt>name</dt>
+						<dd data-f="name" class="redacted">A. Rao</dd>
+						<dt>email</dt>
+						<dd data-f="email" class="redacted">a.rao@corp.example</dd>
+						<dt>answer</dt>
+						<dd data-f="answer" class="answer">fewer meetings, longer focus blocks</dd>
+					</dl>
+					<div class="nn-actions">
+						<span class="nn-submit" data-f="submit">submit anonymously</span>
+						<span class="nn-proof on" data-f="proof">✓ eligible · unlinkable</span>
+					</div>
+				</div>
+				<div class="nn-inbox">
+					<span class="label">
+						responses <b data-f="count">41</b>
+					</span>
+					<ol data-f="inbox">
+						<li>
+							<span class="mono">#041</span> <span>fewer meetings, longer focus blocks</span> <em>identity: none</em>
+						</li>
+					</ol>
+				</div>
+			</div>
+		)
+	}
+	{
+		id === 'postgres-with-quic' && (
+			<div class="qr">
+				<canvas />
+			</div>
+		)
+	}
+	{
+		id === 'light' && (
+			<div class="lt">
+				<div class="lt-peer">
+					<span class="label">peer a · sync engine</span>
+					<ol data-f="log-a">
+						<li>→ call #40 merge(delta)</li>
+					</ol>
+				</div>
+				<div class="lt-wire" data-f="wire">
+					<span class="label lt-tag">RTCDataChannel · no server in the path</span>
+				</div>
+				<div class="lt-peer">
+					<span class="label">peer b · handler</span>
+					<ol data-f="log-b">
+						<li>← handle #40</li>
+					</ol>
+				</div>
+			</div>
+		)
+	}
+	{
+		id === 'filter-rs' && (
+			<div class="tui">
+				<div class="tui-bar">
+					<span>filter-rs</span>
+					<span>app.log</span>
+					<span>
+						<b data-f="hits">3</b> / <span data-f="seen">18,204</span>
+					</span>
+				</div>
+				<ol class="tui-lines" data-f="lines">
+					<li class="err">12:04:09 ERROR db error: unique constraint violated</li>
+					<li class="warn">12:04:02 WARN  http timeout after 5000ms, retrying</li>
+					<li>12:03:58 INFO  sync sync batch applied: 128 ops</li>
+				</ol>
+				<div class="tui-prompt">
+					/<span data-f="query">error</span>
+					<i class="caret" />
+				</div>
+			</div>
+		)
+	}
+</div>
+
+<style is:global>
+	.viz {
+		position: relative;
+		height: 100%;
+		min-height: 260px;
+		padding: 1.25rem;
+		font-family: var(--font-mono);
+		font-size: 0.8rem;
+		color: var(--ink);
+		background:
+			radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
+			var(--bg-2);
+	}
+	.viz.large {
+		min-height: 380px;
+	}
+	.viz ol {
+		list-style: none;
+		padding: 0;
+	}
+	.viz-net {
+		width: 100%;
+		height: calc(100% - 1.5rem);
+		min-height: 220px;
+	}
+	.viz.large .viz-net {
+		min-height: 330px;
+	}
+	.viz-cap {
+		position: absolute;
+		left: 1.25rem;
+		bottom: 0.9rem;
+	}
+
+	/* firefly */
+	.ff {
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 0.75rem;
+		height: 100%;
+	}
+	.ff-col {
+		display: flex;
+		flex-direction: column;
+		gap: 0.6rem;
+		min-width: 0;
+	}
+	.ff-col.srv {
+		padding: 0 0.6rem;
+		border-inline: 1px dashed var(--line-2);
+	}
+	.ff-lane {
+		display: flex;
+		flex-direction: column;
+		justify-content: flex-end;
+		gap: 0.45rem;
+		flex: 1;
+		min-height: 13rem;
+		overflow: hidden;
+	}
+	.msg {
+		max-width: 100%;
+		padding: 0.45rem 0.6rem;
+		border-radius: 10px;
+		overflow-wrap: anywhere;
+		line-height: 1.35;
+		animation: msg-in 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+	}
+	.msg.out {
+		align-self: flex-end;
+		background: var(--accent);
+		color: var(--accent-ink);
+		border-bottom-right-radius: 3px;
+	}
+	.msg.in {
+		align-self: flex-start;
+		background: var(--panel-2);
+		border: 1px solid var(--line-2);
+		border-bottom-left-radius: 3px;
+	}
+	.msg.cipher {
+		align-self: center;
+		color: var(--faint);
+		border: 1px dashed var(--line-2);
+		letter-spacing: 0.04em;
+	}
+	@keyframes msg-in {
+		from {
+			opacity: 0;
+			transform: translateY(0.5rem) scale(0.97);
+		}
+	}
+
+	/* noon */
+	.nn {
+		display: grid;
+		grid-template-columns: 1.1fr 1fr;
+		gap: 1rem;
+		height: 100%;
+		align-items: stretch;
+	}
+	.nn-form,
+	.nn-inbox {
+		padding: 0.9rem;
+		border-radius: 10px;
+		background: var(--panel);
+		border: 1px solid var(--line-2);
+	}
+	.nn dl {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 0.4rem 0.8rem;
+		margin: 0.8rem 0;
+	}
+	.nn dt {
+		color: var(--faint);
+	}
+	.nn dd {
+		min-height: 1.3em;
+		border-bottom: 1px solid var(--line-2);
+		transition: color 0.3s;
+	}
+	.nn dd.redacted {
+		color: transparent;
+		background: repeating-linear-gradient(90deg, var(--ink) 0 0.55em, transparent 0.55em 0.62em) 0 0.2em / 100% 0.9em
+			no-repeat;
+		opacity: 0.85;
+	}
+	.nn dd.answer {
+		color: var(--ink);
+	}
+	.nn-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		align-items: center;
+	}
+	.nn-submit {
+		padding: 0.35rem 0.6rem;
+		border-radius: 6px;
+		background: var(--ink);
+		color: var(--bg);
+		transition: transform 0.15s;
+	}
+	.nn-submit.press {
+		transform: scale(0.94);
+		background: var(--accent);
+	}
+	.nn-proof {
+		color: var(--ok);
+		opacity: 0;
+		transition: opacity 0.3s;
+	}
+	.nn-proof.on {
+		opacity: 1;
+	}
+	.nn-inbox b {
+		color: var(--accent);
+	}
+	.nn-inbox ol {
+		display: grid;
+		gap: 0.5rem;
+		margin-top: 0.8rem;
+	}
+	.nn-inbox li {
+		display: grid;
+		gap: 0.1rem;
+		padding: 0.5rem 0.6rem;
+		border-radius: 8px;
+		background: var(--panel-2);
+		animation: msg-in 0.4s ease;
+	}
+	.nn-inbox em {
+		color: var(--ok);
+		font-style: normal;
+		font-size: 0.72rem;
+	}
+
+	/* quic race */
+	.viz-postgres-with-quic {
+		padding: 0.75rem;
+	}
+	.qr,
+	.qr canvas {
+		width: 100%;
+		height: 100%;
+		min-height: 250px;
+	}
+	.viz.large .qr canvas {
+		height: 360px;
+	}
+
+	/* infinity: screenshots crossfading, 4s each */
+	.viz-infinity {
+		padding: 0;
+		overflow: hidden;
+	}
+	.viz-infinity.large {
+		aspect-ratio: 16 / 9;
+		height: auto;
+	}
+	.inf {
+		position: absolute;
+		inset: 0;
+		background: #0b0b0b;
+	}
+	.inf img {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		object-position: left center;
+		transform-origin: left center;
+		opacity: 0;
+		animation: inf-slide 24s linear infinite;
+		animation-delay: calc(var(--i) * 4s);
+	}
+	.inf img:first-child {
+		opacity: 1;
+	}
+	@keyframes inf-slide {
+		0% { opacity: 0; transform: scale(1.08); }
+		3% { opacity: 1; }
+		17% { opacity: 1; }
+		21% { opacity: 0; transform: scale(1); }
+		100% { opacity: 0; transform: scale(1); }
+	}
+	.inf-g {
+		position: absolute;
+		right: 0.75rem;
+		bottom: 0.75rem;
+		padding: 0.3rem 0.6rem;
+		border-radius: 999px;
+		color: #fff;
+		background: rgb(0 0 0 / 0.55);
+		backdrop-filter: blur(6px);
+	}
+	.inf-g b {
+		display: inline-block;
+		color: #f5c542;
+		animation: inf-g 24s steps(1) infinite;
+	}
+	@keyframes inf-g {
+		0% { transform: rotate(0deg); }
+		16.6% { transform: rotate(90deg); }
+		33.3% { transform: rotate(180deg); }
+		50% { transform: rotate(270deg); }
+		66.6% { transform: rotate(90deg); }
+		83.3% { transform: rotate(0deg); }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.inf img,
+		.inf-g b {
+			animation: none;
+		}
+	}
+
+	/* light */
+	.lt {
+		display: grid;
+		grid-template-columns: 1fr 1.3fr 1fr;
+		gap: 0.75rem;
+		height: 100%;
+		align-items: center;
+	}
+	.lt-peer {
+		align-self: stretch;
+		padding: 0.8rem;
+		border-radius: 10px;
+		background: var(--panel);
+		border: 1px solid var(--line-2);
+		min-width: 0;
+	}
+	.lt-peer ol {
+		display: grid;
+		gap: 0.3rem;
+		margin-top: 0.7rem;
+		font-size: 0.74rem;
+		color: var(--dim);
+	}
+	.lt-peer li:first-child {
+		color: var(--ink);
+	}
+	.lt-wire {
+		position: relative;
+		height: 4.5rem;
+		border-block: 1px solid var(--line-2);
+		background: repeating-linear-gradient(90deg, var(--line) 0 6px, transparent 6px 12px) center / 100% 1px no-repeat;
+	}
+	.lt-tag {
+		position: absolute;
+		left: 0;
+		right: 0;
+		bottom: -1.7rem;
+		text-align: center;
+		font-size: 0.62rem;
+	}
+	.rpc {
+		position: absolute;
+		left: 0;
+		padding: 0.25rem 0.5rem;
+		border-radius: 999px;
+		font-size: 0.72rem;
+		white-space: nowrap;
+	}
+	.rpc.call {
+		top: 0.55rem;
+		background: var(--accent);
+		color: var(--accent-ink);
+		box-shadow: var(--glow);
+	}
+	.rpc.ret {
+		bottom: 0.55rem;
+		background: var(--ok);
+		color: var(--bg);
+	}
+
+	/* filter */
+	.viz-filter-rs {
+		padding: 0.9rem;
+	}
+	.tui {
+		display: flex;
+		flex-direction: column;
+		height: 100%;
+		min-height: 240px;
+		border-radius: 8px;
+		border: 1px solid var(--line-2);
+		background: color-mix(in srgb, var(--bg) 85%, #000);
+		overflow: hidden;
+	}
+	.tui-bar {
+		display: flex;
+		justify-content: space-between;
+		gap: 1rem;
+		padding: 0.35rem 0.7rem;
+		background: var(--ink);
+		color: var(--bg);
+		font-size: 0.74rem;
+	}
+	.tui-lines {
+		flex: 1;
+		padding: 0.5rem 0.7rem !important;
+		font-size: 0.74rem;
+		line-height: 1.55;
+		white-space: pre;
+		overflow: hidden;
+		color: var(--dim);
+	}
+	.tui-lines li {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		animation: msg-in 0.25s ease;
+	}
+	.tui-lines .err {
+		color: var(--pen);
+	}
+	.tui-lines .warn {
+		color: var(--amber);
+	}
+	.tui-lines mark {
+		background: var(--accent);
+		color: var(--accent-ink);
+		border-radius: 2px;
+	}
+	.tui-prompt {
+		padding: 0.4rem 0.7rem;
+		border-top: 1px solid var(--line-2);
+	}
+	.caret {
+		display: inline-block;
+		width: 0.55em;
+		height: 1em;
+		margin-left: 2px;
+		vertical-align: -0.15em;
+		background: var(--accent);
+		animation: blink 1s steps(1) infinite;
+	}
+	@keyframes blink {
+		50% {
+			opacity: 0;
+		}
+	}
+
+	@media (max-width: 560px) {
+		.ff {
+			gap: 0.4rem;
+			font-size: 0.7rem;
+		}
+		.nn,
+		.lt {
+			grid-template-columns: 1fr;
+		}
+		.lt-wire {
+			height: 4rem;
+		}
+		.lt-tag {
+			bottom: -1.4rem;
+		}
+	}
+</style>

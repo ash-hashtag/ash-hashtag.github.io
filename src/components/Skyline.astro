@@ -1,0 +1,374 @@
+---
+import { fmt, type GitHubData, GITHUB_USER, type Stats } from '../lib/github';
+
+interface Props {
+	data: GitHubData;
+	stats: Stats;
+}
+
+const { data, stats } = Astro.props;
+const max = Math.max(...data.days.map((d) => d.count), 1);
+const nice = (date: string, opts: Intl.DateTimeFormatOptions) =>
+	new Date(`${date}T00:00:00Z`).toLocaleDateString('en-US', { timeZone: 'UTC', ...opts });
+const tip = (d: { date: string; count: number }) =>
+	`${d.count ? fmt(d.count) : 'No'} contribution${d.count === 1 ? '' : 's'} · ${nice(d.date, { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' })}`;
+
+// isometric-ish projection: weeks run right and slightly down, weekdays run towards the viewer
+const S = 13;
+const U = { x: S, y: S * 0.26 };
+const V = { x: -S * 0.58, y: S * 0.4 };
+const GAP = 0.8;
+const HMAX = 120;
+const weeks = stats.weeks.length;
+const O = { x: 7 * -V.x + 24, y: HMAX + 18 };
+const W = Math.ceil(O.x + weeks * U.x + 24);
+const H = Math.ceil(O.y + weeks * U.y + 7 * V.y + 40);
+
+const pt = (p: { x: number; y: number }) => `${p.x.toFixed(1)},${p.y.toFixed(1)}`;
+const add = (...ps: { x: number; y: number }[]) => ps.reduce((a, b) => ({ x: a.x + b.x, y: a.y + b.y }), { x: 0, y: 0 });
+const scale = (p: { x: number; y: number }, k: number) => ({ x: p.x * k, y: p.y * k });
+
+const cells = stats.weeks
+	.flatMap((week, w) => week.map((day, d) => ({ day, w, d })))
+	.sort((a, b) => a.w * U.y + a.d * V.y - (b.w * U.y + b.d * V.y) || a.w - b.w)
+	.map(({ day, w, d }) => {
+		const h = day.count ? 5 + Math.sqrt(day.count / max) * (HMAX - 5) : 1.6;
+		const P = add(O, scale(U, w), scale(V, d));
+		const u = scale(U, GAP), v = scale(V, GAP), up = { x: 0, y: -h };
+		const a = P, b = add(P, u), c = add(P, u, v), e = add(P, v);
+		return {
+			day,
+			w,
+			top: [a, b, c, e].map((p) => pt(add(p, up))).join(' '),
+			right: [b, c, add(c, up), add(b, up)].map(pt).join(' '),
+			front: [e, c, add(c, up), add(e, up)].map(pt).join(' '),
+		};
+	});
+
+const monthStarts = stats.weeks
+	.map((week, w) => ({ w, date: week[0].date }))
+	.filter(({ date }, i, all) => i > 0 && date.slice(5, 7) !== all[i - 1].date.slice(5, 7))
+	.map(({ w, date }) => ({ w, label: nice(date, { month: 'short' }) }));
+const months = monthStarts.map(({ w, label }) => ({ ...add(O, scale(U, w), scale(V, 7.6)), label }));
+const angle = (Math.atan2(U.y, U.x) * 180) / Math.PI;
+
+const rel = (iso: string) => {
+	const s = (Date.now() - Date.parse(iso)) / 1000;
+	for (const [n, unit] of [[86400, 'day'], [3600, 'hour'], [60, 'minute']] as const) {
+		if (s >= n) return `${Math.floor(s / n)} ${unit}${Math.floor(s / n) > 1 ? 's' : ''} ago`;
+	}
+	return 'just now';
+};
+
+const tiles = [
+	{ value: fmt(stats.total), label: 'contributions, last 12 months' },
+	{ value: `${stats.activeDays}`, label: `active days of ${data.days.length}` },
+	{ value: `${stats.longestStreak}`, label: 'day longest streak' },
+	{ value: `${stats.currentStreak}`, label: 'day current streak' },
+	{ value: `${stats.best.count}`, label: `best day · ${nice(stats.best.date, { month: 'short', day: 'numeric' })}` },
+	{ value: `${data.publicRepos}`, label: 'public repositories' },
+];
+---
+
+<div class="sky rise">
+	<div class="sky-tiles">
+		{
+			tiles.map((t) => (
+				<div class="tile">
+					<b>{t.value}</b>
+					<span class="label">{t.label}</span>
+				</div>
+			))
+		}
+	</div>
+
+	<div class="panel sky-panel">
+		<div class="sky-bar">
+			<span class="label">github.com/{GITHUB_USER} · contribution calendar</span>
+			<div class="sky-toggle" role="group" aria-label="Chart style">
+				<button type="button" aria-pressed="true" data-mode="iso">3d</button>
+				<button type="button" aria-pressed="false" data-mode="flat">flat</button>
+			</div>
+		</div>
+
+		<figure class="sky-fig" data-mode="iso">
+			<svg class="iso" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${fmt(stats.total)} contributions in the last year, shown as a 3D skyline`}>
+				{
+					cells.map((c) => (
+						<g class:list={['c', `l${c.day.level}`]} style={`--i:${c.w}`} data-tip={tip(c.day)}>
+							<polygon class="f" points={c.front} />
+							<polygon class="r" points={c.right} />
+							<polygon class="t" points={c.top} />
+						</g>
+					))
+				}
+				{
+					months.map((m) => (
+						<text x={m.x} y={m.y} transform={`rotate(${angle} ${m.x} ${m.y})`} class="m">
+							{m.label}
+						</text>
+					))
+				}
+			</svg>
+			<svg class="flat" viewBox={`0 0 ${weeks * 14 + 4} ${7 * 14 + 22}`} role="img" aria-label={`${fmt(stats.total)} contributions in the last year, shown as a heatmap`}>
+				{
+					stats.weeks.map((week, w) =>
+						week.map((day, d) => (
+							<rect x={w * 14 + 2} y={d * 14 + 2} width="11" height="11" rx="2.5" class={`l${day.level}`} data-tip={tip(day)} />
+						)),
+					)
+				}
+				{
+					monthStarts.map((m) => (
+						<text x={m.w * 14 + 2} y={7 * 14 + 16} class="m">
+							{m.label}
+						</text>
+					))
+				}
+			</svg>
+			<figcaption class="sky-legend label">
+				less <i class="l0"></i><i class="l1"></i><i class="l2"></i><i class="l3"></i><i class="l4"></i> more
+			</figcaption>
+		</figure>
+		<div class="sky-tip" role="status" aria-live="polite"></div>
+	</div>
+
+	<div class="panel pushes">
+		<div class="sky-bar">
+			<span class="label"><span class="dot"></span>&nbsp; latest pushes</span>
+			<a class="label" href={`https://github.com/${GITHUB_USER}`}>profile ↗</a>
+		</div>
+		<ol data-push-list>
+			{
+				data.pushes.map((p) => (
+					<li>
+						<a href={`https://github.com/${p.repo}`}>{p.repo}</a>
+						<time datetime={p.at} data-at={p.at}>{rel(p.at)}</time>
+					</li>
+				))
+			}
+		</ol>
+	</div>
+</div>
+
+<script>
+	const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+	document.querySelectorAll<HTMLElement>('.sky').forEach((sky) => {
+		const fig = sky.querySelector<HTMLElement>('.sky-fig')!;
+		const tipEl = sky.querySelector<HTMLElement>('.sky-tip')!;
+		const panel = sky.querySelector<HTMLElement>('.sky-panel')!;
+
+		sky.querySelectorAll<HTMLButtonElement>('.sky-toggle button').forEach((btn) =>
+			btn.addEventListener('click', () => {
+				fig.dataset.mode = btn.dataset.mode;
+				sky.querySelectorAll('.sky-toggle button').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+			}),
+		);
+
+		fig.addEventListener('pointerover', (e) => {
+			const cell = (e.target as Element).closest<SVGElement>('[data-tip]');
+			if (!cell) return;
+			sky.querySelectorAll('.hot').forEach((h) => h.classList.remove('hot'));
+			cell.classList.add('hot');
+			tipEl.textContent = cell.dataset.tip!;
+			const r = cell.getBoundingClientRect(), p = panel.getBoundingClientRect();
+			tipEl.style.transform = `translate(${r.left - p.left + r.width / 2}px, ${r.top - p.top}px)`;
+			tipEl.classList.add('on');
+		});
+		fig.addEventListener('pointerleave', () => {
+			tipEl.classList.remove('on');
+			sky.querySelectorAll('.hot').forEach((h) => h.classList.remove('hot'));
+		});
+
+		if (calm) return fig.classList.add('built');
+		new IntersectionObserver(
+			([e], io) => {
+				if (!e.isIntersecting) return;
+				fig.classList.add('built');
+				io.disconnect();
+			},
+			{ threshold: 0.3 },
+		).observe(fig);
+	});
+</script>
+
+<style is:global>
+	.sky {
+		display: grid;
+		gap: 1rem;
+	}
+	.sky-tiles {
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-columns: repeat(6, minmax(0, 1fr));
+		gap: 1rem;
+	}
+	.sky-panel {
+		padding: 1rem 1.1rem 0.8rem;
+	}
+	.sky-bar {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: space-between;
+		align-items: center;
+		gap: 1rem;
+	}
+	.sky-bar a {
+		text-decoration: none;
+	}
+	.sky-toggle {
+		display: flex;
+		border: 1px solid var(--line-2);
+		border-radius: 999px;
+		overflow: hidden;
+	}
+	.sky-toggle button {
+		padding: 0.3rem 0.75rem;
+		border: 0;
+		background: transparent;
+		color: var(--dim);
+		font: 0.75rem var(--font-mono);
+		cursor: pointer;
+	}
+	.sky-toggle button[aria-pressed='true'] {
+		background: var(--ink);
+		color: var(--bg);
+	}
+	.sky-fig {
+		margin-top: 0.6rem;
+	}
+	.sky-fig svg {
+		width: 100%;
+		height: auto;
+	}
+	.sky-fig[data-mode='iso'] .flat,
+	.sky-fig[data-mode='flat'] .iso {
+		display: none;
+	}
+	.sky-fig .m {
+		font: 10px var(--font-mono);
+		fill: var(--faint);
+	}
+
+	.sky .l0 {
+		--c: var(--l0);
+	}
+	.sky .l1 {
+		--c: var(--l1);
+	}
+	.sky .l2 {
+		--c: var(--l2);
+	}
+	.sky .l3 {
+		--c: var(--l3);
+	}
+	.sky .l4 {
+		--c: var(--l4);
+	}
+	.iso .t,
+	.flat rect {
+		fill: var(--c);
+	}
+	.iso .r {
+		fill: color-mix(in srgb, var(--c) 72%, #000);
+	}
+	.iso .f {
+		fill: color-mix(in srgb, var(--c) 52%, #000);
+	}
+	.iso .hot .t,
+	.flat rect.hot {
+		fill: var(--ink);
+	}
+	.iso .c {
+		transform-box: fill-box;
+		transform-origin: 50% 100%;
+	}
+	.fx .iso .c {
+		transform: scaleY(0.02);
+		transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
+		transition-delay: calc(var(--i) * 14ms);
+	}
+	.fx .built .iso .c {
+		transform: none;
+	}
+
+	.sky-legend {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 0.25rem;
+		margin-top: 0.4rem;
+		font-size: 0.65rem;
+	}
+	.sky-legend i {
+		width: 0.7rem;
+		height: 0.7rem;
+		border-radius: 2px;
+		background: var(--c);
+	}
+
+	.sky-tip {
+		position: absolute;
+		top: 0;
+		left: 0;
+		padding: 0.35rem 0.55rem;
+		border-radius: 6px;
+		background: var(--ink);
+		color: var(--bg);
+		font: 0.75rem var(--font-mono);
+		white-space: nowrap;
+		pointer-events: none;
+		opacity: 0;
+		translate: -50% calc(-100% - 8px);
+		transition: opacity 0.15s;
+	}
+	.sky-tip.on {
+		opacity: 1;
+	}
+
+	.pushes {
+		padding: 1rem 1.1rem;
+	}
+	.pushes ol {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+		gap: 0 2rem;
+		margin-top: 0.8rem;
+		padding: 0;
+		list-style: none;
+	}
+	.pushes li {
+		display: flex;
+		justify-content: space-between;
+		gap: 0.75rem;
+		padding: 0.55rem 0;
+		border-bottom: 1px solid var(--line);
+		font: 0.8rem var(--font-mono);
+	}
+	.pushes li a {
+		min-width: 0;
+		color: var(--ink);
+		text-decoration: none;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.pushes li a:hover {
+		color: var(--accent);
+	}
+	.pushes time {
+		color: var(--faint);
+		white-space: nowrap;
+	}
+
+	@media (max-width: 1000px) {
+		.sky-tiles {
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+		}
+	}
+	@media (max-width: 520px) {
+		.sky-tiles {
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+		}
+	}
+</style>

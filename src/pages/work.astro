@@ -1,80 +1,41 @@
 ---
-import FormFeed from '../components/FormFeed.astro';
-import MemoHeader from '../components/MemoHeader.astro';
-import Sec from '../components/Sec.astro';
+import ProjectCard from '../components/ProjectCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { AUTHOR, getWork, memoDate, memoNumber } from '../lib/memo';
+import { getWork } from '../lib/site';
 
 const work = await getWork();
-const pad = (n: number) => String(n).padStart(4, '0');
-
-const entries = [
-	{ n: 0, href: '/', title: 'Sri Pranav Tene: Private Products and Fast Systems', date: memoDate(), keywords: 'portfolio' },
-	{ n: 1, href: '/about/', title: 'The Author: Background, Experience, and Toolchain', date: memoDate(), keywords: 'about, experience' },
-	...work.map((p, i) => ({
-		n: memoNumber(i),
-		href: `/work/${p.id}/`,
-		title: p.data.title,
-		date: memoDate(p.data.publishDate),
-		keywords: p.data.tags.filter((t) => t !== 'Dev').join(', '),
-		description: p.data.description,
-	})),
-];
 ---
 
-<BaseLayout title="Sri Pranav Tene — RFC Index" description="Index of every project memo by Sri Pranav Tene.">
-	<MemoHeader
-		left={['Independent Submission', 'RFC Index', 'Category: Informational']}
-		title="RFC Index"
-		docname="rfc-index.txt"
-	/>
-
-	<Sec id="about-index" title="About This Index">
-		<p>
-			Every memo filed by {AUTHOR.name}, in order of number. Memos 0 and 1 describe the author; memos
-			{memoNumber(0)} onward each describe one project, in order of priority.
-		</p>
-	</Sec>
-
-	<Sec id="index" title="Index">
-		<ol class="index">
-			{
-				entries.map((e) => (
-					<li>
-						<a href={e.href} class="num">{pad(e.n)}</a>
-						<div>
-							<a href={e.href}>{e.title}</a>. {AUTHOR.short}. {e.date}. (Keywords: {e.keywords}) (Status:
-							INFORMATIONAL)
-							{e.description && <p class="desc">{e.description}</p>}
-						</div>
-					</li>
-				))
-			}
-		</ol>
-	</Sec>
-
-	<FormFeed doc="RFC Index" short="Index" last />
+<BaseLayout
+	title="Work · Sri Pranav Tene"
+	description="Projects by Sri Pranav Tene: Lupyd, Firefly, Noon, Infinity, Postgres over QUIC, Light, Filter and Mantis."
+	image="/og/home.png"
+>
+	<main class="section" style="border-top:0">
+		<div class="wrap">
+			<div class="section-head rise">
+				<h1>All work</h1>
+				<p>Products, protocols and tools, in priority order. Each panel runs a live sketch of the idea; open one for the details.</p>
+			</div>
+			<div class="grid">
+				{work.map((project, i) => <ProjectCard project={project} index={i} />)}
+			</div>
+		</div>
+	</main>
 </BaseLayout>
 
 <style>
-	.index {
-		list-style: none;
-		padding: 0;
+	h1 {
+		font-size: clamp(2.8rem, 7vw, 5rem);
 	}
-	.index li {
+	.grid {
 		display: grid;
-		grid-template-columns: 5ch 1fr;
-		gap: 1ch;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.25rem;
 	}
-	.index li + li {
-		margin-top: 1.2rem;
-	}
-	.num {
-		color: var(--dim) !important;
-		text-decoration: none;
-	}
-	.desc {
-		margin-top: 0.3rem;
-		color: var(--dim);
+	@media (max-width: 860px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

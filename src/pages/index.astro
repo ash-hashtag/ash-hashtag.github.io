@@ -1,240 +1,268 @@
 ---
-import FormFeed from '../components/FormFeed.astro';
-import MemoHeader from '../components/MemoHeader.astro';
-import Sec from '../components/Sec.astro';
+import Experience from '../components/Experience.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import Skyline from '../components/Skyline.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { AUTHOR, SOCIALS, getWork, memoNumber } from '../lib/memo';
+import { fmt, getGitHub, statsOf } from '../lib/github';
+import { heroGraph } from '../lib/graphs';
+import { AUTHOR, SOCIALS, getWork } from '../lib/site';
 
 const work = await getWork();
-const year = new Date().getFullYear();
-const DOC = 'RFC 0';
-const SHORT = 'Portfolio';
-const DECRYPT = new Set(['firefly', 'noon']);
+const featured = work.slice(0, 4);
+const rest = work.slice(4);
 
-const stack = String.raw`
-+--------+       +----------+       +---------+       +--------+
-|  idea  |------>| protocol |------>| product |------>| people |
-+--------+       +----------+       +---------+       +--------+
-`.slice(1);
-
-const toc = [
-	{ id: 'introduction', num: '1', title: 'Introduction', pg: 2 },
-	{ id: 'conventions', num: '2', title: 'Conventions Used in This Document', pg: 2 },
-	{
-		id: 'work',
-		num: '3',
-		title: 'Work',
-		pg: 3,
-		children: work.map((p, i) => ({ id: p.id, num: `3.${i + 1}`, title: p.data.title, pg: 3 })),
-	},
-	{ id: 'security', num: '4', title: 'Security Considerations', pg: 4 },
-	{ id: 'iana', num: '5', title: 'IANA Considerations', pg: 4 },
-	{ id: 'references', num: '6', title: 'References', pg: 4 },
-	{ id: 'address', title: "Author's Address", pg: 4 },
-];
+const gh = await getGitHub();
+const stats = statsOf(gh);
+const since = new Date(gh.since).getUTCFullYear();
+const weekends = gh.days.filter((d) => [0, 6].includes(new Date(`${d.date}T00:00:00Z`).getUTCDay()));
+const weekendActive = weekends.filter((d) => d.count).length;
+const busyWeekends = weekendActive * 2 > weekends.length;
 ---
 
 <BaseLayout
-	title="Sri Pranav Tene — RFC 0: Private Products and Fast Systems"
-	description="Sri Pranav Tene is a software engineer and the founder of Lupyd, building privacy-first products, end-to-end encrypted messaging, and peer-to-peer systems."
+	title="Sri Pranav Tene · Founder of Lupyd · Rust, encryption & real-time systems"
+	description={`Software engineer and founder building privacy-first products: Rust backends, MLS and libsignal encryption, WebRTC and QUIC transports. ${fmt(stats.total)} GitHub contributions in the last year.`}
+	image="/og/home.png"
 >
-	<MemoHeader
-		left={['Independent Submission', 'Request for Comments: 0', 'Obsoletes: v1', 'Category: Informational']}
-		title="Sri Pranav Tene: Private Products and Fast Systems"
-		docname="draft-tene-portfolio-latest"
-	/>
-
-	<Sec id="abstract" title="Abstract">
-		<p>
-			This memo documents the work of Sri Pranav Tene, a software engineer based in Hyderabad and the
-			founder of Lupyd. It covers a privacy-first social platform, end-to-end encrypted messaging,
-			peer-to-peer transport, and a handful of smaller tools, and describes how to start a
-			collaboration with the author.
-		</p>
-	</Sec>
-
-	<Sec id="status" title="Status of This Memo">
-		<p>
-			This document is not an Internet Standards Track specification. It is published for
-			informational purposes, <mark class="circle">and for hiring.</mark>
-		</p>
-		<p>
-			This is a living document and may be updated, replaced, or obsoleted at any time. Comments are
-			welcome at <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>. Distribution of this memo is
-			unlimited.
-		</p>
-		<aside class="note" style="--tilt:-4deg">hiring? my address is at the very bottom</aside>
-	</Sec>
-
-	<Sec id="copyright" title="Copyright Notice">
-		<p>
-			Copyright (c) {year} {AUTHOR.name}. The source of this page is available under the MIT License
-			at <a href="https://github.com/ash-hashtag/portfolio">github.com/ash-hashtag/portfolio</a>.
-		</p>
-	</Sec>
-
-	<Sec id="toc" title="Table of Contents">
-		<ol class="toc">
-			{
-				toc.map((s) => (
-					<li>
-						<span class="row">
-							<a href={`#${s.id}`}>{s.num ? `${s.num}.  ${s.title}` : s.title}</a>
-							<span class="pg">{s.pg}</span>
-						</span>
-						{s.children && (
-							<ol>
-								{s.children.map((c) => (
-									<li>
-										<span class="row">
-											<a href={`#${c.id}`}>{`${c.num}.  ${c.title}`}</a>
-											<span class="pg">{c.pg}</span>
-										</span>
-									</li>
-								))}
-							</ol>
-						)}
-					</li>
-				))
-			}
-		</ol>
-	</Sec>
-
-	<FormFeed doc={DOC} short={SHORT} />
-
-	<Sec id="introduction" num="1" title="Introduction">
-		<p>
-			The author works in the layer where hard technical ideas become dependable products: the part
-			after the whiteboard and before the user notices anything at all.
-		</p>
-		<figure>
-			<pre>{stack}</pre>
-			<figcaption>Figure 1: Where the author works</figcaption>
-		</figure>
-		<aside class="note" style="--tilt:-3deg">the middle two are the fun part</aside>
-		<p>
-			Most of that work happens at Lupyd [<a href="#ref-lupyd">LUPYD</a>], a privacy-focused social and
-			collaboration platform built from the ground up: Rust on the server, React and Tauri on the
-			clients, and MLS, WebSockets, WebTransport and WebRTC in between. Outside it, the author writes
-			Rust, C++, TypeScript, Flutter and Go, and has shipped audio processing, GPU compute, mobile
-			apps, smart contracts and a programming language.
-		</p>
-		<p>
-			Section 3 lists the work. A longer account of the author is filed separately as
-			<a href="/about/">RFC 1</a>.
-		</p>
-	</Sec>
-
-	<Sec id="conventions" num="2" title="Conventions Used in This Document">
-		<p>
-			The key words "<span class="kw">MUST</span>", "<span class="kw">MUST NOT</span>", "<span class="kw">SHOULD</span>", "<span class="kw">SHOULD NOT</span>", and "<span class="kw">MAY</span>" in this document are to be interpreted as described in BCP 14
-			[<a href="#ref-rfc2119">RFC2119</a>] [<a href="#ref-rfc8174">RFC8174</a>] when, and only when,
-			they appear in all capitals, as shown here.
-		</p>
-		<p>The author's own work is held to the following:</p>
-		<ul>
-			<li>User data <span class="kw">MUST NOT</span> be collected merely because it can be.</li>
-			<li>Encryption <span class="kw">SHOULD</span> be <mark class="circle">end-to-end</mark>. The server is not a trusted party.</li>
-			<li>A round trip that can be removed <span class="kw">SHOULD</span> be removed.</li>
-			<li>A dependency <span class="kw">MAY</span> be added when it pays rent.</li>
-			<li>
-				Code <span class="kw">MUST</span> remain understandable by whoever maintains it next, including
-				the author in a year.
-			</li>
-		</ul>
-		<aside class="note" style="--tilt:2deg">read these as promises, not slogans</aside>
-	</Sec>
-
-	<FormFeed doc={DOC} short={SHORT} />
-
-	<Sec id="work" num="3" title="Work">
-		<p>
-			Projects are listed in order of priority. Each has a full memo with a figure and references;
-			the complete list is in the <a href="/work/">index</a>.
-		</p>
-		{
-			work.map((p, i) => (
-				<Sec sub id={p.id} num={`3.${i + 1}`} title={p.data.title}>
-					<p data-decrypt={DECRYPT.has(p.id) ? '' : undefined}>{p.data.description}</p>
-					<p class="meta-line">
-						Keywords: {p.data.tags.filter((t) => t !== 'Dev').join(', ')}
-						<br />
-						Full memo: <a href={`/work/${p.id}/`}>RFC {memoNumber(i)}</a>
-						{p.data.githubUrl && (
-							<>
-								{' · '}Source: <a href={p.data.githubUrl}>{p.data.githubUrl.replace('https://', '')}</a>
-							</>
-						)}
-						{p.data.url && (
-							<>
-								{' · '}Live: <a href={p.data.url}>{p.data.url.replace('https://', '')}</a>
-							</>
-						)}
+	<main>
+		<section class="hero">
+			<div class="wrap hero-grid">
+				<div class="hero-copy">
+					<p class="label hero-kicker">Founder &amp; engineer · Lupyd · {AUTHOR.city}</p>
+					<h1>I build private, real-time software <span>from the wire protocol up.</span></h1>
+					<p class="lede">
+						Rust backends, end-to-end encryption with MLS and libsignal, WebRTC and QUIC transports, and the React,
+						Tauri and Flutter apps on top, with C/C++, WebAssembly and <a href="/work/infinity/">Godot games</a> along
+						the way. Right now I'm building <a href="/work/lupyd/">Lupyd</a>, an end-to-end encrypted collaboration
+						platform.
 					</p>
-				</Sec>
-			))
-		}
-	</Sec>
+					<div class="cta">
+						<a class="btn primary" href="#work">See the work ↓</a>
+						<a class="btn" href={`mailto:${AUTHOR.email}`}>Email me</a>
+						{SOCIALS.slice(0, 2).map((s) => <a class="btn" href={s.href}>{s.label} ↗</a>)}
+					</div>
+					<dl class="hero-stats">
+						<div><dt>{fmt(stats.total)}</dt><dd class="label">contributions / yr</dd></div>
+						<div><dt>{stats.activeDays}</dt><dd class="label">active days</dd></div>
+						<div><dt>{gh.publicRepos}</dt><dd class="label">public repos</dd></div>
+						<div><dt>{since}</dt><dd class="label">shipping since</dd></div>
+					</dl>
+				</div>
+				<div class="hero-net">
+					<canvas data-net={JSON.stringify(heroGraph)} aria-label="A routing diagram of Sri Pranav Tene's projects and the technology under them"></canvas>
+					<p class="label hero-hint">hover a project · click to open it</p>
+				</div>
+			</div>
+		</section>
 
-	<FormFeed doc={DOC} short={SHORT} />
+		<section id="work" class="section">
+			<div class="wrap">
+				<div class="section-head rise">
+					<h2><span class="num mono">01</span> Selected work</h2>
+					<p>
+						Every panel below is live: it runs the idea behind the project, not a screenshot of it. Encrypted
+						messaging, anonymous forms, peer-to-peer RPC, a faster Postgres transport and the tools in between.
+					</p>
+				</div>
+				<div class="featured">
+					{featured.map((project, i) => <ProjectCard project={project} index={i} feature />)}
+				</div>
+				<div class="grid">
+					{rest.map((project, i) => <ProjectCard project={project} index={i + featured.length} />)}
+				</div>
+			</div>
+		</section>
 
-	<Sec id="security" num="4" title="Security Considerations">
-		<p>
-			Projects handed to the author will be asked for a threat model before they are asked for a
-			deadline.
-		</p>
-		<aside class="note" style="--tilt:-2deg">I mean it.</aside>
-		<p>
-			Mail sent to the address in this memo is not end-to-end encrypted. For anything sensitive, ask
-			for a secure channel first.
-		</p>
-	</Sec>
+		<section id="activity" class="section">
+			<div class="wrap">
+				<div class="section-head rise">
+					<h2><span class="num mono">02</span> Shipping, every week</h2>
+					<p>
+						My public GitHub calendar for the last twelve months, one column per week. Pulled at build time; the
+						latest pushes refresh live.
+						{busyWeekends && <span class="note" style="--tilt:-2deg"> weekends too: {weekendActive} of {weekends.length}</span>}
+					</p>
+				</div>
+				<Skyline data={gh} stats={stats} />
+			</div>
+		</section>
 
-	<Sec id="iana" num="5" title="IANA Considerations">
-		<p>This document has no IANA actions. It does request a conversation; see Author's Address.</p>
-	</Sec>
+		<section id="experience" class="section">
+			<div class="wrap">
+				<div class="section-head rise">
+					<h2><span class="num mono">03</span> Experience</h2>
+					<p>Founder first, but hands on the code at every layer: protocol, server, client and the build in between.</p>
+				</div>
+				<Experience />
+			</div>
+		</section>
 
-	<Sec id="references" num="6" title="References">
-		<Sec sub id="normative" num="6.1" title="Normative References">
-			<dl class="defs">
-				<dt id="ref-rfc2119">[RFC2119]</dt>
-				<dd>
-					Bradner, S., "Key words for use in RFCs to Indicate Requirement Levels", BCP 14, RFC 2119,
-					March 1997, <a href="https://www.rfc-editor.org/rfc/rfc2119">&lt;https://www.rfc-editor.org/rfc/rfc2119&gt;</a>.
-				</dd>
-				<dt id="ref-rfc8174">[RFC8174]</dt>
-				<dd>
-					Leiba, B., "Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words", BCP 14, RFC 8174,
-					May 2017, <a href="https://www.rfc-editor.org/rfc/rfc8174">&lt;https://www.rfc-editor.org/rfc/rfc8174&gt;</a>.
-				</dd>
-			</dl>
-		</Sec>
-		<Sec sub id="informative" num="6.2" title="Informative References">
-			<dl class="defs">
-				<dt id="ref-lupyd">[LUPYD]</dt>
-				<dd><a href="https://www.lupyd.com">&lt;https://www.lupyd.com&gt;</a></dd>
-				{
-					SOCIALS.map((s) => (
-						<>
-							<dt>[{s.label.toUpperCase()}]</dt>
-							<dd><a href={s.href}>&lt;{s.href}&gt;</a></dd>
-						</>
-					))
-				}
-			</dl>
-		</Sec>
-	</Sec>
-
-	<Sec id="address" title="Author's Address">
-		<p>
-			{AUTHOR.name}<br />
-			{AUTHOR.org}<br />
-			{AUTHOR.city}<br />
-			<br />
-			Email: <a href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a><br />
-			URI: &nbsp;&nbsp;<a href="/">https://{AUTHOR.site}/</a>
-		</p>
-	</Sec>
-
-	<FormFeed doc={DOC} short={SHORT} last />
+		<section id="contact" class="section contact">
+			<div class="wrap rise">
+				<p class="label">04 / contact</p>
+				<h2>Have something hard to build? <span>Let's talk.</span></h2>
+				<div class="contact-row">
+					<a class="contact-mail" href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
+					<button class="btn" type="button" data-copy={AUTHOR.email}>copy</button>
+				</div>
+				<div class="cta">
+					{SOCIALS.map((s) => <a class="btn" href={s.href}>{s.label} ↗</a>)}
+				</div>
+			</div>
+		</section>
+	</main>
 </BaseLayout>
+
+<script>
+	document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((btn) =>
+		btn.addEventListener('click', async () => {
+			try {
+				await navigator.clipboard.writeText(btn.dataset.copy!);
+				btn.textContent = 'copied ✓';
+			} catch {
+				btn.textContent = 'press ⌘/ctrl+c';
+			}
+			setTimeout(() => (btn.textContent = 'copy'), 1800);
+		}),
+	);
+</script>
+
+<style>
+	.hero {
+		position: relative;
+		overflow: hidden;
+		padding-block: clamp(3rem, 7vw, 5.5rem) clamp(3rem, 6vw, 5rem);
+		background:
+			radial-gradient(60rem 30rem at 85% 10%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 70%),
+			radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 24px 24px;
+	}
+	.hero-grid {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+		gap: clamp(2rem, 4vw, 4rem);
+		align-items: center;
+	}
+	.hero-kicker {
+		color: var(--accent);
+	}
+	h1 {
+		margin-top: 1.1rem;
+		font-size: clamp(2.6rem, 5.2vw, 4.6rem);
+		line-height: 0.98;
+	}
+	h1 span {
+		color: var(--dim);
+	}
+	.lede {
+		margin-top: 1.5rem;
+		max-width: 36rem;
+		font-size: clamp(1.02rem, 1.5vw, 1.18rem);
+		color: var(--dim);
+	}
+	.lede a {
+		color: var(--ink);
+		text-decoration-color: var(--accent);
+		text-underline-offset: 0.2em;
+	}
+	.cta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.6rem;
+		margin-top: 2rem;
+	}
+	.hero-stats {
+		display: grid;
+		grid-template-columns: repeat(4, auto);
+		justify-content: start;
+		gap: 0.5rem 2.2rem;
+		margin-top: 2.6rem;
+		padding-top: 1.4rem;
+		border-top: 1px solid var(--line);
+	}
+	.hero-stats dt {
+		font: 700 clamp(1.6rem, 2.6vw, 2.1rem) / 1 var(--font-display);
+	}
+	.hero-stats dd {
+		margin-top: 0.3rem;
+	}
+	.hero-net {
+		position: relative;
+		aspect-ratio: 1 / 0.92;
+		border: 1px solid var(--line);
+		border-radius: 20px;
+		background: color-mix(in srgb, var(--panel) 70%, transparent);
+	}
+	.hero-net canvas {
+		width: 100%;
+		height: 100%;
+	}
+	.hero-hint {
+		position: absolute;
+		right: 1rem;
+		bottom: 0.8rem;
+		font-size: 0.62rem;
+		color: var(--faint);
+	}
+	@media (max-width: 900px) {
+		.hero-grid {
+			grid-template-columns: 1fr;
+		}
+		.hero-net {
+			aspect-ratio: 1 / 0.85;
+		}
+		.hero-stats {
+			grid-template-columns: repeat(2, auto);
+		}
+	}
+
+	.featured {
+		display: grid;
+		gap: 1.25rem;
+	}
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1.25rem;
+		margin-top: 1.25rem;
+	}
+	@media (max-width: 860px) {
+		.grid {
+			grid-template-columns: 1fr;
+		}
+	}
+	.section-head h2 .num {
+		font-size: 0.4em;
+		vertical-align: 0.9em;
+		margin-right: 0.3rem;
+	}
+	.section-head .note {
+		display: block;
+		margin-top: 0.5rem;
+	}
+
+	.contact {
+		background: radial-gradient(50rem 24rem at 15% 100%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%);
+	}
+	.contact h2 {
+		margin-top: 1rem;
+		font-size: clamp(2.6rem, 7vw, 6rem);
+		max-width: 14ch;
+	}
+	.contact h2 span {
+		color: var(--accent);
+	}
+	.contact-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+	.contact-mail {
+		font: 600 clamp(1.2rem, 3.4vw, 2.2rem) / 1.1 var(--font-mono);
+		text-decoration: underline;
+		text-decoration-color: var(--accent);
+		text-underline-offset: 0.18em;
+		overflow-wrap: anywhere;
+	}
+</style>

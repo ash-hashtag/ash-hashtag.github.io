@@ -3,20 +3,22 @@ title: Lupyd
 publishDate: 2024-03-10 00:00:00
 priority: 1
 img: /assets/work/lupyd.webp
-img_alt: Privacy-focused social media platform
+img_alt: Lupyd, a privacy-focused collaboration platform
 description: |
-  Privacy-focused social media platform prioritizing user data protection and control.
+  Privacy-focused collaboration platform with end-to-end encryption, where the server relays and stores data it cannot read.
 tags:
   - Privacy
-  - Social Media
+  - End-to-end encryption
+  - Collaboration
   - Dev
   - Backend
 url: https://www.lupyd.com
 ---
 
-A privacy-focused social media platform built with user data protection
-and control at its core. It is designed to give users full ownership of
-their data while keeping them socially connected.
+A privacy-focused collaboration platform with end-to-end encryption.
+Teams and communities talk, share and work together, and the content is
+encrypted on their devices before it leaves them, so the server routes
+and stores ciphertext it cannot read.
 
 The backend is written in Rust; the web and desktop clients use React
 and Tauri. Group state is protected with MLS, and clients reach the

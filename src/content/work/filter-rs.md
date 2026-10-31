@@ -1,7 +1,7 @@
 ---
 title: Filter
 publishDate: 2024-01-15 00:00:00
-priority: 6
+priority: 7
 img: /assets/work/filter.webp
 img_alt: Real-time log processing interface
 description: |

@@ -1,7 +1,7 @@
 ---
 title: Light
 publishDate: 2025-01-10 00:00:00
-priority: 5
+priority: 6
 description: |
   Lightweight WebRTC-based RPC library for building peer-to-peer sync engines.
 githubUrl: https://github.com/lupyd/light

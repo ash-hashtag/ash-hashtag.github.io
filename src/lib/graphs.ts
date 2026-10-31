@@ -1,0 +1,107 @@
+import type { NetGraph } from '../scripts/net';
+
+/** The hero: every project, the technology under it, and the traces between. */
+export const heroGraph: NetGraph = {
+	nodes: [
+		{ id: 'lupyd', x: 0.42, y: 0.4, label: 'lupyd', major: true, href: '/work/lupyd/' },
+		{ id: 'firefly', x: 0.12, y: 0.16, label: 'firefly', major: true, href: '/work/firefly/' },
+		{ id: 'noon', x: 0.74, y: 0.12, label: 'noon', major: true, href: '/work/noon/' },
+		{ id: 'light', x: 0.84, y: 0.56, label: 'light', major: true, href: '/work/light/' },
+		{ id: 'quic', x: 0.16, y: 0.74, label: 'pg/quic', major: true, href: '/work/postgres-with-quic/' },
+		{ id: 'filter', x: 0.52, y: 0.92, label: 'filter', major: true, href: '/work/filter-rs/' },
+		{ id: 'mantis', x: 0.88, y: 0.9, label: 'mantis', major: true, href: '/work/mantis/' },
+		{ id: 'infinity', x: 0.34, y: 0.82, label: 'infinity', major: true, href: '/work/infinity/' },
+		{ id: 'rust', x: 0.52, y: 0.66, label: 'rust' },
+		{ id: 'mls', x: 0.02, y: 0.42, label: 'mls' },
+		{ id: 'libsignal', x: 0.36, y: 0.02, label: 'libsignal' },
+		{ id: 'webrtc', x: 0.98, y: 0.2, label: 'webrtc' },
+		{ id: 'wt', x: 0.7, y: 0.34, label: 'webtransport' },
+		{ id: 'react', x: 0.24, y: 0.5, label: 'react/tauri' },
+		{ id: 'postgres', x: 0.02, y: 0.96, label: 'postgres' },
+		{ id: 'tokio', x: 0.72, y: 0.74, label: 'tokio' },
+		{ id: 'crypto', x: 0.56, y: 0.04, label: 'blind sigs' },
+		{ id: 'wasm', x: 0.98, y: 0.4, label: 'wasm' },
+		{ id: 'cpp', x: 0.7, y: 1, label: 'c/c++' },
+		{ id: 'godot', x: 0.22, y: 1, label: 'godot' },
+	],
+	edges: [
+		['lupyd', 'firefly', 'vh'],
+		['lupyd', 'noon', 'hv'],
+		['lupyd', 'wt', 'hv'],
+		['wt', 'light', 'hv'],
+		['light', 'webrtc', 'vh'],
+		['lupyd', 'rust', 'hv'],
+		['lupyd', 'react', 'vh'],
+		['firefly', 'mls', 'vh'],
+		['firefly', 'libsignal', 'hv'],
+		['lupyd', 'crypto', 'vh'],
+		['quic', 'rust', 'hv'],
+		['quic', 'postgres', 'vh'],
+		['rust', 'filter', 'vh'],
+		['rust', 'tokio', 'hv'],
+		['tokio', 'mantis', 'hv'],
+		['tokio', 'light', 'hv'],
+		['react', 'quic', 'vh'],
+		['rust', 'wasm', 'hv'],
+		['mantis', 'cpp', 'vh'],
+		['infinity', 'godot', 'vh'],
+		['godot', 'cpp', 'hv'],
+	],
+	rate: 0.28,
+};
+
+/** Lupyd's shape: clients on the left, the Rust core, peers talking directly. */
+export const lupydGraph: NetGraph = {
+	nodes: [
+		{ id: 'web', x: 0.05, y: 0.15, label: 'web', major: true },
+		{ id: 'desktop', x: 0.05, y: 0.5, label: 'desktop', major: true },
+		{ id: 'mobile', x: 0.05, y: 0.85, label: 'mobile', major: true },
+		{ id: 'api', x: 0.55, y: 0.5, label: 'rust core', major: true },
+		{ id: 'db', x: 0.95, y: 0.2, label: 'storage', major: true },
+		{ id: 'peer', x: 0.95, y: 0.85, label: 'peer', major: true },
+		{ id: 'j1', x: 0.3, y: 0.5, label: '' },
+	],
+	edges: [
+		['web', 'j1', 'hv'],
+		['desktop', 'j1', 'hv'],
+		['mobile', 'j1', 'hv'],
+		['j1', 'api', 'hv'],
+		['api', 'db', 'hv'],
+		['mobile', 'peer', 'hv'],
+	],
+	routes: [
+		{ path: ['web', 'j1', 'api', 'db'], weight: 2 },
+		{ path: ['desktop', 'j1', 'api'], weight: 2 },
+		{ path: ['mobile', 'j1', 'api', 'db'], weight: 2 },
+		{ path: ['db', 'api', 'j1', 'web'], weight: 1 },
+		{ path: ['mobile', 'peer'], weight: 1 },
+		{ path: ['peer', 'mobile'], weight: 1 },
+	],
+	rate: 0.42,
+};
+
+/** Mantis's compiler pipeline; some programs don't make it past the checks. */
+export const mantisGraph: NetGraph = {
+	nodes: [
+		{ id: 'src', x: 0, y: 0.5, label: 'source', major: true },
+		{ id: 'lex', x: 0.2, y: 0.5, label: 'lexer', major: true },
+		{ id: 'parse', x: 0.4, y: 0.5, label: 'parser', major: true },
+		{ id: 'check', x: 0.6, y: 0.5, label: 'checks', major: true },
+		{ id: 'gen', x: 0.8, y: 0.2, label: 'codegen', major: true },
+		{ id: 'bin', x: 1, y: 0.2, label: 'binary', major: true },
+		{ id: 'err', x: 0.8, y: 0.82, label: 'unsafe: rejected', major: true },
+	],
+	edges: [
+		['src', 'lex'],
+		['lex', 'parse'],
+		['parse', 'check'],
+		['check', 'gen', 'vh'],
+		['gen', 'bin'],
+		['check', 'err', 'vh'],
+	],
+	routes: [
+		{ path: ['src', 'lex', 'parse', 'check', 'gen', 'bin'], weight: 3 },
+		{ path: ['src', 'lex', 'parse', 'check', 'err'], drop: true, weight: 1 },
+	],
+	rate: 0.55,
+};

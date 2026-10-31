@@ -1,7 +1,7 @@
 ---
 title: Postgres with QUIC
 publishDate: 2024-07-15 00:00:00
-priority: 4
+priority: 5
 img: /assets/work/postgres-with-quic.webp
 img_alt: Database performance visualization
 description: |
