@@ -26,3 +26,9 @@ pnpm-debug.log*
 
 # wrangler
 .wrangler/
+
+# lockfiles from other package managers; this project uses pnpm
+package-lock.json
+yarn.lock
+bun.lock
+bun.lockb
