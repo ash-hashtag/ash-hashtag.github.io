@@ -368,7 +368,6 @@ const script: Record<string, string> = {
 		height: 100%;
 		object-fit: cover;
 		object-position: left center;
-		transform-origin: left center;
 		opacity: 0;
 		animation: inf-slide 24s linear infinite;
 		animation-delay: calc(var(--i) * 4s);
@@ -377,11 +376,11 @@ const script: Record<string, string> = {
 		opacity: 1;
 	}
 	@keyframes inf-slide {
-		0% { opacity: 0; transform: scale(1.08); }
-		3% { opacity: 1; }
+		0% { opacity: 0; }
+		4% { opacity: 1; }
 		17% { opacity: 1; }
-		21% { opacity: 0; transform: scale(1); }
-		100% { opacity: 0; transform: scale(1); }
+		21% { opacity: 0; }
+		100% { opacity: 0; }
 	}
 	.inf-g {
 		position: absolute;

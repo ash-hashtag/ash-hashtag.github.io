@@ -15,6 +15,7 @@ export const collections = {
 			img_alt: z.string().optional(),
 			githubUrl: z.string().optional(),
 			url: z.string().optional(),
+			videoUrl: z.string().optional(),
 		}),
 	}),
 };

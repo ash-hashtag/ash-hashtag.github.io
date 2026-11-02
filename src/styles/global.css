@@ -1,6 +1,6 @@
 /*
  * Night-shift engineering: ink-dark panels, one hot signal colour, and
- * the IBM Plex family end to end. Light mode is the same system on paper.
+ * Native system font stacks end to end. Light mode is the same system on paper.
  */
 :root {
 	--bg: #0b0c0a;
@@ -26,10 +26,10 @@
 	--l3: color-mix(in srgb, var(--accent) 80%, #1d201b);
 	--l4: color-mix(in srgb, var(--accent) 70%, #ffd7b0);
 
-	--font-display: 'IBM Plex Sans Condensed', 'Arial Narrow', system-ui, sans-serif;
-	--font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
-	--font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
-	--font-hand: 'Caveat', 'Segoe Print', 'Bradley Hand', cursive;
+	--font-display: 'Arial Narrow', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+	--font-mono: ui-monospace, 'SFMono-Regular', Menlo, Monaco, Consolas, 'Liberation Mono', 'DejaVu Sans Mono', 'Courier New', monospace;
+	--font-hand: 'Segoe Print', 'Bradley Hand', 'Chalkboard SE', 'Comic Sans MS', cursive;
 
 	--wrap: 1200px;
 	--gutter: clamp(16px, 4vw, 48px);
@@ -425,6 +425,31 @@ p {
 	height: auto;
 	border-radius: 8px;
 	border: 1px solid var(--line);
+}
+
+.prose .video-embed {
+	position: relative;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	border-radius: 10px;
+	overflow: hidden;
+	border: 1px solid var(--line);
+	background: var(--panel-2);
+}
+.prose .video-embed iframe {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	border: 0;
+}
+.prose > iframe {
+	display: block;
+	width: 100%;
+	aspect-ratio: 16 / 9;
+	border-radius: 10px;
+	border: 1px solid var(--line);
+	background: var(--panel-2);
 }
 
 /* ASCII figures from the markdown, printed on a paper slip */

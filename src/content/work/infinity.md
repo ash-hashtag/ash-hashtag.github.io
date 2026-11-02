@@ -12,12 +12,23 @@ tags:
   - Godot
   - 3D
   - Dev
+videoUrl: https://youtu.be/Eg4lvc4jQbA
 ---
 
 Infinity is a race through a shifting 3D maze. Every run hides a golden
 beacon deep inside it, and you have one trick: switch gravity at any
 moment, even mid-air, and fall onto the wall ahead, the ceiling or any
 side. The shortest route is rarely along the floor.
+
+<div class="video-embed">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/Eg4lvc4jQbA"
+    title="Infinity - Gravity is a choice | Game Trailer"
+    loading="lazy"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen></iframe>
+</div>
 
 <div class="shots">
   <img src="/assets/work/infinity/1.webp" alt="Switching gravity mid-air in the research station" loading="lazy" width="1280" height="720" />

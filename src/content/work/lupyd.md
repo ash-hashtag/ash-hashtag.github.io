@@ -13,6 +13,7 @@ tags:
   - Dev
   - Backend
 url: https://www.lupyd.com
+videoUrl: https://youtu.be/UaEMoxkTf-k
 ---
 
 A privacy-focused collaboration platform with end-to-end encryption.
@@ -24,6 +25,16 @@ The backend is written in Rust; the web and desktop clients use React
 and Tauri. Group state is protected with MLS, and clients reach the
 server over WebSockets or WebTransport, with WebRTC for direct
 peer-to-peer paths.
+
+<div class="video-embed">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/UaEMoxkTf-k"
+    title="Introducing Lupyd - Your Private Workspace"
+    loading="lazy"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+    referrerpolicy="strict-origin-when-cross-origin"
+    allowfullscreen></iframe>
+</div>
 
 ```
   +-------------+   WebSocket /    +-----------------+
