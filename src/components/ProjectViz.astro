@@ -1,5 +1,5 @@
 ---
-import { lupydGraph, mantisGraph } from '../lib/graphs';
+import { mantisGraph } from '../lib/graphs';
 
 interface Props {
 	id: string;
@@ -8,6 +8,12 @@ interface Props {
 }
 
 const { id, large = false } = Astro.props;
+
+/** Lupyd's own screenshots from lupyd.com, each in a light and a dark capture. */
+const lupydShots = {
+	desktop: ['group-channel', 'dm', 'calls', 'media', 'search', 'roles'],
+	mobile: ['dm', 'group-channel', 'calls', 'media'],
+};
 
 /** Which script in src/scripts/viz.ts animates this project; canvases with data-net animate themselves. */
 const script: Record<string, string> = {
@@ -22,10 +28,33 @@ const script: Record<string, string> = {
 <div class:list={['viz', `viz-${id}`, { large }]} data-viz={script[id]} aria-hidden="true">
 	{
 		id === 'lupyd' && (
-			<>
-				<canvas class="viz-net" data-net={JSON.stringify(lupydGraph)} />
-				<p class="viz-cap label">clients · rust core · direct peer paths</p>
-			</>
+			<div class="lp">
+				{(['desktop', 'mobile'] as const).map((kind) => (
+					<div class={`lp-${kind}`}>
+						<div class="lp-screen">
+							{lupydShots[kind].map((n, i) => (
+								<span class="lp-shot" style={`--i:${i}`}>
+									<img class="lp-d" src={`/assets/work/lupyd/${kind}/${n}-dark.webp`} alt="" loading="lazy" />
+									<img class="lp-l" src={`/assets/work/lupyd/${kind}/${n}.webp`} alt="" loading="lazy" />
+								</span>
+							))}
+							{kind === 'mobile' && (
+								<div class="lp-status">
+									<time class="lp-time">12:00</time>
+									<svg viewBox="0 0 54 16" fill="currentColor">
+										<path d="M1 7.5a11 11 0 0 1 14 0l-1.6 1.9a8.5 8.5 0 0 0-10.8 0zm3.2 3.8a6 6 0 0 1 7.6 0L8 15.8z" />
+										<path d="M30 3v12H18z" />
+										<rect x="35" y="3.5" width="16" height="9" rx="2.2" fill="none" stroke="currentColor" stroke-width="1.4" />
+										<rect class="lp-batt" x="37" y="5.5" width="10" height="5" rx="0.8" />
+										<rect x="51.8" y="6" width="1.6" height="4" rx="0.6" />
+									</svg>
+								</div>
+							)}
+						</div>
+						<img class="lp-frame" src={`/assets/work/lupyd/${kind === 'desktop' ? 'macbook' : 'pixel'}.webp`} alt="" loading="lazy" />
+					</div>
+				))}
+			</div>
 		)
 	}
 	{
@@ -347,14 +376,142 @@ const script: Record<string, string> = {
 		height: 360px;
 	}
 
-	/* infinity: screenshots crossfading, 4s each */
-	.viz-infinity {
+	/* lupyd: the real app in a laptop and a phone, 24s per loop on each */
+	.viz-lupyd {
 		padding: 0;
 		overflow: hidden;
 	}
-	.viz-infinity.large {
+	.viz-lupyd.large {
 		aspect-ratio: 16 / 9;
 		height: auto;
+	}
+	.lp {
+		position: absolute;
+		inset: 0;
+		container-type: size;
+	}
+	.lp-desktop,
+	.lp-mobile {
+		position: absolute;
+		filter: drop-shadow(0 18px 30px rgb(0 0 0 / 0.35));
+	}
+	/* frame proportions come from the frame images; the screen boxes are their transparent holes */
+	.lp-desktop {
+		left: 5cqw;
+		top: 50%;
+		width: min(80cqw, 125cqh);
+		aspect-ratio: 4256 / 2834;
+		transform: translateY(-50%);
+	}
+	.lp-desktop .lp-screen {
+		left: 9.4%;
+		top: 10.59%;
+		width: 81.2%;
+		height: 78.83%;
+	}
+	.lp-mobile {
+		right: 5cqw;
+		bottom: 6cqh;
+		height: 74cqh;
+		aspect-ratio: 1620 / 3136;
+	}
+	.lp-mobile .lp-screen {
+		left: 10.49%;
+		top: 4.53%;
+		width: 79.01%;
+		height: 91.07%;
+		border-radius: 9% / 4.2%;
+	}
+	/* Android status bar over the phone screenshots, showing the viewer's own clock */
+	.lp-mobile .lp-screen {
+		container-type: size;
+		--sb: 15cqw; /* centred on the frame's punch-hole camera */
+		--sb-bg: #030510;
+		--sb-ink: #e8eaf0;
+	}
+	:root[data-scheme='light'] .lp-mobile .lp-screen {
+		--sb-bg: #fff;
+		--sb-ink: #1a1c22;
+	}
+	.lp-mobile .lp-screen img {
+		top: var(--sb);
+		height: calc(100% - var(--sb));
+		object-fit: fill; /* the bar leaves ~4% less height; a slight squash beats cropping the header or composer */
+	}
+	.lp-status {
+		position: absolute;
+		inset: 0 0 auto;
+		height: var(--sb);
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		padding: 0 11cqw;
+		background: var(--sb-bg);
+		color: var(--sb-ink);
+		font: 500 4.4cqw/1 system-ui, sans-serif;
+		font-variant-numeric: tabular-nums;
+		z-index: 1;
+	}
+	.lp-status svg {
+		height: 4cqw;
+	}
+	.lp-screen {
+		position: absolute;
+		overflow: hidden;
+		background: #0b0e14;
+	}
+	.lp-shot {
+		display: contents;
+	}
+	/* hidden lazy images aren't fetched, so each visitor loads one capture per shot */
+	:root[data-scheme='light'] .lp-d,
+	:root:not([data-scheme='light']) .lp-l {
+		display: none;
+	}
+	.lp-screen img,
+	.lp-frame {
+		position: absolute;
+		inset: 0;
+		width: 100%;
+		height: 100%;
+	}
+	.lp-screen img {
+		object-fit: cover;
+		object-position: top left;
+		opacity: 0;
+	}
+	.lp-screen .lp-shot:first-child img {
+		opacity: 1;
+	}
+	.lp-desktop img:not(.lp-frame) {
+		animation: inf-slide 24s linear infinite;
+		animation-delay: calc(var(--i) * 4s);
+	}
+	.lp-mobile img:not(.lp-frame) {
+		animation: lp-slide4 24s linear infinite;
+		animation-delay: calc(var(--i) * 6s);
+	}
+	@keyframes lp-slide4 {
+		0% { opacity: 0; }
+		4% { opacity: 1; }
+		25% { opacity: 1; }
+		29% { opacity: 0; }
+		100% { opacity: 0; }
+	}
+	@media (prefers-reduced-motion: reduce) {
+		.lp-screen img {
+			animation: none !important;
+		}
+	}
+
+	/* infinity: screenshots crossfading, 4s each */
+	/* the screenshots carry their captions in the frame, so the box matches them and nothing is cropped */
+	.viz-infinity {
+		padding: 0;
+		overflow: hidden;
+		aspect-ratio: 16 / 9;
+		height: auto;
+		min-height: 0;
 	}
 	.inf {
 		position: absolute;
@@ -556,3 +713,27 @@ const script: Record<string, string> = {
 		}
 	}
 </style>
+
+<script>
+	// The phone mockup's status bar shows the visitor's current time, in their locale.
+	const clocks = document.querySelectorAll<HTMLTimeElement>('.lp-time');
+	if (clocks.length) {
+		const fmt = new Intl.DateTimeFormat(undefined, { hour: 'numeric', minute: '2-digit' });
+		const tick = () => {
+			const now = new Date();
+			// Android drops the AM/PM marker from the status bar
+			const text = fmt
+				.formatToParts(now)
+				.filter((p) => p.type !== 'dayPeriod')
+				.map((p) => p.value)
+				.join('')
+				.trim();
+			clocks.forEach((c) => {
+				c.textContent = text;
+				c.dateTime = now.toISOString();
+			});
+			setTimeout(tick, 60_000 - (Date.now() % 60_000));
+		};
+		tick();
+	}
+</script>

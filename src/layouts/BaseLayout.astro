@@ -1,6 +1,6 @@
 ---
 import MainHead from '../components/MainHead.astro';
-import { getGitHub, GITHUB_USER } from '../lib/github';
+import { GITHUB_USER } from '../lib/github';
 import { AUTHOR, SOCIALS } from '../lib/site';
 
 interface Props {
@@ -10,8 +10,6 @@ interface Props {
 }
 
 const { title, description, image } = Astro.props;
-const { pushes } = await getGitHub();
-const last = pushes[0];
 
 const links = [
 	{ label: 'work', href: '/work/' },
@@ -34,20 +32,18 @@ const year = new Date().getFullYear();
 					<span class="brand-mark">SPT</span>
 					<span class="brand-name">Sri Pranav Tene</span>
 				</a>
-				{
-					last && (
-						<p class="status">
-							<span class="dot" />
-							pushed <time data-ago="#last-push" /> to
-							<a id="last-push" data-last-push data-at={last.at} href={`https://github.com/${last.repo}`}>
-								{last.repo}
-							</a>
-						</p>
-					)
-				}
 				<nav class="topnav" aria-label="Site">
 					{links.map(({ label, href }) => <a href={href} aria-current={path === href ? 'page' : undefined}>{label}</a>)}
 				</nav>
+				<button class="scheme" type="button" aria-label="Toggle dark mode" data-scheme-toggle>
+					<svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+						<circle cx="12" cy="12" r="4" />
+						<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+					</svg>
+					<svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round">
+						<path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z" />
+					</svg>
+				</button>
 			</div>
 		</header>
 
@@ -76,6 +72,21 @@ const year = new Date().getFullYear();
 			mountAllNets();
 			mountViz();
 			live();
+
+			const toggle = document.querySelector<HTMLButtonElement>('[data-scheme-toggle]');
+			const label = () => {
+				const dark = document.documentElement.dataset.scheme !== 'light';
+				toggle?.setAttribute('aria-pressed', String(dark));
+			};
+			label();
+			toggle?.addEventListener('click', () => {
+				const next = document.documentElement.dataset.scheme === 'light' ? 'dark' : 'light';
+				try {
+					localStorage.setItem('scheme', next);
+				} catch {}
+				(window as unknown as { applyScheme: (s: string) => void }).applyScheme(next);
+				label();
+			});
 
 			document.querySelectorAll<HTMLAnchorElement>('a[href]').forEach((link) => {
 				const url = new URL(link.href, location.href);

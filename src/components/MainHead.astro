@@ -23,8 +23,26 @@ const imageUrl = new URL(image, Astro.site);
 <title>{title}</title>
 <meta name="description" content={description} />
 <link rel="canonical" href={canonical} />
-<meta name="theme-color" content="#0b0c0a" media="(prefers-color-scheme: dark)" />
-<meta name="theme-color" content="#f3f1e9" media="(prefers-color-scheme: light)" />
+<meta name="theme-color" content="#0b0c0a" />
+<script is:inline>
+	// Pick the colour scheme before first paint: the visitor's saved choice, else the system's.
+	(() => {
+		const system = matchMedia('(prefers-color-scheme: light)');
+		const meta = document.querySelector('meta[name="theme-color"]');
+		const apply = (chosen) => {
+			let saved = typeof chosen === 'string' ? chosen : null;
+			try {
+				saved ??= localStorage.getItem('scheme');
+			} catch {}
+			const scheme = saved === 'light' || saved === 'dark' ? saved : system.matches ? 'light' : 'dark';
+			document.documentElement.dataset.scheme = scheme;
+			meta.content = scheme === 'light' ? '#f3f1e9' : '#0b0c0a';
+		};
+		window.applyScheme = apply;
+		apply();
+		system.addEventListener('change', apply);
+	})();
+</script>
 
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Sri Pranav Tene" />

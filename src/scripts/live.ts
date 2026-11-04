@@ -34,18 +34,11 @@ const render = (pushes: { repo: string; at: string }[]) => {
 			}),
 		);
 	});
-	const last = pushes[0];
-	document.querySelectorAll<HTMLAnchorElement>('[data-last-push]').forEach((a) => {
-		a.href = `https://github.com/${last.repo}`;
-		a.textContent = last.repo;
-		a.dataset.at = last.at;
-	});
 };
 
 const tick = () => {
-	document.querySelectorAll<HTMLElement>('time[data-at], [data-ago]').forEach((el) => {
-		const at = el.dataset.at ?? document.querySelector<HTMLElement>(el.dataset.ago!)?.dataset.at;
-		if (at) el.textContent = ago(at);
+	document.querySelectorAll<HTMLElement>('time[data-at]').forEach((el) => {
+		el.textContent = ago(el.dataset.at!);
 	});
 };
 

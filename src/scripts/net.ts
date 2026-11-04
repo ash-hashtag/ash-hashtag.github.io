@@ -272,7 +272,7 @@ export const mountNet = (canvas: HTMLCanvasElement) => {
 	readTheme();
 	resize();
 	new ResizeObserver(resize).observe(canvas);
-	matchMedia('(prefers-color-scheme: light)').addEventListener('change', readTheme);
+	new MutationObserver(readTheme).observe(document.documentElement, { attributeFilter: ['data-scheme'] });
 
 	const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let visible = false;

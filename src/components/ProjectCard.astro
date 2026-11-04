@@ -1,5 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { themeStyle } from '../lib/themes';
 import ProjectViz from './ProjectViz.astro';
 
 interface Props {
@@ -13,7 +14,11 @@ const { title, description, tags, img, githubUrl, url } = project.data;
 const href = `/work/${project.id}/`;
 ---
 
-<article class:list={['card', 'panel', 'rise', { feature, flip: feature && index % 2 === 1 }]}>
+<article
+	class:list={['card', 'panel', 'rise', 'themed', { feature, flip: feature && index % 2 === 1 }]}
+	data-theme={project.id}
+	style={themeStyle(project.id)}
+>
 	<div class="card-viz">
 		<ProjectViz id={project.id} />
 	</div>

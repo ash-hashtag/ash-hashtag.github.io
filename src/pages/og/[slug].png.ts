@@ -12,6 +12,7 @@ import satori from 'satori';
 import sharp from 'sharp';
 import { fmt, getGitHub, statsOf } from '../../lib/github';
 import { AUTHOR, getWork } from '../../lib/site';
+import { THEMES } from '../../lib/themes';
 
 const font = (file: string) => fs.readFileSync(path.resolve('src/assets/fonts', file));
 const fonts = [
@@ -32,13 +33,21 @@ const C = {
 	levels: ['#1d201b', '#5e2a1d', '#9a3720', '#d94626', '#ff8a5c'],
 };
 
+type Palette = Pick<typeof C, 'bg' | 'line' | 'ink' | 'dim' | 'faint' | 'accent'>;
+
+/** A project's card wears its dark theme; lines and faint text are mixed from its ink. */
+const paletteOf = (id: string): Palette => {
+	const t = THEMES[id]?.dark;
+	return t ? { bg: t.bg, line: `${t.ink}22`, ink: t.ink, dim: t.dim, faint: `${t.dim}aa`, accent: t.accent } : C;
+};
+
 type Node = { type: string; props: Record<string, unknown> };
 const h = (type: string, style: Record<string, unknown>, ...children: unknown[]): Node => ({
 	type,
 	props: { style: { display: 'flex', ...style }, children: children.flat() },
 });
 
-const frame = (...children: unknown[]) =>
+const frame = (p: Palette, ...children: unknown[]) =>
 	h(
 		'div',
 		{
@@ -47,24 +56,24 @@ const frame = (...children: unknown[]) =>
 			flexDirection: 'column',
 			justifyContent: 'space-between',
 			padding: '56px 64px',
-			background: C.bg,
-			backgroundImage: `radial-gradient(circle at 1040px 80px, rgba(255,90,54,0.22), transparent 420px)`,
-			color: C.ink,
+			background: p.bg,
+			backgroundImage: `radial-gradient(circle at 1040px 80px, ${p.accent}38, transparent 420px)`,
+			color: p.ink,
 			fontFamily: 'Plex Condensed',
 		},
 		...children,
 	);
 
-const brand = (right: string) =>
+const brand = (p: Palette, right: string) =>
 	h(
 		'div',
-		{ alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Plex Mono', fontSize: 22, color: C.dim },
+		{ alignItems: 'center', justifyContent: 'space-between', fontFamily: 'Plex Mono', fontSize: 22, color: p.dim },
 		h(
 			'div',
 			{ alignItems: 'center', gap: 16 },
 			h(
 				'div',
-				{ width: 48, height: 48, borderRadius: 10, background: C.accent, color: C.bg, alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 },
+				{ width: 48, height: 48, borderRadius: 10, background: p.accent, color: p.bg, alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 },
 				'SPT',
 			),
 			AUTHOR.site,
@@ -77,7 +86,8 @@ const home = async () => {
 	const stats = statsOf(gh);
 	const weeks = stats.weeks.slice(-52);
 	return frame(
-		brand(`last push ${new Date(gh.pushes[0]?.at ?? gh.fetchedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`),
+		C,
+		brand(C, `last push ${new Date(gh.pushes[0]?.at ?? gh.fetchedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}`),
 		h(
 			'div',
 			{ flexDirection: 'column', gap: 14 },
@@ -108,7 +118,8 @@ const about = async () => {
 	const gh = await getGitHub();
 	const stats = statsOf(gh);
 	return frame(
-		brand('about'),
+		C,
+		brand(C, 'about'),
 		h(
 			'div',
 			{ flexDirection: 'column', gap: 18 },
@@ -136,9 +147,11 @@ const logoOf = async (img?: string) => {
 const project = async (entry: CollectionEntry<'work'>, index: number) => {
 	const { title, description, tags, githubUrl, url, img } = entry.data;
 	const logo = await logoOf(img);
+	const p = paletteOf(entry.id);
 	const keywords = tags.filter((t) => t !== 'Dev');
 	return frame(
-		brand(`project ${String(index + 1).padStart(2, '0')}`),
+		p,
+		brand(p, `project ${String(index + 1).padStart(2, '0')}`),
 		h(
 			'div',
 			{ alignItems: 'center', gap: 48 },
@@ -146,7 +159,7 @@ const project = async (entry: CollectionEntry<'work'>, index: number) => {
 				'div',
 				{ flexDirection: 'column', gap: 18, flex: 1 },
 				h('div', { fontSize: 120, fontWeight: 700, lineHeight: 1, letterSpacing: -2 }, title),
-				h('div', { fontSize: 34, fontWeight: 600, color: C.dim, lineHeight: 1.25 }, description.trim()),
+				h('div', { fontSize: 34, fontWeight: 600, color: p.dim, lineHeight: 1.25 }, description.trim()),
 			),
 			logo
 				? {
@@ -167,10 +180,10 @@ const project = async (entry: CollectionEntry<'work'>, index: number) => {
 				'div',
 				{ gap: 12 },
 				...keywords.slice(0, 4).map((t) =>
-					h('div', { padding: '8px 18px', border: `1px solid ${C.line}`, borderRadius: 999, fontFamily: 'Plex Mono', fontSize: 20, color: C.dim }, t),
+					h('div', { padding: '8px 18px', border: `1px solid ${p.line}`, borderRadius: 999, fontFamily: 'Plex Mono', fontSize: 20, color: p.dim }, t),
 				),
 			),
-			h('div', { fontFamily: 'Plex Mono', fontSize: 20, color: C.faint }, (githubUrl ?? url ?? '').replace('https://', '')),
+			h('div', { fontFamily: 'Plex Mono', fontSize: 20, color: p.faint }, (githubUrl ?? url ?? '').replace('https://', '')),
 		),
 	);
 };

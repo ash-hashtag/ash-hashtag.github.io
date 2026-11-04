@@ -16,6 +16,10 @@ export const collections = {
 			githubUrl: z.string().optional(),
 			url: z.string().optional(),
 			videoUrl: z.string().optional(),
+			/** Where the project stands, shown beside the write-up. */
+			status: z.string().optional(),
+			/** Headline numbers, shown as tiles under the project header. */
+			stats: z.array(z.object({ value: z.string(), label: z.string() })).optional(),
 		}),
 	}),
 };

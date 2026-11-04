@@ -33,7 +33,7 @@ export const heroGraph: NetGraph = {
 		['lupyd', 'rust', 'hv'],
 		['lupyd', 'react', 'vh'],
 		['firefly', 'mls', 'vh'],
-		['firefly', 'libsignal', 'hv'],
+		['lupyd', 'libsignal', 'vh'],
 		['lupyd', 'crypto', 'vh'],
 		['quic', 'rust', 'hv'],
 		['quic', 'postgres', 'vh'],
@@ -48,36 +48,6 @@ export const heroGraph: NetGraph = {
 		['godot', 'cpp', 'hv'],
 	],
 	rate: 0.28,
-};
-
-/** Lupyd's shape: clients on the left, the Rust core, peers talking directly. */
-export const lupydGraph: NetGraph = {
-	nodes: [
-		{ id: 'web', x: 0.05, y: 0.15, label: 'web', major: true },
-		{ id: 'desktop', x: 0.05, y: 0.5, label: 'desktop', major: true },
-		{ id: 'mobile', x: 0.05, y: 0.85, label: 'mobile', major: true },
-		{ id: 'api', x: 0.55, y: 0.5, label: 'rust core', major: true },
-		{ id: 'db', x: 0.95, y: 0.2, label: 'storage', major: true },
-		{ id: 'peer', x: 0.95, y: 0.85, label: 'peer', major: true },
-		{ id: 'j1', x: 0.3, y: 0.5, label: '' },
-	],
-	edges: [
-		['web', 'j1', 'hv'],
-		['desktop', 'j1', 'hv'],
-		['mobile', 'j1', 'hv'],
-		['j1', 'api', 'hv'],
-		['api', 'db', 'hv'],
-		['mobile', 'peer', 'hv'],
-	],
-	routes: [
-		{ path: ['web', 'j1', 'api', 'db'], weight: 2 },
-		{ path: ['desktop', 'j1', 'api'], weight: 2 },
-		{ path: ['mobile', 'j1', 'api', 'db'], weight: 2 },
-		{ path: ['db', 'api', 'j1', 'web'], weight: 1 },
-		{ path: ['mobile', 'peer'], weight: 1 },
-		{ path: ['peer', 'mobile'], weight: 1 },
-	],
-	rate: 0.42,
 };
 
 /** Mantis's compiler pipeline; some programs don't make it past the checks. */

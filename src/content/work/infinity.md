@@ -13,6 +13,16 @@ tags:
   - 3D
   - Dev
 videoUrl: https://youtu.be/Eg4lvc4jQbA
+status: Playable in development; online races coming
+stats:
+  - value: "6"
+    label: surfaces you can fall onto
+  - value: 4 worlds
+    label: station · castle · shoji · moss
+  - value: New maze
+    label: every race
+  - value: Up to 10
+    label: runners per online race (in development)
 ---
 
 Infinity is a race through a shifting 3D maze. Every run hides a golden
@@ -37,6 +47,8 @@ side. The shortest route is rarely along the floor.
   <img src="/assets/work/infinity/4.webp" alt="The four worlds side by side" loading="lazy" width="1280" height="720" />
 </div>
 
+## How it plays
+
 - **Gravity on six axes.** Fall toward any surface around you and chain
   switches to steer through open shafts.
 - **A new maze every race**, with the beacon placed far from the start.
@@ -44,6 +56,24 @@ side. The shortest route is rarely along the floor.
   halls and an overgrown moss garden.
 - **Route tools** to mark your path, seal passages and breach walls.
 - **Runs everywhere**: Windows, Linux and Android with touch controls.
+
+## Controls that stay out of the way
+
+The whole game rests on one verb, so switching gravity has to be instant
+on every input device:
+
+| | Keyboard and mouse | Gamepad | Touch |
+| --- | --- | --- | --- |
+| Fall onto the wall ahead | `E` | `Y` | Tap Gravity |
+| Flip onto the ceiling | `Q` | `X` | Swipe up from Gravity |
+| Pick any wall | Hold right mouse, press a direction | Hold `LT`, push the stick | Swipe from Gravity toward it |
+| Move and look | `WASD` and mouse | Sticks | Floating left stick, drag to look |
+
+Switching works mid-air and chains, so a good run is mostly falling:
+drop onto a wall, sprint, flip to the ceiling over a shaft, and fall
+again toward the beacon.
+
+## Where it's going
 
 Online races for up to ten runners are in active development. Play it at
 [infinity.lupyd.com](https://infinity.lupyd.com) or download builds from

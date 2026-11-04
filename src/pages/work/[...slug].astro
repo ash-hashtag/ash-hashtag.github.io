@@ -3,6 +3,7 @@ import { type CollectionEntry, render } from 'astro:content';
 import ProjectViz from '../../components/ProjectViz.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { AUTHOR, getWork } from '../../lib/site';
+import { themeStyle } from '../../lib/themes';
 
 interface Props {
 	entry: CollectionEntry<'work'>;
@@ -21,12 +22,12 @@ export async function getStaticPaths() {
 
 const { entry, index, prev, next } = Astro.props;
 const { Content } = await render(entry);
-const { title, description, tags, img, githubUrl, url } = entry.data;
+const { title, description, tags, img, githubUrl, url, status, stats } = entry.data;
 const keywords = tags.filter((t) => t !== 'Dev');
 ---
 
 <BaseLayout title={`${title} · Sri Pranav Tene`} description={description} image={`/og/${entry.id}.png`}>
-	<main>
+	<main class="themed" data-theme={entry.id} style={themeStyle(entry.id)}>
 		<header class="p-hero">
 			<div class="wrap">
 				<a class="back mono" href="/work/">← all work</a>
@@ -43,6 +44,18 @@ const keywords = tags.filter((t) => t !== 'Dev');
 					{githubUrl && <a class:list={['btn', { primary: !url }]} href={githubUrl}>Source on GitHub ↗</a>}
 					<a class="btn" href={`mailto:${AUTHOR.email}?subject=${encodeURIComponent(title)}`}>Ask me about it</a>
 				</div>
+				{
+					stats && (
+						<div class="p-stats">
+							{stats.map((s) => (
+								<div class="tile">
+									<b>{s.value}</b>
+									<span class="label">{s.label}</span>
+								</div>
+							))}
+						</div>
+					)
+				}
 			</div>
 		</header>
 
@@ -61,6 +74,14 @@ const keywords = tags.filter((t) => t !== 'Dev');
 					<span class="label">Stack</span>
 					<ul class="chips">{keywords.map((t) => <li class="chip">{t}</li>)}</ul>
 				</div>
+				{
+					status && (
+						<div>
+							<span class="label">Status</span>
+							<p>{status}</p>
+						</div>
+					)
+				}
 				<div>
 					<span class="label">Started</span>
 					<p class="mono">{entry.data.publishDate.getUTCFullYear()}</p>
@@ -102,6 +123,11 @@ const keywords = tags.filter((t) => t !== 'Dev');
 </BaseLayout>
 
 <style>
+	main {
+		background:
+			radial-gradient(70% 520px at 85% -120px, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%),
+			var(--bg);
+	}
 	.p-hero {
 		padding-block: clamp(2.5rem, 6vw, 4.5rem) 2.5rem;
 	}
@@ -142,16 +168,25 @@ const keywords = tags.filter((t) => t !== 'Dev');
 		gap: 0.6rem;
 		margin-top: 1.75rem;
 	}
+	.p-stats {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(10.5rem, 1fr));
+		gap: 0.75rem;
+		margin-top: 2.25rem;
+	}
 	.p-viz {
 		min-height: 380px;
 	}
 	.p-body {
 		display: grid;
-		grid-template-columns: minmax(0, 1fr) 16rem;
+		grid-template-columns: minmax(0, 1fr) 15rem;
 		gap: 3rem;
 		padding-block: clamp(2.5rem, 6vw, 4.5rem);
 	}
 	.p-meta {
+		position: sticky;
+		top: 5rem;
+		align-self: start;
 		display: grid;
 		gap: 1.5rem;
 		align-content: start;
@@ -188,6 +223,9 @@ const keywords = tags.filter((t) => t !== 'Dev');
 	@media (max-width: 820px) {
 		.p-body {
 			grid-template-columns: 1fr;
+		}
+		.p-meta {
+			position: static;
 		}
 	}
 </style>

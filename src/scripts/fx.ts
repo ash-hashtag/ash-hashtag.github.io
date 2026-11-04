@@ -142,7 +142,14 @@ const wire = (pre: HTMLPreElement) => {
 	requestAnimationFrame(frame);
 };
 
-const packets = () => document.querySelectorAll<HTMLPreElement>('.prose pre, .spec pre').forEach(wire);
+/** Figures only: real code (a fenced block with a language) has arrows that aren't wires. */
+const isFigure = (pre: HTMLPreElement) => {
+	const lang = pre.querySelector('code')?.className.match(/language-(\S+)/)?.[1];
+	return !lang || lang === 'lanes';
+};
+
+const packets = () =>
+	document.querySelectorAll<HTMLPreElement>('.prose pre, .spec pre').forEach((pre) => isFigure(pre) && wire(pre));
 
 if (!calm) {
 	document.documentElement.classList.add('fx');
