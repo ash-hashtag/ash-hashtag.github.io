@@ -1,10 +1,15 @@
 {
 	// Static-only Worker: Cloudflare serves the Astro build in docs/ directly,
 	// the same output GitHub Pages serves. Cache rules live in public/_headers.
-	"name": "portfolio",
+	"name": "ash-hashtag-github-io",
 	"compatibility_date": "2026-10-01",
 	// Attaches spt.lupyd.com to the Worker on deploy (lupyd.com must be a zone on this account).
-	"routes": [{ "pattern": "spt.lupyd.com", "custom_domain": true }],
+	"routes": [
+		{
+			"pattern": "spt.lupyd.com",
+			"custom_domain": true
+		}
+	],
 	"build": {
 		"command": "pnpm build"
 	},
