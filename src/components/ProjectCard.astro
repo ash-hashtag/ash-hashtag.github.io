@@ -60,9 +60,22 @@ const href = `/work/${project.id}/`;
 	.card.flip .card-viz {
 		order: 2;
 	}
+	/* a fixed frame: the visual is taken out of flow, so its animation can never resize the card */
 	.card-viz {
+		position: relative;
+		height: 20rem;
+		overflow: hidden;
 		border-bottom: 1px solid var(--line);
-		min-height: 270px;
+	}
+	.card-viz > :global(.viz) {
+		position: absolute;
+		inset: 0;
+		height: auto;
+		min-height: 0;
+	}
+	.feature .card-viz {
+		height: auto;
+		min-height: 24rem;
 	}
 	.feature .card-viz {
 		border-bottom: 0;
@@ -132,6 +145,11 @@ const href = `/work/${project.id}/`;
 	@media (max-width: 860px) {
 		.card.feature {
 			grid-template-columns: 1fr;
+		}
+		.card-viz,
+		.feature .card-viz {
+			height: 22rem;
+			min-height: 0;
 		}
 		.card.flip .card-viz {
 			order: 0;

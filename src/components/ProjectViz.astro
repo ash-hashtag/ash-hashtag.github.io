@@ -505,13 +505,14 @@ const script: Record<string, string> = {
 	}
 
 	/* infinity: screenshots crossfading, 4s each */
-	/* the screenshots carry their captions in the frame, so the box matches them and nothing is cropped */
+	/* the screenshots carry their captions in the frame; anchored left so cropping only trims the right */
 	.viz-infinity {
 		padding: 0;
 		overflow: hidden;
+	}
+	.viz-infinity.large {
 		aspect-ratio: 16 / 9;
 		height: auto;
-		min-height: 0;
 	}
 	.inf {
 		position: absolute;
@@ -701,15 +702,35 @@ const script: Record<string, string> = {
 			gap: 0.4rem;
 			font-size: 0.7rem;
 		}
+		/* stacked panels share the card's fixed height instead of growing past it */
 		.nn,
 		.lt {
 			grid-template-columns: 1fr;
+			gap: 0.6rem;
+		}
+		.nn {
+			grid-template-rows: auto minmax(0, 1fr);
+		}
+		.nn dl {
+			margin: 0.6rem 0;
+		}
+		.nn-inbox,
+		.lt-peer {
+			overflow: hidden;
+		}
+		.nn-inbox ol,
+		.lt-peer ol {
+			mask-image: linear-gradient(#000 60%, transparent);
+		}
+		.lt {
+			grid-template-rows: minmax(0, 1fr) auto minmax(0, 1fr);
+			align-items: stretch;
 		}
 		.lt-wire {
-			height: 4rem;
+			height: 3rem;
 		}
 		.lt-tag {
-			bottom: -1.4rem;
+			bottom: 0.25rem;
 		}
 	}
 </style>
