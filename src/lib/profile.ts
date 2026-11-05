@@ -3,7 +3,7 @@ export const EXPERIENCE = [
 		when: '2023 — now',
 		org: 'Lupyd Media',
 		role: 'Founder · full-stack engineer',
-		body: 'Building a privacy-focused collaboration platform with end-to-end encryption from the ground up: Rust across the backend, React and Tauri across the clients, with MLS, blind signatures, WebSockets, WebTransport and WebRTC in the mix.',
+		body: 'Built a privacy-focused collaboration platform with end-to-end encryption from the ground up: Rust across the backend, React and Tauri across the clients, with MLS, blind signatures, WebSockets, WebTransport and WebRTC in the mix.',
 		tags: ['Rust', 'MLS', 'WebRTC', 'WebTransport', 'React', 'Tauri'],
 	},
 	{

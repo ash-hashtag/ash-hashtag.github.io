@@ -1,5 +1,5 @@
 {
-	"fetchedAt": "2026-11-04T11:00:52.797Z",
+	"fetchedAt": "2026-11-05T16:59:13.528Z",
 	"days": [
 		{
 			"date": "2025-11-02",
@@ -408,7 +408,7 @@
 		},
 		{
 			"date": "2026-01-22",
-			"level": 3,
+			"level": 2,
 			"count": 13
 		},
 		{
@@ -803,7 +803,7 @@
 		},
 		{
 			"date": "2026-04-11",
-			"level": 3,
+			"level": 2,
 			"count": 13
 		},
 		{
@@ -828,7 +828,7 @@
 		},
 		{
 			"date": "2026-04-16",
-			"level": 4,
+			"level": 3,
 			"count": 19
 		},
 		{
@@ -1133,7 +1133,7 @@
 		},
 		{
 			"date": "2026-06-16",
-			"level": 3,
+			"level": 2,
 			"count": 13
 		},
 		{
@@ -1228,7 +1228,7 @@
 		},
 		{
 			"date": "2026-07-05",
-			"level": 3,
+			"level": 2,
 			"count": 13
 		},
 		{
@@ -1298,7 +1298,7 @@
 		},
 		{
 			"date": "2026-07-19",
-			"level": 4,
+			"level": 3,
 			"count": 19
 		},
 		{
@@ -1433,7 +1433,7 @@
 		},
 		{
 			"date": "2026-08-15",
-			"level": 4,
+			"level": 3,
 			"count": 19
 		},
 		{
@@ -1473,7 +1473,7 @@
 		},
 		{
 			"date": "2026-08-23",
-			"level": 3,
+			"level": 2,
 			"count": 13
 		},
 		{
@@ -1518,7 +1518,7 @@
 		},
 		{
 			"date": "2026-09-01",
-			"level": 3,
+			"level": 2,
 			"count": 13
 		},
 		{
@@ -1668,7 +1668,7 @@
 		},
 		{
 			"date": "2026-10-01",
-			"level": 4,
+			"level": 3,
 			"count": 20
 		},
 		{
@@ -1838,20 +1838,25 @@
 		},
 		{
 			"date": "2026-11-04",
-			"level": 2,
-			"count": 12
+			"level": 3,
+			"count": 17
+		},
+		{
+			"date": "2026-11-05",
+			"level": 4,
+			"count": 27
 		}
 	],
 	"publicRepos": 90,
 	"since": "2021-11-12T13:24:24Z",
 	"pushes": [
 		{
-			"repo": "lupyd/firefly",
-			"at": "2026-11-02T10:55:35Z"
+			"repo": "ash-hashtag/ash-hashtag.github.io",
+			"at": "2026-11-04T12:21:20Z"
 		},
 		{
-			"repo": "ash-hashtag/ash-hashtag.github.io",
-			"at": "2026-11-02T05:16:23Z"
+			"repo": "lupyd/firefly",
+			"at": "2026-11-02T10:55:35Z"
 		},
 		{
 			"repo": "ash-hashtag/ash-hashtag",

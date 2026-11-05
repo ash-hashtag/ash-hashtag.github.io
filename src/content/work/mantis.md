@@ -4,7 +4,7 @@ publishDate: 2024-02-29 00:00:00
 img: /assets/work/mantis.webp
 img_alt: Programming language compiler interface
 description: |
-  A memory-safe, statically compiled language inspired by Rust, with its own compiler, Cranelift backend, standard library, language server and editor grammar. All written in Rust.
+  A memory-safe compiled language inspired by Rust, with its own Cranelift-based compiler, standard library and language server.
 githubUrl: https://github.com/ash-hashtag/mantis
 status: Work in progress; the borrow checker is being built
 stats:

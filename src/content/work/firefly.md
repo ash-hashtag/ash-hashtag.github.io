@@ -5,7 +5,7 @@ priority: 2
 img: /assets/work/firefly.webp
 img_alt: Secure encrypted messaging interface
 description: |
-  Open-source Rust MLS (RFC 9420) client suite for end-to-end encrypted messaging, with SQLite persistence, WebTransport and Node.js and web bindings. It powers Lupyd.
+  Open-source Rust MLS (RFC 9420) client for end-to-end encrypted messaging, with SQLite storage, WebTransport and Node.js bindings. Powers Lupyd.
 githubUrl: https://github.com/lupyd/firefly
 status: Open source (MIT), running in production inside Lupyd
 stats:

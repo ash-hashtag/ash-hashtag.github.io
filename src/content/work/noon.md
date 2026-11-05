@@ -5,7 +5,7 @@ priority: 3
 img: /assets/work/noon.webp
 img_alt: Anonymous cryptographic forms
 description: |
-  Anonymous forms and surveys built on RSA blind signatures: the server can check that every response came from an allowed person, and cannot tell which person sent which one.
+  Anonymous forms built on RSA blind signatures: the server verifies every response came from an allowed person, but can't tell who sent which.
 tags:
   - Cryptography
   - Privacy
