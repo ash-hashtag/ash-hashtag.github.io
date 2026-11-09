@@ -62,6 +62,16 @@ export const THEMES: Record<string, Theme> = {
 		dark: { bg: '#0a1a1d', bg2: '#0d2226', panel: '#10282c', ink: '#eaf3e2', dim: '#97ab9b', accent: '#a4d82e', accentInk: '#0a1a1d' },
 		light: { bg: '#eff4ec', bg2: '#e4ecdf', panel: '#f9fbf7', ink: '#18383e', dim: '#4d6352', accent: '#4f7a0a', accentInk: '#ffffff' },
 	},
+	shine: {
+		from: 'the Shine site and logo: teal light on a graphite optical bench',
+		dark: { bg: '#141517', bg2: '#17181b', panel: '#1c1e21', ink: '#ecefee', dim: '#9aa3a2', accent: '#3fb8b0', accentInk: '#0d1414' },
+		light: { bg: '#f5f5f2', bg2: '#ecece7', panel: '#fafaf8', ink: '#16201f', dim: '#56605f', accent: '#0b6e69', accentInk: '#ffffff' },
+	},
+	teenie: {
+		from: 'the Teenie site: blue answer bits on near-black, like its bit grids',
+		dark: { bg: '#0d0d0d', bg2: '#121211', panel: '#1a1a19', ink: '#f0efec', dim: '#a3a29b', accent: '#3987e5', accentInk: '#ffffff' },
+		light: { bg: '#f6f6f3', bg2: '#eeede8', panel: '#fcfcfb', ink: '#0b0b0b', dim: '#52514e', accent: '#2a78d6', accentInk: '#ffffff' },
+	},
 };
 
 const vars = (t: Tokens, mode: 'd' | 'l') =>

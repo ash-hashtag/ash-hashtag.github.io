@@ -361,7 +361,103 @@ const filter = (root: HTMLElement) => {
 	});
 };
 
-const registry: Record<string, (root: HTMLElement) => void> = { firefly, noon, quic, light, filter };
+/* ---------- shine: a phase shift steering light between two detectors ---------- */
+
+const shine = (root: HTMLElement) => {
+	const arms = root.querySelectorAll<SVGElement>('[data-b="arm"]');
+	const outA = root.querySelector<SVGElement>('[data-b="a"]')!;
+	const outB = root.querySelector<SVGElement>('[data-b="b"]')!;
+	const detA = root.querySelector<SVGElement>('[data-d="a"]')!;
+	const detB = root.querySelector<SVGElement>('[data-d="b"]')!;
+	const readA = root.querySelector<SVGElement>('[data-r="a"]')!;
+	const readB = root.querySelector<SVGElement>('[data-r="b"]')!;
+	const phi = root.querySelector<SVGElement>('[data-r="phi"]')!;
+	arms.forEach((a) => a.style.setProperty('--p', '0.5'));
+	const t0 = performance.now();
+	whileVisible(root, async (alive) => {
+		while (alive()) {
+			// one full turn of phase every 8 s; the two outputs share the power as cos² and sin² of half of it
+			const p = ((performance.now() - t0) / 8000) * Math.PI * 2;
+			const a = Math.cos(p / 2) ** 2;
+			const b = 1 - a;
+			outA.style.setProperty('--p', a.toFixed(3));
+			detA.style.setProperty('--p', a.toFixed(3));
+			outB.style.setProperty('--p', b.toFixed(3));
+			detB.style.setProperty('--p', b.toFixed(3));
+			readA.textContent = a.toFixed(3);
+			readB.textContent = b.toFixed(3);
+			phi.textContent = `φ = ${(p % (Math.PI * 2)).toFixed(2)}`;
+			await new Promise(requestAnimationFrame);
+		}
+	});
+};
+
+/* ---------- teenie: infer the hidden rule, answer bit by bit ---------- */
+
+const teenie = (root: HTMLElement) => {
+	const rows = root.querySelectorAll<HTMLElement>('[data-f="ex"] .tn-row');
+	const qa = root.querySelector<HTMLElement>('[data-f="qa"]')!;
+	const qb = root.querySelector<HTMLElement>('[data-f="qb"]')!;
+	const ans = root.querySelector<HTMLElement>('[data-f="ans"]')!;
+	const round = root.querySelector<HTMLElement>('[data-f="round"]')!;
+	const rule = root.querySelector<HTMLElement>('[data-f="rule"]')!;
+	const ok = root.querySelector<HTMLElement>('[data-f="ok"]')!;
+	// relations the real model gets right on 8 bits; the replay is illustrative, not recorded
+	const rules: [string, (a: number, b: number) => number][] = [
+		['a + b', (a, b) => a + b],
+		['a xor b', (a, b) => a ^ b],
+		['max(a, b)', (a, b) => Math.max(a, b)],
+		['a > b ? a − b : a + b', (a, b) => (a > b ? a - b : a + b)],
+		['(a + b) >> 1', (a, b) => (a + b) >> 1],
+		['a − b', (a, b) => a - b],
+	];
+	const byte = () => (Math.random() * 256) | 0;
+	const paint = (strip: Element, n: number) =>
+		[...strip.children].forEach((cell, i) => {
+			cell.className = (n >> (7 - i)) & 1 ? 'on' : '';
+			(cell as HTMLElement).style.removeProperty('--p');
+		});
+	let k = 0;
+	whileVisible(root, async (alive) => {
+		const [name, f] = rules[k++ % rules.length];
+		const at = (a: number, b: number) => f(a, b) & 255;
+		rows.forEach((row) => {
+			const [sa, sb, sc] = row.querySelectorAll('.tn-bits');
+			const a = byte(), b = byte();
+			paint(sa, a);
+			paint(sb, b);
+			paint(sc, at(a, b));
+		});
+		const a = byte(), b = byte(), c = at(a, b);
+		paint(qa, a);
+		paint(qb, b);
+		rule.textContent = 'rule hidden';
+		ok.classList.add('off');
+		// low bits settle first, the way carries resolve; each bit flickers until its round
+		const settle = Array.from({ length: 8 }, (_, i) => Math.min(8, 1 + Math.floor((7 - i) * 0.8 + Math.random() * 1.5)));
+		for (let r = 1; r <= 8; r++) {
+			round.textContent = String(r);
+			[...ans.children].forEach((cell, i) => {
+				const bit = (c >> (7 - i)) & 1;
+				const el = cell as HTMLElement;
+				if (r >= settle[i]) {
+					el.className = bit ? 'on' : '';
+					el.style.removeProperty('--p');
+				} else {
+					el.className = 'unsure';
+					el.style.setProperty('--p', (0.15 + Math.random() * 0.6).toFixed(2));
+				}
+			});
+			await sleep(420);
+			if (!alive()) return;
+		}
+		rule.textContent = `rule was ${name}`;
+		ok.classList.remove('off');
+		await sleep(2200);
+	});
+};
+
+const registry: Record<string, (root: HTMLElement) => void> = { firefly, noon, quic, light, filter, shine, teenie };
 
 export const mountViz = () => {
 	document.querySelectorAll<HTMLElement>('[data-viz]').forEach((el) => {

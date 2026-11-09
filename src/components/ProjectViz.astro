@@ -15,8 +15,20 @@ const lupydShots = {
 	mobile: ['dm', 'group-channel', 'calls', 'media'],
 };
 
+/** Teenie's still frame: a + b on 8 bits, from examples shown on teenie.lupyd.com. */
+const bits = (n: number) => [...n.toString(2).padStart(8, '0')].map((d) => d === '1');
+const teenieExamples = [
+	[143, 30],
+	[241, 33],
+	[243, 254],
+	[88, 125],
+].map(([a, b]) => [a, b, (a + b) & 255]);
+const teenieQuestion = [165, 34, (165 + 34) & 255];
+
 /** Which script in src/scripts/viz.ts animates this project; canvases with data-net animate themselves. */
 const script: Record<string, string> = {
+	shine: 'shine',
+	teenie: 'teenie',
 	firefly: 'firefly',
 	noon: 'noon',
 	light: 'light',
@@ -136,6 +148,67 @@ const script: Record<string, string> = {
 		id === 'postgres-with-quic' && (
 			<div class="qr">
 				<canvas />
+			</div>
+		)
+	}
+	{
+		id === 'shine' && (
+			<>
+				<svg class="sh" viewBox="0 0 400 236" preserveAspectRatio="xMidYMid meet">
+					<rect class="sh-part" x="10" y="180" width="46" height="26" rx="5" />
+					<text class="sh-label" x="33" y="197" text-anchor="middle">laser</text>
+					<polyline class="sh-beam" data-b="in" points="56,193 124,193" />
+					<polyline class="sh-beam" data-b="arm" points="124,193 124,78 304,78" />
+					<polyline class="sh-beam" data-b="arm" points="124,193 304,193 304,78" />
+					<polyline class="sh-beam" data-b="a" points="304,78 360,78" />
+					<polyline class="sh-beam" data-b="b" points="304,78 304,34" />
+					<line class="sh-split" x1="110" y1="207" x2="138" y2="179" />
+					<line class="sh-mirror" x1="110" y1="92" x2="138" y2="64" />
+					<line class="sh-mirror" x1="290" y1="207" x2="318" y2="179" />
+					<line class="sh-split" x1="290" y1="92" x2="318" y2="64" />
+					<rect class="sh-part sh-phase" x="196" y="64" width="34" height="28" rx="5" />
+					<text class="sh-phi" x="213" y="83" text-anchor="middle">φ</text>
+					<text class="sh-label" x="213" y="54" text-anchor="middle" data-r="phi">φ = 2.09</text>
+					<circle class="sh-det" data-d="a" cx="372" cy="78" r="12" style="--p:0.25" />
+					<text class="sh-label" x="372" y="110" text-anchor="middle">det a</text>
+					<text class="sh-read" x="372" y="126" text-anchor="middle" data-r="a">0.250</text>
+					<circle class="sh-det" data-d="b" cx="304" cy="20" r="12" style="--p:0.75" />
+					<text class="sh-label" x="326" y="17">det b</text>
+					<text class="sh-read" x="326" y="31" data-r="b">0.750</text>
+				</svg>
+				<p class="viz-cap label">one phase shift steers the light between two detectors</p>
+			</>
+		)
+	}
+	{
+		id === 'teenie' && (
+			<div class="tn">
+				<span class="label">examples · 4 of 999, rule hidden</span>
+				<div class="tn-rows" data-f="ex">
+					{teenieExamples.map(([a, b, c]) => (
+						<div class="tn-row">
+							<span class="tn-bits">{bits(a).map((on) => <i class:list={{ on }} />)}</span>
+							<span class="tn-op">?</span>
+							<span class="tn-bits">{bits(b).map((on) => <i class:list={{ on }} />)}</span>
+							<span class="tn-op">→</span>
+							<span class="tn-bits">{bits(c).map((on) => <i class:list={{ on }} />)}</span>
+						</div>
+					))}
+				</div>
+				<span class="tn-more">⋮ 995 more</span>
+				<span class="label">
+					new question · round <b data-f="round">8</b> of 8
+				</span>
+				<div class="tn-row tn-q">
+					<span class="tn-bits" data-f="qa">{bits(teenieQuestion[0]).map((on) => <i class:list={{ on }} />)}</span>
+					<span class="tn-op">?</span>
+					<span class="tn-bits" data-f="qb">{bits(teenieQuestion[1]).map((on) => <i class:list={{ on }} />)}</span>
+					<span class="tn-op">→</span>
+					<span class="tn-bits tn-ans" data-f="ans">{bits(teenieQuestion[2]).map((on) => <i class:list={{ on }} />)}</span>
+				</div>
+				<p class="tn-verdict">
+					<span data-f="rule">rule was a + b</span> <b data-f="ok">✓ every bit right</b>
+				</p>
 			</div>
 		)
 	}
@@ -568,6 +641,147 @@ const script: Record<string, string> = {
 		.inf-g b {
 			animation: none;
 		}
+	}
+
+	/* shine: a Mach–Zehnder interferometer */
+	.viz-shine {
+		display: flex;
+		flex-direction: column;
+	}
+	.sh {
+		flex: 1;
+		min-height: 0;
+		width: 100%;
+	}
+	.sh-beam {
+		fill: none;
+		stroke: var(--accent);
+		stroke-width: 3;
+		stroke-linejoin: round;
+		opacity: calc(0.12 + var(--p, 0.5) * 0.88);
+		filter: drop-shadow(0 0 4px color-mix(in srgb, var(--accent) calc(var(--p, 0.5) * 80%), transparent));
+	}
+	.sh-beam[data-b='in'] {
+		--p: 1;
+	}
+	.sh-part {
+		fill: var(--panel);
+		stroke: var(--line-2);
+		stroke-width: 1.5;
+	}
+	.sh-split,
+	.sh-mirror {
+		stroke: var(--ink);
+		stroke-width: 4;
+		stroke-linecap: round;
+	}
+	.sh-split {
+		stroke: var(--dim);
+		stroke-dasharray: 4 3;
+	}
+	.sh-det {
+		fill: var(--accent);
+		fill-opacity: calc(0.08 + var(--p) * 0.92);
+		stroke: var(--line-2);
+		stroke-width: 1.5;
+	}
+	.sh-phi {
+		fill: var(--accent);
+		font: 600 15px var(--font-mono);
+	}
+	.sh-label,
+	.sh-read {
+		fill: var(--dim);
+		font: 11px var(--font-mono);
+	}
+	.sh-read {
+		fill: var(--ink);
+		font-variant-numeric: tabular-nums;
+	}
+
+	/* teenie: one episode, answered round by round */
+	.viz-teenie {
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+	.tn {
+		display: flex;
+		flex-direction: column;
+		gap: 0.45rem;
+	}
+	.viz-teenie.large .tn {
+		width: min(100%, 44rem);
+		margin-inline: auto;
+		gap: 0.7rem;
+	}
+	.viz-teenie.large .tn-bits {
+		max-width: 14rem;
+	}
+	.viz-teenie.large .tn-bits i {
+		max-height: 1.6rem;
+	}
+	.tn-rows {
+		display: grid;
+		gap: 0.3rem;
+	}
+	.tn-row {
+		display: flex;
+		align-items: center;
+		gap: 0.4rem;
+	}
+	.tn-bits {
+		flex: 1;
+		display: grid;
+		grid-template-columns: repeat(8, 1fr);
+		gap: 2px;
+		max-width: 11rem;
+	}
+	.tn-bits i {
+		aspect-ratio: 1;
+		max-height: 1.1rem;
+		border-radius: 2px;
+		background: var(--line-2);
+		transition:
+			background 0.25s,
+			opacity 0.25s;
+	}
+	.tn-bits i.on {
+		background: var(--ink);
+	}
+	.tn-ans i.on {
+		background: var(--accent);
+	}
+	.tn-ans i.unsure {
+		background: var(--accent);
+		opacity: var(--p);
+	}
+	.tn-op {
+		color: var(--faint);
+	}
+	.tn-more {
+		color: var(--faint);
+		font-size: 0.7rem;
+	}
+	.tn-q {
+		padding: 0.4rem;
+		margin-inline: -0.4rem;
+		border-radius: 8px;
+		background: color-mix(in srgb, var(--accent) 8%, transparent);
+	}
+	.tn-verdict {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.3rem 0.8rem;
+		color: var(--dim);
+	}
+	.tn-verdict b {
+		color: var(--ok);
+		font-weight: 500;
+		transition: opacity 0.3s;
+	}
+	.tn-verdict b.off {
+		opacity: 0;
 	}
 
 	/* light */

@@ -33,6 +33,7 @@ export const TOOLKIT = [
 	{ group: 'Systems', items: ['Rust', 'C', 'C++', 'WebAssembly', 'Tokio', 'Axum', 'Boost', 'Rayon'] },
 	{ group: 'Realtime & crypto', items: ['WebRTC', 'WebTransport', 'WebSockets', 'QUIC', 'MLS', 'libsignal'] },
 	{ group: 'Product', items: ['React', 'TypeScript', 'Flutter', 'Tauri', 'Next.js'] },
+	{ group: 'Simulation & ML', items: ['PyTorch', 'NumPy', 'SIMD', 'egui'] },
 	{ group: 'Games & graphics', items: ['Godot', 'GDExtension', 'Vulkan', 'WGPU', 'Voxel engines'] },
 	{ group: 'Infrastructure', items: ['PostgreSQL', 'Redis', 'Docker', 'Kubernetes', 'AWS'] },
 ];

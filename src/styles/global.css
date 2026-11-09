@@ -493,6 +493,19 @@ p {
 	border-radius: 10px;
 	border: 1px solid var(--line);
 }
+.prose figure.diagram svg {
+	display: block;
+	width: 100%;
+	height: auto;
+	padding: 1rem;
+	border-radius: 10px;
+	border: 1px solid var(--line);
+	background: var(--bg-2);
+}
+/* diagram text stays readable when the figure shrinks to phone width */
+.prose figure.diagram :is(.sh-label, .sh-read) {
+	font-size: 14px;
+}
 .prose figure figcaption {
 	margin-top: 0.6rem;
 	text-align: center;
@@ -704,6 +717,22 @@ p {
 		radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
 		var(--bg-2);
 }
+/* shine: the editor's square grid, lit from the laser side */
+.themed[data-theme='shine'] .viz {
+	background:
+		radial-gradient(60% 70% at 0% 70%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+		linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 20px 20px,
+		linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 20px 20px,
+		var(--bg-2);
+}
+/* teenie: a faint wall of bits */
+.themed[data-theme='teenie'] .viz {
+	background:
+		radial-gradient(70% 60% at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
+		linear-gradient(var(--bg-2) 0 4px, transparent 4px) 0 0 / 11px 14px,
+		linear-gradient(90deg, color-mix(in srgb, var(--ink) 5%, transparent) 0 8px, transparent 8px 11px) 0 0 / 11px 14px,
+		var(--bg-2);
+}
 
 /* and a type voice that echoes the project */
 .themed[data-theme='lupyd'] :is(h1, h3) {
@@ -725,6 +754,14 @@ p {
 	font-weight: 300;
 }
 .themed[data-theme='filter-rs'] :is(h1, h3),
+.themed[data-theme='shine'] :is(h1, h3) {
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+.themed[data-theme='teenie'] :is(h1, h3) {
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.03em;
+}
 .themed[data-theme='mantis'] :is(h1, h3) {
 	font-family: var(--font-mono);
 	letter-spacing: -0.04em;
@@ -732,4 +769,10 @@ p {
 .themed[data-theme='filter-rs'] :is(h1, h3)::before {
 	content: '$ ';
 	color: var(--accent);
+}
+
+/* images that come in a light and a dark capture, shown for the current scheme */
+:root[data-scheme='light'] .dark-only,
+:root:not([data-scheme='light']) .light-only {
+	display: none;
 }

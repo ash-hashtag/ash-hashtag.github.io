@@ -1,7 +1,7 @@
 ---
 title: Light
 publishDate: 2025-01-10 00:00:00
-priority: 6
+priority: 8
 description: |
   Typed RPC and low-latency datagrams over WebRTC data channels, for peer-to-peer sync engines in browsers, Node.js and Bun.
 githubUrl: https://github.com/lupyd/light

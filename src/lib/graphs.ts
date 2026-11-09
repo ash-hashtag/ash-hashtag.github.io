@@ -11,6 +11,8 @@ export const heroGraph: NetGraph = {
 		{ id: 'filter', x: 0.52, y: 0.92, label: 'filter', major: true, href: '/work/filter-rs/' },
 		{ id: 'mantis', x: 0.88, y: 0.9, label: 'mantis', major: true, href: '/work/mantis/' },
 		{ id: 'infinity', x: 0.34, y: 0.82, label: 'infinity', major: true, href: '/work/infinity/' },
+		{ id: 'shine', x: 0.64, y: 0.5, label: 'shine', major: true, href: '/work/shine/' },
+		{ id: 'teenie', x: 0.08, y: 0.58, label: 'teenie', major: true, href: '/work/teenie/' },
 		{ id: 'rust', x: 0.52, y: 0.66, label: 'rust' },
 		{ id: 'mls', x: 0.02, y: 0.42, label: 'mls' },
 		{ id: 'libsignal', x: 0.36, y: 0.02, label: 'libsignal' },
@@ -23,6 +25,7 @@ export const heroGraph: NetGraph = {
 		{ id: 'wasm', x: 0.98, y: 0.4, label: 'wasm' },
 		{ id: 'cpp', x: 0.7, y: 1, label: 'c/c++' },
 		{ id: 'godot', x: 0.22, y: 1, label: 'godot' },
+		{ id: 'pytorch', x: 0.02, y: 0.66, label: 'pytorch' },
 	],
 	edges: [
 		['lupyd', 'firefly', 'vh'],
@@ -46,6 +49,9 @@ export const heroGraph: NetGraph = {
 		['mantis', 'cpp', 'vh'],
 		['infinity', 'godot', 'vh'],
 		['godot', 'cpp', 'hv'],
+		['shine', 'rust', 'vh'],
+		['shine', 'wasm', 'hv'],
+		['teenie', 'pytorch', 'vh'],
 	],
 	rate: 0.28,
 };
