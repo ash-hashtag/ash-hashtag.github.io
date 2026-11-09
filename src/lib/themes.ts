@@ -79,7 +79,7 @@ const vars = (t: Tokens, mode: 'd' | 'l') =>
 		.map(([k, v]) => `--t-${k}-${mode}:${v}`)
 		.join(';');
 
-/** Inline custom properties for a themed element; global.css maps them onto the site tokens. */
+/** Inline custom properties for a themed element; themes.css maps them onto the site tokens. */
 export const themeStyle = (id: string) => {
 	const t = THEMES[id];
 	return t ? `${vars(t.dark, 'd')};${vars(t.light, 'l')}` : undefined;

@@ -149,7 +149,7 @@ const isFigure = (pre: HTMLPreElement) => {
 };
 
 const packets = () =>
-	document.querySelectorAll<HTMLPreElement>('.prose pre, .spec pre').forEach((pre) => isFigure(pre) && wire(pre));
+	document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => isFigure(pre) && wire(pre));
 
 if (!calm) {
 	document.documentElement.classList.add('fx');

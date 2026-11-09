@@ -1,6 +1,6 @@
 {
-	// Static-only Worker: Cloudflare serves the Astro build in docs/ directly,
-	// the same output GitHub Pages serves. Cache rules live in public/_headers.
+	// Static-only Worker: Cloudflare serves the Astro build in dist/ directly.
+	// Cache rules live in public/_headers.
 	"name": "ash-hashtag-github-io",
 	"compatibility_date": "2026-10-01",
 	// Attaches spt.lupyd.com to the Worker on deploy (lupyd.com must be a zone on this account).
@@ -14,7 +14,7 @@
 		"command": "pnpm build"
 	},
 	"assets": {
-		"directory": "./docs",
+		"directory": "./dist",
 		// /work/lupyd → /work/lupyd/, matching the trailing-slash links Astro emits
 		"html_handling": "auto-trailing-slash",
 		"not_found_handling": "404-page"

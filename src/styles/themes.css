@@ -1,0 +1,130 @@
+/*
+ * Project themes (src/lib/themes.ts). A themed element carries --t-*-d and
+ * --t-*-l inline; these rules map them onto the site tokens for the current
+ * scheme, so everything inside, canvases included, follows.
+ */
+.themed {
+	--bg: var(--t-bg-d);
+	--bg-2: var(--t-bg2-d);
+	--panel: var(--t-panel-d);
+	--ink: var(--t-ink-d);
+	--dim: var(--t-dim-d);
+	--accent: var(--t-accent-d);
+	--accent-ink: var(--t-accentInk-d);
+}
+:root[data-scheme='light'] .themed {
+	--bg: var(--t-bg-l);
+	--bg-2: var(--t-bg2-l);
+	--panel: var(--t-panel-l);
+	--ink: var(--t-ink-l);
+	--dim: var(--t-dim-l);
+	--accent: var(--t-accent-l);
+	--accent-ink: var(--t-accentInk-l);
+}
+/* tokens derived from the ones above have to be re-derived here */
+.themed {
+	--panel-2: color-mix(in srgb, var(--panel) 92%, var(--ink));
+	--line: color-mix(in srgb, var(--ink) 10%, transparent);
+	--line-2: color-mix(in srgb, var(--ink) 19%, transparent);
+	--faint: color-mix(in srgb, var(--dim) 65%, var(--bg));
+	--glow: 0 0 0.9rem color-mix(in srgb, var(--accent) 50%, transparent);
+	color: var(--ink);
+}
+
+/* each project's surface texture, behind its live visual */
+.themed[data-theme='lupyd'] .viz {
+	background:
+		radial-gradient(80% 60% at 50% 0%, color-mix(in srgb, var(--ink) 9%, transparent), transparent 70%),
+		var(--bg-2);
+}
+.themed[data-theme='firefly'] .viz {
+	background:
+		radial-gradient(3px 3px at 12% 22%, color-mix(in srgb, var(--accent) 70%, transparent), transparent),
+		radial-gradient(2px 2px at 78% 14%, color-mix(in srgb, var(--accent) 60%, transparent), transparent),
+		radial-gradient(3px 3px at 64% 82%, color-mix(in srgb, var(--accent) 55%, transparent), transparent),
+		radial-gradient(2px 2px at 30% 70%, color-mix(in srgb, var(--accent) 50%, transparent), transparent),
+		radial-gradient(60% 50% at 50% 110%, color-mix(in srgb, var(--accent) 14%, transparent), transparent),
+		var(--bg-2);
+}
+.themed[data-theme='noon'] .viz {
+	background:
+		radial-gradient(40% 55% at 92% -10%, color-mix(in srgb, #f3aa4a 30%, transparent), transparent 70%),
+		radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
+		var(--bg-2);
+}
+.themed[data-theme='postgres-with-quic'] .viz {
+	background:
+		linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 24px 24px,
+		linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 24px 24px,
+		var(--bg-2);
+}
+.themed[data-theme='light'] .viz {
+	background:
+		linear-gradient(115deg, transparent 35%, color-mix(in srgb, var(--accent) 10%, transparent) 50%, transparent 65%),
+		radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
+		var(--bg-2);
+}
+.themed[data-theme='filter-rs'] .viz {
+	background:
+		repeating-linear-gradient(0deg, color-mix(in srgb, var(--ink) 4%, transparent) 0 1px, transparent 1px 3px),
+		var(--bg-2);
+}
+.themed[data-theme='mantis'] .viz {
+	background:
+		radial-gradient(70% 60% at 0% 100%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
+		radial-gradient(circle at 1px 1px, var(--line) 1px, transparent 0) 0 0 / 18px 18px,
+		var(--bg-2);
+}
+/* shine: the editor's square grid, lit from the laser side */
+.themed[data-theme='shine'] .viz {
+	background:
+		radial-gradient(60% 70% at 0% 70%, color-mix(in srgb, var(--accent) 14%, transparent), transparent 70%),
+		linear-gradient(var(--line) 1px, transparent 1px) 0 0 / 20px 20px,
+		linear-gradient(90deg, var(--line) 1px, transparent 1px) 0 0 / 20px 20px,
+		var(--bg-2);
+}
+/* teenie: a faint wall of bits */
+.themed[data-theme='teenie'] .viz {
+	background:
+		radial-gradient(70% 60% at 100% 0%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 70%),
+		linear-gradient(var(--bg-2) 0 4px, transparent 4px) 0 0 / 11px 14px,
+		linear-gradient(90deg, color-mix(in srgb, var(--ink) 5%, transparent) 0 8px, transparent 8px 11px) 0 0 / 11px 14px,
+		var(--bg-2);
+}
+
+/* and a type voice that echoes the project */
+.themed[data-theme='lupyd'] :is(h1, h3) {
+	letter-spacing: -0.03em;
+}
+.themed[data-theme='firefly'] :is(h1, h3) {
+	text-shadow: 0 0 1.4rem color-mix(in srgb, var(--accent) 35%, transparent);
+}
+.themed[data-theme='noon'] :is(h1, h3) {
+	font-family: Georgia, 'Times New Roman', serif;
+	font-style: italic;
+	font-weight: 600;
+}
+.themed[data-theme='infinity'] :is(h1, h3) {
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+}
+.themed[data-theme='light'] :is(h1, h3) {
+	font-weight: 300;
+}
+.themed[data-theme='filter-rs'] :is(h1, h3),
+.themed[data-theme='shine'] :is(h1, h3) {
+	font-weight: 600;
+	letter-spacing: -0.02em;
+}
+.themed[data-theme='teenie'] :is(h1, h3) {
+	font-variant-numeric: tabular-nums;
+	letter-spacing: -0.03em;
+}
+.themed[data-theme='mantis'] :is(h1, h3) {
+	font-family: var(--font-mono);
+	letter-spacing: -0.04em;
+}
+.themed[data-theme='filter-rs'] :is(h1, h3)::before {
+	content: '$ ';
+	color: var(--accent);
+}

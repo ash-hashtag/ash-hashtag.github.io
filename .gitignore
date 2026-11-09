@@ -1,6 +1,6 @@
 # build output
 dist/
-# `docs/` is intentionally tracked for GitHub Pages.
+# docs/ only redirects the old GitHub Pages URL to spt.lupyd.com.
 # generated types
 .astro/
 
