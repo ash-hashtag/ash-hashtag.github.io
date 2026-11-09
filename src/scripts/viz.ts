@@ -354,7 +354,9 @@ const filter = (root: HTMLElement) => {
 				m.textContent = line.slice(at, at + q.length);
 				li.append(m, line.slice(at + q.length));
 				list.prepend(li);
-				while (list.children.length > 7) list.lastElementChild!.remove();
+				// keep as many lines as the terminal has room for
+				const fit = Math.floor(list.clientHeight / li.getBoundingClientRect().height) || 7;
+				while (list.children.length > fit) list.lastElementChild!.remove();
 			}
 			await sleep(110);
 		}

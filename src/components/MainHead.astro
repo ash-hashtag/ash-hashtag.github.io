@@ -1,21 +1,26 @@
 ---
 import '../styles/global.css';
+import { type Thing, site } from '../lib/schema';
 
 interface Props {
 	title?: string | undefined;
 	description?: string | undefined;
 	/** Path of the social card, e.g. "/og/home.png". */
 	image?: string | undefined;
+	/** JSON-LD nodes about this page, added to the site-wide graph. */
+	schema?: Thing[] | undefined;
 }
 
 const {
 	title = 'Sri Pranav Tene',
 	description = 'Portfolio of Sri Pranav Tene',
 	image = '/og/home.png',
+	schema = [],
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const imageUrl = new URL(image, Astro.site);
+const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...site(), ...schema] }).replace(/</g, '\\u003c');
 ---
 
 <meta charset="UTF-8" />
@@ -60,3 +65,4 @@ const imageUrl = new URL(image, Astro.site);
 <meta name="generator" content={Astro.generator} />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<script type="application/ld+json" set:html={jsonLd} />

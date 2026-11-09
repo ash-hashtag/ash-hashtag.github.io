@@ -1,15 +1,18 @@
 ---
 import MainHead from '../components/MainHead.astro';
+import type { Thing } from '../lib/schema';
 import { GITHUB_USER } from '../lib/github';
 import { AUTHOR, SOCIALS } from '../lib/site';
+import { MARK } from '../lib/mark';
 
 interface Props {
 	title?: string | undefined;
 	description?: string | undefined;
 	image?: string | undefined;
+	schema?: Thing[] | undefined;
 }
 
-const { title, description, image } = Astro.props;
+const { title, description, image, schema } = Astro.props;
 
 const links = [
 	{ label: 'work', href: '/work/' },
@@ -23,13 +26,18 @@ const year = new Date().getFullYear();
 
 <html lang="en">
 	<head>
-		<MainHead title={title} description={description} image={image} />
+		<MainHead title={title} description={description} image={image} schema={schema} />
 	</head>
 	<body>
 		<header class="topbar">
 			<div class="wrap">
 				<a class="brand" href="/">
-					<span class="brand-mark">SPT</span>
+					<svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true">
+						<rect width="64" height="64" rx="14" fill={MARK.tile} />
+						<rect x="0.75" y="0.75" width="62.5" height="62.5" rx="13.25" fill="none" stroke={MARK.rim} stroke-width="1.5" />
+						<g fill="none" stroke={MARK.ink} stroke-width="4.5" stroke-linecap="square">{MARK.strokes.map((d) => <path d={d} pathLength="1" />)}</g>
+						<rect class="cursor" {...MARK.cursor} />
+					</svg>
 					<span class="brand-name">Sri Pranav Tene</span>
 				</a>
 				<nav class="topnav" aria-label="Site">
@@ -58,7 +66,7 @@ const year = new Date().getFullYear();
 					>
 				</span>
 				<span>
-					No trackers, no cookies. <a href={`https://github.com/${GITHUB_USER}/portfolio`}>Source</a>
+					No trackers, no cookies. <a href={`https://github.com/${GITHUB_USER}/${GITHUB_USER}.github.io`}>Source</a>
 				</span>
 			</div>
 		</footer>

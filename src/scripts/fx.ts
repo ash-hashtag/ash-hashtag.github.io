@@ -68,7 +68,7 @@ const REST = 1400;
 const wire = (pre: HTMLPreElement) => {
 	const hops = parseHops(pre.textContent ?? '');
 	if (!hops.length) return;
-	const racing = pre.dataset.fx === 'lanes' || pre.querySelector('code.language-lanes') !== null;
+	const racing = pre.dataset.language === 'lanes';
 	const lanes = racing ? intoLanes(hops) : [hops];
 	let hop = racing ? 500 : 650;
 
@@ -143,10 +143,7 @@ const wire = (pre: HTMLPreElement) => {
 };
 
 /** Figures only: real code (a fenced block with a language) has arrows that aren't wires. */
-const isFigure = (pre: HTMLPreElement) => {
-	const lang = pre.querySelector('code')?.className.match(/language-(\S+)/)?.[1];
-	return !lang || lang === 'lanes';
-};
+const isFigure = (pre: HTMLPreElement) => ['plaintext', 'lanes'].includes(pre.dataset.language ?? '');
 
 const packets = () =>
 	document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => isFigure(pre) && wire(pre));

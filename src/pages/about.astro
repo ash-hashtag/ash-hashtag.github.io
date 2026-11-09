@@ -1,6 +1,7 @@
 ---
 import Experience from '../components/Experience.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { profilePage } from '../lib/schema';
 import { AUTHOR } from '../lib/site';
 
 const ranks = [
@@ -16,13 +17,13 @@ const rules = [
 	['MAY', 'add a dependency when it pays rent.'],
 	['MUST', 'stay understandable to whoever maintains it next.'],
 ];
+
+const title = 'About · Sri Pranav Tene';
+const description =
+	'Sri Pranav Tene, founder of Lupyd: experience and toolkit across Rust, end-to-end encryption and real-time systems.';
 ---
 
-<BaseLayout
-	title="About · Sri Pranav Tene"
-	description="Sri Pranav Tene, founder of Lupyd: experience and toolkit across Rust, end-to-end encryption and real-time systems."
-	image="/og/about.png"
->
+<BaseLayout {title} {description} image="/og/about.png" schema={[profilePage('/about/', title, description)]}>
 	<main>
 		<section class="about-hero">
 			<div class="wrap">

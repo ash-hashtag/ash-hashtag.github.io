@@ -45,9 +45,6 @@
 	color: var(--ink);
 	font: 0.86em var(--font-mono);
 }
-.prose pre code[class*='language-'] {
-	color: var(--ink);
-}
 .prose table {
 	display: block;
 	overflow-x: auto;
@@ -136,7 +133,7 @@
 	background: var(--panel-2);
 }
 
-/* ASCII figures from the markdown, printed on a paper slip */
+/* code and ASCII figures from the markdown, printed on a paper slip */
 .prose pre {
 	position: relative;
 	overflow-x: auto;
@@ -147,6 +144,25 @@
 	color: var(--ink);
 	font: 0.86rem/1.4 var(--font-mono);
 	white-space: pre;
+
+	/* Shiki's css-variables theme (astro.config.mjs): keywords in the page's accent */
+	--code-fn: #86c3ff;
+	--code-const: #c6a8ff;
+	--astro-code-background: var(--panel-2);
+	--astro-code-foreground: var(--ink);
+	--astro-code-token-keyword: var(--accent);
+	--astro-code-token-string: var(--amber);
+	--astro-code-token-string-expression: var(--amber);
+	--astro-code-token-constant: var(--code-const);
+	--astro-code-token-function: var(--code-fn);
+	--astro-code-token-parameter: var(--ink);
+	--astro-code-token-punctuation: var(--dim);
+	--astro-code-token-comment: var(--faint);
+	--astro-code-token-link: var(--accent);
+}
+:root[data-scheme='light'] .prose pre {
+	--code-fn: #1d5fb0;
+	--code-const: #6c3fc2;
 }
 .prose .caption {
 	margin-top: 0.6rem;

@@ -847,13 +847,16 @@ const script: Record<string, string> = {
 	}
 
 	/* filter */
+	/* a column so the terminal fills the panel, whether it is sized by height or min-height */
 	.viz-filter-rs {
+		display: flex;
+		flex-direction: column;
 		padding: 0.9rem;
 	}
 	.tui {
 		display: flex;
 		flex-direction: column;
-		height: 100%;
+		flex: 1;
 		min-height: 240px;
 		border-radius: 8px;
 		border: 1px solid var(--line-2);

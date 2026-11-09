@@ -5,6 +5,7 @@ import Skyline from '../components/Skyline.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { fmt, getGitHub, statsOf } from '../lib/github';
 import { heroGraph } from '../lib/graphs';
+import { profilePage } from '../lib/schema';
 import { AUTHOR, SOCIALS, getWork } from '../lib/site';
 
 const work = await getWork();
@@ -17,13 +18,12 @@ const since = new Date(gh.since).getUTCFullYear();
 const weekends = gh.days.filter((d) => [0, 6].includes(new Date(`${d.date}T00:00:00Z`).getUTCDay()));
 const weekendActive = weekends.filter((d) => d.count).length;
 const busyWeekends = weekendActive * 2 > weekends.length;
+
+const title = 'Sri Pranav Tene · Founder of Lupyd';
+const description = `I built Lupyd and write privacy-first software: Rust backends, end-to-end encryption, WebRTC and QUIC. ${fmt(stats.total)} GitHub contributions this year.`;
 ---
 
-<BaseLayout
-	title="Sri Pranav Tene · Founder of Lupyd"
-	description={`I built Lupyd and write privacy-first software: Rust backends, end-to-end encryption, WebRTC and QUIC. ${fmt(stats.total)} GitHub contributions this year.`}
-	image="/og/home.png"
->
+<BaseLayout {title} {description} image="/og/home.png" schema={[profilePage('/', title, description)]}>
 	<main>
 		<section class="hero">
 			<div class="wrap hero-grid">
@@ -102,7 +102,7 @@ const busyWeekends = weekendActive * 2 > weekends.length;
 		<section id="contact" class="section contact">
 			<div class="wrap rise">
 				<p class="label">04 / contact</p>
-				<h2>Have something hard to build? <span>Let's talk.</span></h2>
+				<h2>Have something interesting or challenging to build? <span>Let's talk.</span></h2>
 				<div class="contact-row">
 					<a class="contact-mail" href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
 					<button class="btn" type="button" data-copy={AUTHOR.email}>copy</button>
@@ -247,8 +247,8 @@ const busyWeekends = weekendActive * 2 > weekends.length;
 	}
 	.contact h2 {
 		margin-top: 1rem;
-		font-size: clamp(2.6rem, 7vw, 6rem);
-		max-width: 14ch;
+		font-size: clamp(2.4rem, 6vw, 5rem);
+		max-width: 15em;
 	}
 	.contact h2 span {
 		color: var(--accent);

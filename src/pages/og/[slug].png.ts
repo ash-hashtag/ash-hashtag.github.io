@@ -11,6 +11,7 @@ import type { CollectionEntry } from 'astro:content';
 import satori from 'satori';
 import sharp from 'sharp';
 import { fmt, getGitHub, statsOf } from '../../lib/github';
+import { markSvg } from '../../lib/mark';
 import { AUTHOR, getWork } from '../../lib/site';
 import { THEMES } from '../../lib/themes';
 
@@ -29,8 +30,8 @@ const C = {
 	ink: '#eceae2',
 	dim: '#a3a197',
 	faint: '#6b6a62',
-	accent: '#ff5a36',
-	levels: ['#1d201b', '#5e2a1d', '#9a3720', '#d94626', '#ff8a5c'],
+	accent: '#6fdc8c',
+	levels: ['#1d201b', '#22402b', '#2f6e43', '#4fae6b', '#9df0b3'],
 };
 
 type Palette = Pick<typeof C, 'bg' | 'line' | 'ink' | 'dim' | 'faint' | 'accent'>;
@@ -71,11 +72,10 @@ const brand = (p: Palette, right: string) =>
 		h(
 			'div',
 			{ alignItems: 'center', gap: 16 },
-			h(
-				'div',
-				{ width: 48, height: 48, borderRadius: 10, background: p.accent, color: p.bg, alignItems: 'center', justifyContent: 'center', fontWeight: 700, fontSize: 18 },
-				'SPT',
-			),
+			{
+				type: 'img',
+				props: { src: `data:image/svg+xml;base64,${Buffer.from(markSvg(p.accent)).toString('base64')}`, width: 48, height: 48 },
+			},
 			AUTHOR.site,
 		),
 		right,

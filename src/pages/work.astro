@@ -1,16 +1,15 @@
 ---
 import ProjectCard from '../components/ProjectCard.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { workIndex } from '../lib/schema';
 import { getWork } from '../lib/site';
 
 const work = await getWork();
+const description =
+	'Projects by Sri Pranav Tene: Lupyd, Firefly, Noon, Infinity, Shine, Teenie, Postgres over QUIC, Light, Filter and Mantis.';
 ---
 
-<BaseLayout
-	title="Work · Sri Pranav Tene"
-	description="Projects by Sri Pranav Tene: Lupyd, Firefly, Noon, Infinity, Shine, Teenie, Postgres over QUIC, Light, Filter and Mantis."
-	image="/og/home.png"
->
+<BaseLayout title="Work · Sri Pranav Tene" {description} image="/og/home.png" schema={workIndex(work, description)}>
 	<main class="section" style="border-top:0">
 		<div class="wrap">
 			<div class="section-head rise">
