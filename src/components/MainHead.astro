@@ -5,7 +5,7 @@ import { type Thing, site } from '../lib/schema';
 interface Props {
 	title?: string | undefined;
 	description?: string | undefined;
-	/** Path of the social card, e.g. "/og/home.png". */
+	/** Path of the social card, e.g. "/og/home.jpg". */
 	image?: string | undefined;
 	/** JSON-LD nodes about this page, added to the site-wide graph. */
 	schema?: Thing[] | undefined;
@@ -14,7 +14,7 @@ interface Props {
 const {
 	title = 'Sri Pranav Tene',
 	description = 'Portfolio of Sri Pranav Tene',
-	image = '/og/home.png',
+	image = '/og/home.jpg',
 	schema = [],
 } = Astro.props;
 
@@ -64,5 +64,7 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...
 <meta name="twitter:image" content={imageUrl} />
 <meta name="generator" content={Astro.generator} />
 
+<link rel="icon" href="/favicon.ico" sizes="48x48" />
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="icon" type="image/webp" href="/favicon.webp" sizes="192x192" />
 <script type="application/ld+json" set:html={jsonLd} />

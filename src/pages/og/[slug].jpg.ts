@@ -1,6 +1,6 @@
 /*
  * Social cards, rendered at build time: satori lays out the card,
- * resvg rasterises it. The home card carries the real contribution
+ * resvg rasterises it and sharp encodes it as JPEG. The home card carries the real contribution
  * heatmap; project cards carry the project's logo.
  */
 import fs from 'node:fs';
@@ -202,5 +202,7 @@ export const GET: APIRoute = async ({ props }) => {
 		props.kind === 'home' ? await home() : props.kind === 'about' ? await about() : await project(props.entry, props.index);
 	const svg = await satori(tree as never, { width: 1200, height: 630, fonts });
 	const png = new Resvg(svg, { fitTo: { mode: 'width', value: 1200 } }).render().asPng();
-	return new Response(new Uint8Array(png), { headers: { 'Content-Type': 'image/png' } });
+	// JPEG rather than WebP: every link-preview crawler reads it, LinkedIn's included
+	const jpg = await sharp(png).jpeg({ quality: 85, mozjpeg: true }).toBuffer();
+	return new Response(new Uint8Array(jpg), { headers: { 'Content-Type': 'image/jpeg' } });
 };

@@ -37,7 +37,7 @@ export const heroGraph: NetGraph = {
 		['lupyd', 'react', 'vh'],
 		['firefly', 'mls', 'vh'],
 		['lupyd', 'libsignal', 'vh'],
-		['lupyd', 'crypto', 'vh'],
+		['noon', 'crypto', 'hv'],
 		['quic', 'rust', 'hv'],
 		['quic', 'postgres', 'vh'],
 		['rust', 'filter', 'vh'],
