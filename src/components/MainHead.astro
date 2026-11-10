@@ -46,6 +46,12 @@ const jsonLd = JSON.stringify({ '@context': 'https://schema.org', '@graph': [...
 		window.applyScheme = apply;
 		apply();
 		system.addEventListener('change', apply);
+		// carry the scroll drift (scripts/drift.ts) over from the last page without a flash
+		try {
+			const drift = JSON.parse(sessionStorage.getItem('drift') ?? '{}');
+			if (drift.scheme === document.documentElement.dataset.scheme)
+				for (const [k, v] of Object.entries(drift.vars ?? {})) document.documentElement.style.setProperty(k, v);
+		} catch {}
 	})();
 </script>
 

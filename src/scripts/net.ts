@@ -272,7 +272,7 @@ export const mountNet = (canvas: HTMLCanvasElement) => {
 	readTheme();
 	resize();
 	new ResizeObserver(resize).observe(canvas);
-	new MutationObserver(readTheme).observe(document.documentElement, { attributeFilter: ['data-scheme'] });
+	new MutationObserver(readTheme).observe(document.documentElement, { attributeFilter: ['data-scheme', 'style'] });
 
 	const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 	let visible = false;

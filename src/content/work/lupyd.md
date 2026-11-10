@@ -1,6 +1,6 @@
 ---
 title: Lupyd
-publishDate: 2024-03-10 00:00:00
+publishDate: 2023-01-01 00:00:00
 priority: 1
 img: /assets/work/lupyd.webp
 img_alt: Lupyd, a privacy-focused collaboration platform

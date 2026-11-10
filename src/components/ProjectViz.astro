@@ -600,6 +600,7 @@ const script: Record<string, string> = {
 	.lp-screen {
 		position: absolute;
 		overflow: hidden;
+		isolation: isolate; /* keep the bars' z-index under the frame, so its corners and camera stay on top */
 		background: #0b0e14;
 	}
 	.lp-shot {
