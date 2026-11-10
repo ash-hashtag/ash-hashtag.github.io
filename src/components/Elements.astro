@@ -1,0 +1,280 @@
+---
+import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
+---
+
+<div class="pt" data-pt>
+	<div class="pt-key panel" aria-live="polite">
+		<div class="pt-big" data-group={ELEMENTS[0].group}>
+			<span class="pt-n mono">1</span>
+			<b class="pt-sym">{ELEMENTS[0].sym}</b>
+			<span class="pt-name">{ELEMENTS[0].name}</span>
+		</div>
+		<div class="pt-about">
+			<p class="label pt-group">{ELEMENT_GROUPS[ELEMENTS[0].group]}</p>
+			<p class="pt-in"></p>
+		</div>
+	</div>
+
+	<ol class="pt-grid">
+		{
+			ELEMENTS.map((e, i) => (
+				<li
+					class="pt-el rise"
+					tabindex="0"
+					data-i={i}
+					data-group={e.group}
+					style={`--x:${e.x};--y:${e.y};--d:${(e.x + e.y) * 0.05}s`}
+					aria-label={`${e.name}, ${ELEMENT_GROUPS[e.group]}`}
+				>
+					<span class="pt-n mono">{i + 1}</span>
+					<b class="pt-sym">{e.sym}</b>
+					<span class="pt-name">{e.name}</span>
+					{e.in && <span class="pt-used" title="in the work" />}
+				</li>
+			))
+		}
+	</ol>
+
+	<ul class="pt-legend">
+		{
+			Object.entries(ELEMENT_GROUPS).map(([g, name]) => (
+				<li data-group={g} class="label">{name}</li>
+			))
+		}
+		<li class="label pt-legend-used">shown in the work</li>
+	</ul>
+</div>
+
+<script>
+	import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
+
+	document.querySelectorAll<HTMLElement>('[data-pt]').forEach((pt) => {
+		const els = ELEMENTS;
+		const big = pt.querySelector<HTMLElement>('.pt-big')!;
+		const tiles = [...pt.querySelectorAll<HTMLElement>('.pt-el')];
+
+		// the key keeps the last element pointed at, so its links stay reachable
+		const pick = (i: number) => {
+			const e = els[i];
+			big.dataset.group = e.group;
+			big.querySelector('.pt-n')!.textContent = String(i + 1);
+			big.querySelector('.pt-sym')!.textContent = e.sym;
+			big.querySelector('.pt-name')!.textContent = e.name;
+			pt.querySelector('.pt-group')!.textContent = ELEMENT_GROUPS[e.group];
+			const where = pt.querySelector('.pt-in')!;
+			where.replaceChildren();
+			if (e.in?.length) {
+				where.append('In ');
+				e.in.forEach((u, k) => {
+					const a = document.createElement('a');
+					a.href = u.href;
+					a.textContent = u.label;
+					where.append(...(k ? [k === e.in!.length - 1 ? ' and ' : ', '] : []), a);
+				});
+			}
+			tiles.forEach((t, k) => t.classList.toggle('on', k === i));
+		};
+
+		tiles.forEach((t, i) => {
+			t.addEventListener('pointerenter', () => pick(i));
+			t.addEventListener('focus', () => pick(i));
+		});
+		pick(0);
+	});
+</script>
+
+<style>
+	.pt {
+		/* derived from the site tokens, so the groups follow the scheme and the scroll drift */
+		--g-lang: var(--accent);
+		--g-fw: var(--amber);
+		--g-data: color-mix(in oklch longer hue, var(--accent), var(--pen));
+		--g-cloud: color-mix(in oklch, var(--accent), var(--g-data));
+		display: grid;
+		grid-template-columns: repeat(8, minmax(0, 1fr));
+		grid-template-rows: repeat(4, auto);
+		gap: clamp(0.35rem, 0.8vw, 0.6rem);
+	}
+	[data-group='lang'] { --g: var(--g-lang); }
+	[data-group='fw'] { --g: var(--g-fw); }
+	[data-group='data'] { --g: var(--g-data); }
+	[data-group='cloud'] { --g: var(--g-cloud); }
+
+	/* the grid's children sit directly on .pt's grid */
+	.pt-grid {
+		display: contents;
+		list-style: none;
+	}
+	.pt-el {
+		grid-column: var(--x);
+		grid-row: var(--y);
+	}
+	.pt-key {
+		grid-column: 3 / 6;
+		grid-row: 1 / 3;
+	}
+	.pt-legend {
+		grid-column: 6 / 9;
+		grid-row: 4;
+	}
+
+	.pt-el,
+	.pt-big {
+		position: relative;
+		display: grid;
+		grid-template-rows: auto 1fr auto;
+		aspect-ratio: 1;
+		padding: clamp(0.4rem, 0.9vw, 0.7rem);
+		border: 1px solid color-mix(in srgb, var(--g) 30%, transparent);
+		border-radius: 10px;
+		background:
+			radial-gradient(90% 90% at 100% 0%, color-mix(in srgb, var(--g) 16%, transparent), transparent 70%),
+			color-mix(in srgb, var(--g) 7%, var(--panel));
+	}
+	.pt-el {
+		cursor: default;
+		outline: none;
+		transition:
+			opacity 0.7s ease,
+			transform 0.7s cubic-bezier(0.2, 0.7, 0.2, 1),
+			translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+			border-color 0.2s,
+			box-shadow 0.2s;
+	}
+	.pt-el:hover,
+	.pt-el:focus-visible,
+	.pt-el.on {
+		translate: 0 -3px; /* not transform: the scroll reveal owns that */
+		border-color: var(--g);
+		box-shadow: 0 0 0 1px var(--g), 0 0.6rem 1.6rem -0.6rem color-mix(in srgb, var(--g) 60%, transparent);
+	}
+	.pt-n {
+		font-size: clamp(0.62rem, 0.9vw, 0.74rem);
+		color: var(--g);
+	}
+	.pt-sym {
+		align-self: center;
+		justify-self: center;
+		font: 700 clamp(1.4rem, 3vw, 2.4rem) / 1 var(--font-display);
+		letter-spacing: -0.02em;
+	}
+	.pt-name {
+		overflow: hidden;
+		text-align: center;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		font: clamp(0.6rem, 0.95vw, 0.76rem) / 1.2 var(--font-mono);
+		color: var(--dim);
+	}
+	/* a small dot where the element turns up in a case study */
+	.pt-used {
+		position: absolute;
+		top: clamp(0.45rem, 0.9vw, 0.7rem);
+		right: clamp(0.45rem, 0.9vw, 0.7rem);
+		width: 6px;
+		height: 6px;
+		border-radius: 50%;
+		background: var(--g);
+		box-shadow: 0 0 0.5rem var(--g);
+	}
+
+	/* the key: an enlarged element and where it is used */
+	.pt-key {
+		display: grid;
+		grid-template-columns: clamp(7rem, 11vw, 10.5rem) minmax(0, 1fr);
+		gap: clamp(1rem, 2vw, 1.6rem);
+		align-items: center;
+		padding: clamp(0.8rem, 1.6vw, 1.2rem);
+		background: color-mix(in srgb, var(--panel) 70%, transparent);
+	}
+	.pt-big {
+		border-color: var(--g);
+		transition: background 0.3s, border-color 0.3s;
+	}
+	.pt-big .pt-sym {
+		font-size: clamp(2.6rem, 6vw, 4.6rem);
+	}
+	.pt-big .pt-n {
+		font-size: 0.85rem;
+	}
+	.pt-big .pt-name {
+		font-size: clamp(0.72rem, 1.1vw, 0.88rem);
+		color: var(--ink);
+	}
+	.pt-about {
+		display: grid;
+		gap: 0.6rem;
+		align-content: center;
+	}
+	.pt-group {
+		color: var(--g);
+	}
+	.pt-big[data-group='lang'] ~ .pt-about .pt-group { --g: var(--g-lang); }
+	.pt-big[data-group='fw'] ~ .pt-about .pt-group { --g: var(--g-fw); }
+	.pt-big[data-group='data'] ~ .pt-about .pt-group { --g: var(--g-data); }
+	.pt-big[data-group='cloud'] ~ .pt-about .pt-group { --g: var(--g-cloud); }
+	.pt-in {
+		font-size: clamp(0.95rem, 1.4vw, 1.1rem);
+		color: var(--dim);
+	}
+	.pt-in:empty {
+		display: none;
+	}
+	.pt-in a {
+		color: var(--ink);
+		text-decoration-color: var(--accent);
+		text-underline-offset: 0.2em;
+	}
+
+	.pt-legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-content: center;
+		gap: 0.5rem 1.2rem;
+		padding: 0 0.5rem;
+		list-style: none;
+	}
+	.pt-legend li {
+		display: flex;
+		align-items: center;
+		gap: 0.45rem;
+	}
+	.pt-legend li::before {
+		content: '';
+		width: 0.7rem;
+		height: 0.7rem;
+		border-radius: 3px;
+		background: var(--g);
+	}
+	.pt-legend .pt-legend-used::before {
+		width: 6px;
+		height: 6px;
+		margin-inline: 2px;
+		border-radius: 50%;
+		background: var(--ink);
+	}
+
+	/* narrow: the key on top, then the elements flowed group by group */
+	@media (max-width: 960px) {
+		.pt {
+			grid-template-columns: repeat(auto-fill, minmax(5.2rem, 1fr));
+		}
+		.pt-el,
+		.pt-key,
+		.pt-legend {
+			grid-column: auto;
+			grid-row: auto;
+		}
+		.pt-key,
+		.pt-legend {
+			grid-column: 1 / -1;
+		}
+		.pt-legend {
+			order: -1;
+			padding: 0 0 0.4rem;
+		}
+		.pt-key {
+			order: -2;
+		}
+	}
+</style>

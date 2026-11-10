@@ -1,10 +1,12 @@
 ---
+import Elements from '../components/Elements.astro';
 import Experience from '../components/Experience.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import Skyline from '../components/Skyline.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { fmt, getGitHub, statsOf } from '../lib/github';
 import { heroGraph } from '../lib/graphs';
+import { ELEMENTS } from '../lib/profile';
 import { profilePage } from '../lib/schema';
 import { AUTHOR, SOCIALS, getWork } from '../lib/site';
 
@@ -99,9 +101,23 @@ const description = `I built Lupyd and write privacy-first software: Rust backen
 			</div>
 		</section>
 
+		<section id="stack" class="section">
+			<div class="wrap">
+				<div class="section-head rise">
+					<h2><span class="num mono">04</span> Whatever it takes</h2>
+					<p>
+						I'm the engineer who gets it shipped, whatever the requirements: the language, the database or the cloud is
+						whatever the problem needs, not whatever I happen to know. This is what I've built with so far.
+						<span class="note" style="--tilt:-2deg"> {ELEMENTS.length} elements and counting</span>
+					</p>
+				</div>
+				<Elements />
+			</div>
+		</section>
+
 		<section id="contact" class="section contact">
 			<div class="wrap rise">
-				<p class="label">04 / contact</p>
+				<p class="label">05 / contact</p>
 				<h2>Have something interesting or challenging to build? <span>Let's talk.</span></h2>
 				<div class="contact-row">
 					<a class="contact-mail" href={`mailto:${AUTHOR.email}`}>{AUTHOR.email}</a>
