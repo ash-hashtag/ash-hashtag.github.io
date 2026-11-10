@@ -127,9 +127,7 @@ import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
 		padding: clamp(0.4rem, 0.9vw, 0.7rem);
 		border: 1px solid color-mix(in srgb, var(--g) 30%, transparent);
 		border-radius: 10px;
-		background:
-			radial-gradient(90% 90% at 100% 0%, color-mix(in srgb, var(--g) 16%, transparent), transparent 70%),
-			color-mix(in srgb, var(--g) 7%, var(--panel));
+		background: color-mix(in srgb, var(--g) 8%, var(--panel));
 	}
 	.pt-el {
 		cursor: default;
@@ -146,7 +144,7 @@ import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
 	.pt-el.on {
 		translate: 0 -3px; /* not transform: the scroll reveal owns that */
 		border-color: var(--g);
-		box-shadow: 0 0 0 1px var(--g), 0 0.6rem 1.6rem -0.6rem color-mix(in srgb, var(--g) 60%, transparent);
+		box-shadow: inset 0 0 0 1px var(--g);
 	}
 	.pt-n {
 		font-size: clamp(0.62rem, 0.9vw, 0.74rem);
@@ -175,7 +173,6 @@ import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
 		height: 6px;
 		border-radius: 50%;
 		background: var(--g);
-		box-shadow: 0 0 0.5rem var(--g);
 	}
 
 	/* the key: an enlarged element and where it is used */

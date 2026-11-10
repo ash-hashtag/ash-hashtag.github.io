@@ -462,6 +462,12 @@ const teenie = (root: HTMLElement) => {
 const registry: Record<string, (root: HTMLElement) => void> = { firefly, noon, quic, light, filter, shine, teenie };
 
 export const mountViz = () => {
+	const io = new IntersectionObserver(
+		(es) => es.forEach((e) => e.target.toggleAttribute('data-live', e.isIntersecting)),
+		{ rootMargin: '100px' },
+	);
+	// CSS-only cards (lupyd, infinity) have no data-viz, so watch every card
+	document.querySelectorAll('.viz').forEach((el) => io.observe(el));
 	document.querySelectorAll<HTMLElement>('[data-viz]').forEach((el) => {
 		const run = registry[el.dataset.viz!];
 		if (run && (!calm || el.dataset.viz === 'quic')) run(el);

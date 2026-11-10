@@ -98,19 +98,23 @@ const wire = (pre: HTMLPreElement) => {
 		pre.after(ctl);
 	}
 
-	let visible = false;
-	new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(pre);
-
-	let clock = 0, last = performance.now();
-	const frame = (now: number) => {
-		const dt = now - last;
-		last = now;
-		if (visible) clock += dt;
-
+	let ch = 0, lh = 0, padL = 0, padT = 0;
+	const measure = () => {
 		const cs = getComputedStyle(pre);
-		const ch = probe.getBoundingClientRect().width / 20;
-		const lh = parseFloat(cs.lineHeight);
-		const padL = parseFloat(cs.paddingLeft), padT = parseFloat(cs.paddingTop);
+		ch = probe.getBoundingClientRect().width / 20;
+		lh = parseFloat(cs.lineHeight);
+		padL = parseFloat(cs.paddingLeft);
+		padT = parseFloat(cs.paddingTop);
+	};
+	new ResizeObserver(measure).observe(pre);
+
+	let visible = false, running = false;
+	let clock = 0, last = 0;
+	const frame = (now: number) => {
+		if (!visible) return void (running = false);
+		clock += now - last;
+		last = now;
+
 		const slot = hop + GAP;
 		const cycle = Math.max(...lanes.map((l) => l.length)) * slot + REST;
 		const t = clock % cycle;
@@ -139,7 +143,14 @@ const wire = (pre: HTMLPreElement) => {
 		});
 		requestAnimationFrame(frame);
 	};
-	requestAnimationFrame(frame);
+	new IntersectionObserver(([e]) => {
+		visible = e.isIntersecting;
+		if (!visible || running) return;
+		running = true;
+		measure();
+		last = performance.now();
+		requestAnimationFrame(frame);
+	}).observe(pre);
 };
 
 /** Figures only: real code (a fenced block with a language) has arrows that aren't wires. */

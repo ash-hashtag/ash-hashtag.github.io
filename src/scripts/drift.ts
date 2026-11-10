@@ -11,6 +11,7 @@ const DEG_PER_SCREEN = 20; // hue turned per viewport height scrolled
 const TINT = 0.018; // chroma the near-greys pick up once the drift is under way
 const TINT_AFTER = 90; // degrees of drift before the tint is fully in
 const KEY = 'drift';
+const STEP = 1; // repaint only once the hue has moved this many degrees: each paint restyles the whole page
 
 const TOKENS = ['--bg', '--bg-2', '--panel', '--panel-2', '--line', '--line-2', '--ink', '--dim', '--faint', '--accent', '--amber', '--ok', '--pen', '--l0'];
 
@@ -51,6 +52,8 @@ const read = (): number => {
 const root = document.documentElement;
 let base = new Map<string, Lch>();
 let deg = read();
+let painted = deg;
+let vars: Record<string, string> = {};
 
 /** Re-read the untouched palette for the current scheme. */
 const rebase = () => {
@@ -65,15 +68,19 @@ const rebase = () => {
 
 const paint = () => {
 	const tint = TINT * Math.min(1, deg / TINT_AFTER);
-	const vars: Record<string, string> = {};
+	painted = deg;
+	vars = {};
 	for (const [t, { l, c, h, a }] of base) {
 		const v = `oklch(${(l * 100).toFixed(2)}% ${Math.max(c, tint).toFixed(4)} ${((h + deg) % 360).toFixed(2)}${a < 1 ? ` / ${a}` : ''})`;
 		root.style.setProperty(t, v);
 		vars[t] = v;
 	}
+};
+
+/** MainHead reapplies these before first paint on the next page. */
+const save = () => {
 	try {
-		// MainHead reapplies these before first paint on the next page
-		sessionStorage.setItem(KEY, JSON.stringify({ deg, scheme: root.dataset.scheme, vars }));
+		sessionStorage.setItem(KEY, JSON.stringify({ deg: painted, scheme: root.dataset.scheme, vars }));
 	} catch {}
 };
 
@@ -81,6 +88,8 @@ if (CSS.supports('color', 'oklch(50% 0.1 120)')) {
 	rebase();
 	paint();
 	new MutationObserver(() => (rebase(), paint())).observe(root, { attributeFilter: ['data-scheme'] });
+	addEventListener('pagehide', save);
+	addEventListener('visibilitychange', () => document.hidden && save());
 
 	let last = scrollY;
 	let queued = false;
@@ -95,7 +104,7 @@ if (CSS.supports('color', 'oklch(50% 0.1 120)')) {
 				last = scrollY;
 				if (!moved) return;
 				deg += (moved / innerHeight) * DEG_PER_SCREEN;
-				paint();
+				if (deg - painted >= STEP) paint();
 			});
 		},
 		{ passive: true },

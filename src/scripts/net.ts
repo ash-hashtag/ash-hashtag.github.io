@@ -272,30 +272,37 @@ export const mountNet = (canvas: HTMLCanvasElement) => {
 	readTheme();
 	resize();
 	new ResizeObserver(resize).observe(canvas);
-	new MutationObserver(readTheme).observe(document.documentElement, { attributeFilter: ['data-scheme', 'style'] });
+	// the scroll drift restyles the root often; read the colours once per frame at most, and only on screen
+	let stale = false;
+	new MutationObserver(() => (stale = true)).observe(document.documentElement, { attributeFilter: ['data-scheme', 'style'] });
 
 	const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
-	let visible = false;
-	new IntersectionObserver(([e]) => (visible = e.isIntersecting)).observe(canvas);
-
-	let last = performance.now(), acc = 0;
+	let visible = false, running = false;
+	let last = 0, acc = 0;
 	const rate = graph.rate ?? 0.32;
 	const frame = (now: number) => {
+		if (!visible) return void (running = false);
 		const dt = Math.min(0.05, (now - last) / 1000);
 		last = now;
-		if (visible) {
-			if (!calm) {
-				acc += dt;
-				while (acc > rate) {
-					acc -= rate;
-					if (packets.length < 40) spawn();
-				}
+		if (stale) (stale = false), readTheme();
+		if (!calm) {
+			acc += dt;
+			while (acc > rate) {
+				acc -= rate;
+				if (packets.length < 40) spawn();
 			}
-			draw(calm ? 0 : dt);
 		}
+		draw(calm ? 0 : dt);
+		if (calm) return void (running = false);
 		requestAnimationFrame(frame);
 	};
-	requestAnimationFrame(frame);
+	new IntersectionObserver(([e]) => {
+		visible = e.isIntersecting;
+		if (!visible || running) return;
+		running = true;
+		last = performance.now();
+		requestAnimationFrame(frame);
+	}).observe(canvas);
 };
 
 export const mountAllNets = () => document.querySelectorAll<HTMLCanvasElement>('canvas[data-net]').forEach(mountNet);

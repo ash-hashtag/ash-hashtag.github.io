@@ -95,7 +95,7 @@ const tiles = [
 			<svg class="iso" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${fmt(stats.total)} contributions in the last year, shown as a 3D skyline`}>
 				{
 					cells.map((c) => (
-						<g class:list={['c', `l${c.day.level}`]} style={`--i:${c.w}`} data-tip={tip(c.day)}>
+						<g class:list={['c', `l${c.day.level}`]} data-tip={tip(c.day)}>
 							<polygon class="f" points={c.front} />
 							<polygon class="r" points={c.right} />
 							<polygon class="t" points={c.top} />
@@ -279,17 +279,28 @@ const tiles = [
 	.flat rect.hot {
 		fill: var(--ink);
 	}
-	.iso .c {
-		transform-box: fill-box;
-		transform-origin: 50% 100%;
+	/*
+	 * The build-in: a panel-coloured curtain slides off the skyline, week by
+	 * week. Moving one composited layer keeps the ~1100 polygons painted once;
+	 * transforming each column redrew the whole SVG every frame.
+	 */
+	.sky-fig {
+		position: relative;
+		overflow: hidden;
 	}
-	.fx .iso .c {
-		transform: scaleY(0.02);
-		transition: transform 0.9s cubic-bezier(0.2, 0.8, 0.2, 1);
-		transition-delay: calc(var(--i) * 14ms);
+	.fx .sky-fig[data-mode='iso']::after {
+		content: '';
+		position: absolute;
+		inset: 0 0 0 -8rem;
+		background: linear-gradient(90deg, transparent, var(--panel) 8rem);
+		pointer-events: none;
+		transition: transform 1.6s cubic-bezier(0.45, 0, 0.2, 1);
 	}
-	.fx .built .iso .c {
-		transform: none;
+	.fx .sky-fig.built::after {
+		transform: translateX(100%);
+	}
+	.iso {
+		contain: paint;
 	}
 
 	.sky-legend {

@@ -492,7 +492,24 @@ const script: Record<string, string> = {
 	.lp-desktop,
 	.lp-mobile {
 		position: absolute;
-		filter: drop-shadow(0 18px 30px rgb(0 0 0 / 0.35));
+		isolation: isolate;
+	}
+	/* a static shadow layer, not drop-shadow(): a filter re-rasters every frame the screenshots crossfade */
+	.lp-desktop::before,
+	.lp-mobile::before {
+		content: '';
+		position: absolute;
+		z-index: -1;
+		box-shadow: 0 18px 30px rgb(0 0 0 / 0.35);
+	}
+	/* insets trace the opaque part of each frame image */
+	.lp-desktop::before {
+		inset: 9% 8.2% 1%;
+		border-radius: 2% / 3%;
+	}
+	.lp-mobile::before {
+		inset: 2.6% 6.5%;
+		border-radius: 14% / 6.8%;
 	}
 	/* frame proportions come from the frame images; the screen boxes are their transparent holes */
 	.lp-desktop {
@@ -626,20 +643,22 @@ const script: Record<string, string> = {
 	.lp-screen .lp-shot:first-child img {
 		opacity: 1;
 	}
+	/* hard cuts, like switching screens on a real device: each shot owns its slice of the cycle */
 	.lp-desktop img:not(.lp-frame) {
-		animation: inf-slide 24s linear infinite;
+		animation: lp-cut6 24s step-end infinite;
 		animation-delay: calc(var(--i) * 4s);
 	}
 	.lp-mobile img:not(.lp-frame) {
-		animation: lp-slide4 24s linear infinite;
+		animation: lp-cut4 24s step-end infinite;
 		animation-delay: calc(var(--i) * 6s);
 	}
-	@keyframes lp-slide4 {
-		0% { opacity: 0; }
-		4% { opacity: 1; }
-		25% { opacity: 1; }
-		29% { opacity: 0; }
-		100% { opacity: 0; }
+	@keyframes lp-cut6 {
+		0% { opacity: 1; }
+		16.667%, 100% { opacity: 0; }
+	}
+	@keyframes lp-cut4 {
+		0% { opacity: 1; }
+		25%, 100% { opacity: 0; }
 	}
 	@media (prefers-reduced-motion: reduce) {
 		.lp-screen img {

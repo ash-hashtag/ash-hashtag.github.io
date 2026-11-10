@@ -140,18 +140,32 @@ p {
 }
 
 .dot {
+	position: relative;
 	display: inline-block;
 	width: 0.5rem;
 	height: 0.5rem;
 	border-radius: 50%;
 	background: var(--ok);
-	box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 60%, transparent);
-	animation: ping 2.4s infinite;
 	vertical-align: 0.05em;
 }
+/* the ping is a ring scaled on the compositor; animating box-shadow repainted every frame */
+.dot::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: 50%;
+	background: color-mix(in srgb, var(--ok) 60%, transparent);
+	animation: ping 2.4s infinite;
+}
 @keyframes ping {
-	70% {
-		box-shadow: 0 0 0 0.5rem transparent;
+	0% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	70%,
+	100% {
+		transform: scale(3);
+		opacity: 0;
 	}
 }
 
@@ -212,6 +226,13 @@ p {
 	backdrop-filter: blur(12px) saturate(1.2);
 	background: color-mix(in srgb, var(--bg) 78%, transparent);
 	border-bottom: 1px solid var(--line);
+}
+/* phones: the blur re-samples everything under the bar on every scroll frame */
+@media (max-width: 760px) {
+	.topbar {
+		backdrop-filter: none;
+		background: color-mix(in srgb, var(--bg) 94%, transparent);
+	}
 }
 .topbar .wrap {
 	display: flex;
@@ -432,7 +453,14 @@ p {
 	html {
 		scroll-behavior: auto;
 	}
-	.dot {
+	.dot::after {
 		animation: none;
+		opacity: 0;
 	}
+}
+
+/* project cards off screen hold their CSS animations (scripts/viz.ts sets data-live) */
+.viz:not([data-live]),
+.viz:not([data-live]) * {
+	animation-play-state: paused !important;
 }
