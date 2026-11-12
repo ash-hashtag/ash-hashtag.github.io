@@ -40,12 +40,12 @@ export const TOOLKIT = [
 
 /*
  * The periodic table on the home page. x and y place each element on the
- * wide layout (8 columns by 4 rows, the key in the gap at the top middle);
+ * wide layout (8 columns by 5 rows, the key in the gap at the top middle);
  * narrow screens just flow them. `in` is only where the site shows it used.
  */
 export const ELEMENT_GROUPS = {
 	lang: 'Languages',
-	fw: 'Frameworks & engines',
+	fw: 'Frameworks & platforms',
 	data: 'Databases',
 	cloud: 'Cloud',
 } as const;
@@ -69,6 +69,9 @@ export const ELEMENTS: { sym: string; name: string; group: keyof typeof ELEMENT_
 	{ sym: 'Fl', name: 'Flutter', group: 'fw', x: 3, y: 4, in: [job('Jandas')] },
 	{ sym: 'Gt', name: 'Godot', group: 'fw', x: 4, y: 4, in: [work('infinity')] },
 	{ sym: 'Pt', name: 'PyTorch', group: 'fw', x: 5, y: 4, in: [work('teenie')] },
+	{ sym: 'Uf', name: 'UniFFI', group: 'fw', x: 3, y: 5 },
+	{ sym: 'W3', name: 'Web3', group: 'fw', x: 4, y: 5, in: [job('Freelance')] },
+	{ sym: 'An', name: 'Android', group: 'fw', x: 5, y: 5 },
 	{ sym: 'Pg', name: 'PostgreSQL', group: 'data', x: 7, y: 1, in: [work('postgres-with-quic', 'pg/quic')] },
 	{ sym: 'My', name: 'MySQL', group: 'data', x: 8, y: 1 },
 	{ sym: 'Mg', name: 'MongoDB', group: 'data', x: 6, y: 2 },

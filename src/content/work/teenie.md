@@ -5,19 +5,19 @@ priority: 6
 img: /assets/work/teenie.webp
 img_alt: Teenie, a research model that infers hidden rules
 description: |
-  A research model that reads 999 examples of a hidden rule on 32-bit integers and answers a new question in one pass, with frozen weights. Failures published too.
+  A research model that reads 999 examples of a hidden rule on 32-bit integers and answers a new question in one pass, with frozen weights. Runs in the browser; failures published too.
 url: https://teenie.lupyd.com
 githubUrl: https://github.com/ash-hashtag/teenie
-status: Ongoing research, every run published at teenie.lupyd.com
+status: Ongoing research, every run published at teenie.lupyd.com; the next model, Mega, is planned
 stats:
-  - value: 939K
+  - value: 1.15M
     label: parameters, the same at every width up to 32 bits
-  - value: 77%
-    label: on an unseen 32-bit conditional (lookup 1.1%)
-  - value: 99.9%
-    label: of confident answers right on the sealed set
-  - value: "999"
-    label: examples per question, weights frozen
+  - value: 93.6%
+    label: on an unseen 32-bit conditional (lookup recovers 4.5 of 32 bits)
+  - value: 84.8%
+    label: on 32-bit (a*b)+a, never trained
+  - value: 100%
+    label: of fully sure answers right, in 9 of 10 test groups
 tags:
   - Machine learning
   - PyTorch
@@ -42,7 +42,7 @@ come from reasoning over the examples rather than looking one up.
   a 10001111  b 00011110  c 11000010
   a 11110001  b 00100001  c 00010001     a 10100101
   a 11110011  b 11111110  c 00011010     b 00100010
-  ⋮                                      c ????????  → refine 8 rounds
+  ⋮                                      c ????????  → refine 12 rounds
 ```
 
 <p class="caption">Figure 1: An 8-bit episode, shortened. The model sees examples and a question, never the rule</p>
@@ -50,60 +50,81 @@ come from reasoning over the examples rather than looking one up.
 ## How it answers
 
 <figure>
-  <img class="dark-only" src="/assets/work/teenie/architecture-dark.webp" alt="Teenie's bit-token architecture: an example encoder, eight answer-bit tokens, bit layers, memory and readout, repeated for eight rounds" loading="lazy" width="1400" height="780" />
-  <img class="light-only" src="/assets/work/teenie/architecture.webp" alt="" loading="lazy" width="1400" height="780" />
+  <img class="dark-only" src="/assets/work/teenie/architecture-dark.webp" alt="Teenie's bit-token architecture: an example encoder, one token per answer bit, two bit layers, memory and a readout that writes the guess and scratch registers, repeated for twelve rounds" loading="lazy" width="1400" height="752" />
+  <img class="light-only" src="/assets/work/teenie/architecture.webp" alt="" loading="lazy" width="1400" height="752" />
   <figcaption>Figure 2: The bit-token model, from <a href="https://teenie.lupyd.com/model/">teenie.lupyd.com/model</a></figcaption>
 </figure>
 
-1. **Read the examples once.** Each example's bits go through a small
-   bilinear encoder and become one fixed vector, with no reading order.
-2. **Hold a guess.** The answer starts undecided, split into one token
-   per answer bit, each knowing which bit it is.
-3. **Look and correct.** Every round the bit tokens attend to each other,
-   so carries can move between positions, then read the examples, then
-   pass through a gated layer that can multiply signals. Eight rounds,
-   the same weights each time.
+1. **Read the examples once.** Every bit of every example becomes a
+   token that sees the numbers relative to its own position, 31 bits
+   either side, so the same weights read 8, 16 or 32 bits.
+2. **Hold a guess.** The answer starts undecided, one token per answer
+   bit, next to two scratch registers the model can write intermediate
+   values into.
+3. **Look and correct.** Each round runs two bit layers: the answer bits
+   attend to each other, so carries and partial products can move
+   between positions, read the same bit of all 999 examples, then pass
+   through a gated layer that can multiply. After each layer they also
+   read 64 worked examples next to their true answers. A memory cell per
+   bit carries state on, and the readout writes a new guess and new
+   register bits. Twelve rounds, the same weights each time.
 4. **Answer honestly.** Confidence is the certainty of the least certain
-   bit, so the model can say when it doesn't know.
+   bit, and an answer only counts as sure when every bit is at 0.99 or
+   above, so the model can say when it doesn't know.
 
-The current model has 939,001 parameters and the same weights answer
-any width up to 32 bits: every layer sees bits relative to their own
-position, so nothing depends on the number size.
+The scratch registers were the change that first let it compute through
+a product instead of matching examples. The model has 1,145,339
+parameters at width 128, and one set of weights answers every width up
+to 32 bits.
 
 ## Results, next to a fair baseline
 
-Every score is reported beside **lookup**: the best of five methods that
+Every score sits beside **lookup**: the best of five methods that
 understand nothing (copy the closest example's answer, or match
 neighbouring bits across examples), chosen per relation after the fact.
-A score only counts where it clearly beats lookup.
+Scores are exact answers, plus how many of the 32 bits come out right
+on average, so partial progress shows too.
 
-| Relation, 32 bits | Teenie | Lookup |
-| --- | --- | --- |
-| Sealed set: 24 everyday functions, never used for a decision | **37.8%** | 21.4% |
-| `a>b ? a−b : a+b`, conditionals never trained | **77.0%** | 1.1% |
-| `rotl(a, b&7)`, rotations never trained | **25.2%** | 0.5% |
-| 2-operation expressions with a held-out pair | **31.7%** | 19.6% |
-| `a*b+b`, a product then one more step | 0% | 0% |
+| Relation, 32 bits | Exact | Bits of 32 | Lookup bits |
+| --- | --- | --- | --- |
+| `a>b ? a−b : a+b`, conditionals never trained | **93.6%** | 31.4 | 4.5 |
+| Held-out single operations | **100.0%** | 32.0 | 21.8 |
+| A product, then one more step | **68.9%** | 30.0 | 2.2 |
+| Operation types never trained | **73.1%** | 27.2 | 12.0 |
+| Hidden compositions | **62.0%** | 27.2 | 4.8 |
+| Two operations | **24.6%** | 14.5 | 1.5 |
+| Unseen multi-step, the target | 7.1% | 13.6 | 3.7 |
 
-When it is sure, it is almost always right: 99.9% of confident answers on
-the sealed set at 32 bits were correct, even where its overall score is
-low.
+Chains of additions, bitwise operations and shifts hold up at full
+width: 98.3% exact for one step and 94.8% for two at 32 bits. When it is
+fully sure, it is right: every sure answer was correct in nine of the
+ten test groups, and 98.9% in the tenth.
 
 ## What failed, and why that's published
 
-The model computes `a*b` on its own, but a product followed by one more
-step stays near zero at 32 bits. Trained on just four such relations it
-solves them almost perfectly, so the failure is in recognising which
-rule the examples come from when there are many candidates, not in the
-arithmetic.
+A product followed by one more step used to be the wall: `a*b+b` scored
+0% at 32 bits. Scratch registers, longer training and twelve rounds
+instead of eight took `a*b` to 89.5% exact at 32 bits and the never
+trained `(a*b)+a` to 84.8%.
 
-Getting here took more than twenty recorded experiments, and the dead
-ends are kept: recurrent models on floating-point values, a
-conjugate-gradient fitter that turned out to do all the work untrained,
-step-by-step supervision that held the model back, and a "program
-inference" design that could represent the answers but would not train.
-Each one, with its numbers and the command to reproduce it, is on
+Multiplying values it has computed itself is still open. `(a+b)*a` and
+`a*a − b*b` only get their lowest six bits right, chains through a
+product drop to 10.6% at 32 bits, and training on such products didn't
+help; at 30% of the mix it wore down `a*b`. So the fix has to come from
+the model's structure, not more data. Rotations and real bit mixing
+stay near chance, and on rotations fitted trees beat it.
+
+Getting here took twenty-eight recorded experiments, and the dead ends
+are kept: recurrent models on floating-point values, a 61-parameter
+curve fitter that scored the same untrained, step-by-step supervision
+that held the model back, a "program inference" design that could
+represent the answers but would not train, and a composition grid the
+model memorised instead of composing. Each one, with its numbers, is on
 [teenie.lupyd.com](https://teenie.lupyd.com).
+
+Next is **Mega**, aimed at computed products, rotations and bit mixing,
+longer chains, more inputs, noisy examples and a fair comparison with
+TabPFN.
 
 ## Built to be checked
 
@@ -114,6 +135,10 @@ Each one, with its numbers and the command to reproduce it, is on
   wrong.
 - **A sealed test set** of 24 functions written separately and evaluated
   once, so the model can't be tuned to it.
+- **Open weights**: the release model is on
+  [Hugging Face](https://huggingface.co/TheLupyd/teenie), and it
+  [runs in the browser](https://teenie.lupyd.com/try/), reading 999
+  examples and answering 16 questions on your device.
 - PyTorch with bf16 training on a single RTX 3050, managed with uv,
-  strict mypy typing and pytest. The results site is Astro, generated
-  from the experiment files.
+  strict mypy typing and pytest. Every result is one training seed. The
+  results site is Astro, generated from the experiment files.

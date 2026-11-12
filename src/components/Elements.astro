@@ -92,7 +92,7 @@ import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
 		--g-cloud: color-mix(in oklch, var(--accent), var(--g-data));
 		display: grid;
 		grid-template-columns: repeat(8, minmax(0, 1fr));
-		grid-template-rows: repeat(4, auto);
+		grid-template-rows: repeat(5, auto);
 		gap: clamp(0.35rem, 0.8vw, 0.6rem);
 	}
 	[data-group='lang'] { --g: var(--g-lang); }
@@ -115,7 +115,7 @@ import { ELEMENTS, ELEMENT_GROUPS } from '../lib/profile';
 	}
 	.pt-legend {
 		grid-column: 6 / 9;
-		grid-row: 4;
+		grid-row: 4 / 6;
 	}
 
 	.pt-el,

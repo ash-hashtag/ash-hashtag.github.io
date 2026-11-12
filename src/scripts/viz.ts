@@ -396,6 +396,8 @@ const shine = (root: HTMLElement) => {
 
 /* ---------- teenie: infer the hidden rule, answer bit by bit ---------- */
 
+const ROUNDS = 12; // the released model refines its answer for 12 rounds
+
 const teenie = (root: HTMLElement) => {
 	const rows = root.querySelectorAll<HTMLElement>('[data-f="ex"] .tn-row');
 	const qa = root.querySelector<HTMLElement>('[data-f="qa"]')!;
@@ -436,8 +438,8 @@ const teenie = (root: HTMLElement) => {
 		rule.textContent = 'rule hidden';
 		ok.classList.add('off');
 		// low bits settle first, the way carries resolve; each bit flickers until its round
-		const settle = Array.from({ length: 8 }, (_, i) => Math.min(8, 1 + Math.floor((7 - i) * 0.8 + Math.random() * 1.5)));
-		for (let r = 1; r <= 8; r++) {
+		const settle = Array.from({ length: 8 }, (_, i) => Math.min(ROUNDS, 1 + Math.floor((7 - i) * 1.25 + Math.random() * 2)));
+		for (let r = 1; r <= ROUNDS; r++) {
 			round.textContent = String(r);
 			[...ans.children].forEach((cell, i) => {
 				const bit = (c >> (7 - i)) & 1;
@@ -450,7 +452,7 @@ const teenie = (root: HTMLElement) => {
 					el.style.setProperty('--p', (0.15 + Math.random() * 0.6).toFixed(2));
 				}
 			});
-			await sleep(420);
+			await sleep(300);
 			if (!alive()) return;
 		}
 		rule.textContent = `rule was ${name}`;
